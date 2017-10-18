@@ -29,5 +29,6 @@ $ brew cask install font-hack-nerd-font
 ## Usage
 
 * Install dotfiles: `./setup.sh`
-* Decrypt ssh config file: `gpg -d ssh/config.gpg`
+* Decrypt ssh config file: `gpg -d ssh/config.gpg > ssh/config`
 * Encrypt ssh config file: `gpg -c ssh/config`
+
