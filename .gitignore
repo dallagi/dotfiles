@@ -1,0 +1,5 @@
+*.swp
+*~
+*.backup
+
+ssh/config

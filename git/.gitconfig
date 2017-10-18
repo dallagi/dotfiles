@@ -1,0 +1,21 @@
+[user]
+    name = Marco Dalla G
+    email = marco.dallagiacoma@gmail.com
+[core]
+    editor = vim
+    excludesfile = ~/.gitignore
+[push]
+    default = simple
+[color]
+    ui = auto
+[diff]
+    tool = vimdiff
+[difftool]
+    prompt = false
+[alias]
+    a = add
+    d = diff
+    s = status
+    log-tree = log --oneline --decorate --all --graph
+[merge]
+    tool = vimdiff
