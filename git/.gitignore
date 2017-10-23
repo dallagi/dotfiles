@@ -9,3 +9,6 @@
 
 # Virtualfish
 .venv
+
+# VS Code
+.vscode
