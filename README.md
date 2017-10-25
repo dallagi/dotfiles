@@ -15,6 +15,7 @@ All OSes:
 Macos only:
 
 * terminal-notifier *(brew)*
+* brew and brew-cask
 
 Linux only:
 
