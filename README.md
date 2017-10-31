@@ -11,6 +11,7 @@ All OSes:
 * neovim
 * nerd fonts
 * ssh
+* python + pip
 
 Macos only:
 
