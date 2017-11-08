@@ -1,8 +1,8 @@
 [user]
-    name = Marco Dalla G
+    name = "Marco Dalla G"
     email = marco.dallagiacoma@gmail.com
 [core]
-    editor = vim
+    editor = nvim
     excludesfile = ~/.gitignore
 [push]
     default = simple
@@ -15,7 +15,10 @@
 [alias]
     a = add
     d = diff
+    dc = diff --cached
+    pr = pull --rebase
     s = status
     log-tree = log --oneline --decorate --all --graph
+    change-commits = "!f() { VAR=$1; OLD=$2; NEW=$3; shift 3; git filter-branch --env-filter \"if [[ \\\"$`echo $VAR`\\\" = '$OLD' ]]; then export $VAR='$NEW'; fi\" $@; }; f "
 [merge]
     tool = vimdiff
