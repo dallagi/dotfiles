@@ -1,2 +1,0 @@
-# Override the default stow ignore list, in order to prevent stow
-# from ignoring the .gitignore file.
