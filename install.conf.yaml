@@ -1,4 +1,5 @@
 - clean: ['~']
 
 - shell:
+  - [sh brew_install.sh,Installing HomeBrew packages]
   - [sh macos_config.sh,Configuring macOS]
