@@ -1,3 +1,5 @@
+set -x
+
 if [ ! -f /usr/local/bin/brew ]
 then
   echo "Homebrew is not installed. Installing now..."
@@ -6,4 +8,4 @@ fi
 
 brew analytics off
 brew tap homebrew/bundle
-brew bundle
+brew bundle --file="$1"
