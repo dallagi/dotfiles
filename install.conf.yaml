@@ -1,4 +1,4 @@
+- clean: ['~']
+
 - shell:
-  - 
-    command: ./.macos
-    description: Configuring macOS
+  - [sh macos_config.sh,Configuring macOS]
