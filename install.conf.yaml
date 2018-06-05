@@ -1,0 +1,4 @@
+- shell:
+  - 
+    command: ./.macos
+    description: Configuring macOS
