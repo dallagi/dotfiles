@@ -1,2 +1,15 @@
 tap "homebrew/cask"
 
+# QuickLook plugins
+cask "betterzip"
+cask "qlcolorcode"
+cask "qlimagesize"
+cask "qlmarkdown"
+cask "qlprettypatch"
+cask "qlstephen"
+cask "qlvideo"
+cask "quicklook-csv"
+cask "quicklook-json"
+cask "quicklookase"
+cask "suspicious-package"
+cask "webpquicklook"
