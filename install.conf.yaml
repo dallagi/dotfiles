@@ -1,5 +1,6 @@
 - clean: ['~']
 
 - shell:
+  - [git submodule update --init --recursive, Installing submodules]
   - [sh scripts/brew_install.sh brew/Brewfile,Installing HomeBrew packages]
   - [sh scripts/macos_config.sh,Configuring macOS]
