@@ -8,4 +8,4 @@ fi
 
 brew analytics off
 brew tap homebrew/bundle
-brew bundle --file="$1"
+brew bundle --no-upgrade --file="$1"
