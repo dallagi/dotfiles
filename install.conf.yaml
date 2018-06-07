@@ -11,14 +11,17 @@
   - '~'
   - '~/.config'
   - '~/.config/fish'
+  - '~/.config/nvim'
 
 - link:
     ~/.config/fish: 'fish'
     ~/.gitconfig: 'git/gitconfig'
     ~/.gitignore: 'git/gitignore'
+    ~/.config/nvim: 'nvim'
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
   - [sh scripts/brew_install.sh brew/Brewfile,Installing HomeBrew packages]
   - [sh scripts/macos_config.sh,Configuring macOS]
   - [sh scripts/fish_setup.sh,Configuring FISH shell]
+  - [sh scripts/vim_setup.sh,Configuring VIM]
