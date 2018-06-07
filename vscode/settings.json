@@ -1,0 +1,6 @@
+{
+    "telemetry.enableCrashReporter": false,
+    "telemetry.enableTelemetry": false,
+    "files.autoSave": "onWindowChange",
+    "editor.fontLigatures": true
+}
