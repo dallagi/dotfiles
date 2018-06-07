@@ -14,6 +14,8 @@
 
 - link:
     ~/.config/fish: 'fish'
+    ~/.gitconfig: 'git/gitconfig'
+    ~/.gitignore: 'git/gitignore'
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]

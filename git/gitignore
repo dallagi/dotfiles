@@ -1,0 +1,14 @@
+# JetBrains
+.idea
+
+# macOs stuff
+.DS_Store
+
+# Direnv
+.envrc
+
+# Virtualfish
+.venv
+
+# VS Code
+.vscode
