@@ -3,9 +3,16 @@ tap "homebrew/cask"
 brew "direnv"
 brew "fish"
 brew "fzf"
+brew "neovim"
 brew "python"
 brew "python@2"
 brew "terminal-notifier"
+
+cask "firefox"
+cask "intellij-idea-ce"
+cask "iterm2"
+cask "slack"
+cask "visual-studio-code"
 
 # QuickLook plugins
 cask "betterzip"
