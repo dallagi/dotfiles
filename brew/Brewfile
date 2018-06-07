@@ -13,6 +13,7 @@ cask "firefox"
 cask "intellij-idea-ce"
 cask "iterm2"
 cask "slack"
+cask "spectacle"
 cask "visual-studio-code"
 
 # QuickLook plugins
