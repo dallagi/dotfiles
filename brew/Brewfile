@@ -1,5 +1,12 @@
 tap "homebrew/cask"
 
+brew "direnv"
+brew "fish"
+brew "fzf"
+brew "python"
+brew "python@2"
+brew "terminal-notifier"
+
 # QuickLook plugins
 cask "betterzip"
 cask "qlcolorcode"

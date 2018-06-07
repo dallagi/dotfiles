@@ -1,6 +1,22 @@
-- clean: ['~']
+- defaults:
+    link:
+      create: true
+      relink: true
+      force: true
+    shell:
+      stdout: true
+      stdin: true
+
+- clean:
+  - '~'
+  - '~/.config'
+  - '~/.config/fish'
+
+- link:
+    ~/.config/fish: 'fish'
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
   - [sh scripts/brew_install.sh brew/Brewfile,Installing HomeBrew packages]
   - [sh scripts/macos_config.sh,Configuring macOS]
+  - [sh scripts/fish_setup.sh,Configuring FISH shell]

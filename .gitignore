@@ -2,4 +2,7 @@
 *~
 *.backup
 
-ssh/config
+/fish/functions
+/fish/fishd*
+/fish/completions
+/fish/conf.d
