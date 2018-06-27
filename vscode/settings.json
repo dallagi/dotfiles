@@ -1,6 +1,20 @@
 {
     "telemetry.enableCrashReporter": false,
     "telemetry.enableTelemetry": false,
-    "files.autoSave": "onWindowChange",
-    "editor.fontLigatures": true
+    "files.autoSave": "onFocusChange",
+    "editor.fontLigatures": true,
+    "window.zoomLevel": 0,
+    "editor.fontFamily": "'Fira Code', Menlo, Monaco, 'Courier New', monospace, 'Apple Color Emoji'",
+    "editor.fontSize": 16,
+    "workbench.iconTheme": "vs-seti",
+    "workbench.startupEditor": "newUntitledFile",
+    "workbench.statusBar.feedback.visible": false,
+    "vim.easymotion": true,
+    "vim.enableNeovim": true,
+    "vim.statusBarColorControl": true,
+    "vim.useSystemClipboard": true,
+    "python.pythonPath": "/usr/local/bin/python3",
+    "python.linting.mypyEnabled": true,
+    "python.unitTest.pyTestEnabled": true,
+    "editor.minimap.enabled": false,
 }
