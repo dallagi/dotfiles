@@ -1,20 +1,35 @@
 tap "homebrew/cask"
+tap "homebrew/cask-fonts"
+tap "buo/cask-upgrade"
+tap "caskroom/versions"
 
+brew "brew-cask-completion"
+brew "diff-so-fancy"
 brew "direnv"
 brew "fish"
 brew "fzf"
+brew "jenv"
 brew "neovim"
 brew "python"
 brew "python@2"
 brew "terminal-notifier"
 brew "tig"
+brew "wget"
 
 cask "firefox"
+cask "flycut"
 cask "intellij-idea-ce"
 cask "iterm2"
+cask "java"
+cask "kap"
 cask "slack"
 cask "spectacle"
+cask "vagrant"
+cask "virtualbox"
 cask "visual-studio-code"
+
+# Fonts
+cask "font-fira-code"
 
 # QuickLook plugins
 cask "betterzip"
