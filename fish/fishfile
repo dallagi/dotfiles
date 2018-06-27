@@ -1,7 +1,6 @@
 fisherman/await
 oh-my-fish/plugin-bang-bang
 edc/bass
-oh-my-fish/theme-bira
 decors/fish-colored-man
 fisherman/done
 fisherman/fzf
@@ -9,4 +8,5 @@ fisherman/get
 fisherman/getopts
 fisherman/humanize_duration
 fisherman/last_job_id
+rafaelrinaldi/pure
 fisherman/z
