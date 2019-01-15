@@ -1,10 +1,10 @@
 [user]
-    name = "Marco Dalla G"
-    email = marco.dallagiacoma@gmail.com
+    name = Marco Dallagiacoma
+    email = marco.dallagiacoma@xpeppers.com
 
 [core]
     editor = nvim
-    excludesfile = ~/.gitignore
+    excludesfile = /Users/marco/.gitignore
     pager = "diff-so-fancy | less --tabs=4 -RFX"
 
 [push]
@@ -23,3 +23,5 @@
     log-tree = log --oneline --decorate --all --graph
     change-commits = "!f() { VAR=$1; OLD=$2; NEW=$3; shift 3; git filter-branch --env-filter \"if [[ \\\"$`echo $VAR`\\\" = '$OLD' ]]; then export $VAR='$NEW'; fi\" $@; }; f "
 
+[rerere]
+    enabled = true

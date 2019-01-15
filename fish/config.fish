@@ -18,4 +18,3 @@ set -g man_underline -u 93a1a1
 
 # Aliases
 source ~/.config/fish/aliases.fish
-

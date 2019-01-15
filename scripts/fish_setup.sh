@@ -12,4 +12,3 @@ pip completion --fish > ~/.config/fish/completions/pip.fish
 grep -qF $(which fish) /etc/shells || echo $(which fish) | sudo tee -a "/etc/shells"
 
 chsh -s $(which fish)
-
