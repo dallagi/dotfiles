@@ -8,4 +8,5 @@ fi
 
 brew analytics off
 brew tap homebrew/bundle
+brew tap homebrew/cask-fonts
 brew bundle --no-upgrade --file="$1"

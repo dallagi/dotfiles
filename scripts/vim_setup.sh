@@ -8,3 +8,11 @@ curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
 
 echo "Installing plugins..."
 nvim +PlugInstall +qall
+
+echo "Installing COC plugins..."
+nvim -c 'CocInstall -sync coc-json coc-html coc-eslint coc-vetur coc-tsserver coc-solargraph |q'
+
+echo "Installing language servers..."
+npm install vue-language-server -g
+gem install solargraph
+
