@@ -70,6 +70,10 @@ set sidescrolloff=5
 " Persist undos
 set undofile
 
+" Gitgutter
+set updatetime=500 " Update time for git gutter
+let g:gitgutter_highlight_linenrs = 1
+
 " Colors
 set background=dark
 
