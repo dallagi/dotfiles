@@ -10,9 +10,10 @@ echo "Installing plugins..."
 nvim +PlugInstall +qall
 
 echo "Installing COC plugins..."
-nvim -c 'CocInstall -sync coc-json coc-html coc-eslint coc-vetur coc-tsserver coc-solargraph |q'
+nvim -c 'CocInstall -sync coc-json coc-html coc-css coc-eslint coc-vetur coc-tsserver coc-solargraph coc-python |q'
 
 echo "Installing language servers..."
-npm install vue-language-server -g
+npm install vue-language-server eslint eslint-plugin-vue -g
 gem install solargraph
+pip install python-language-server
 

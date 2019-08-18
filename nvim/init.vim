@@ -9,6 +9,7 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'scrooloose/nerdtree'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'luochen1990/rainbow'
+Plug 'posva/vim-vue'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'wsdjeg/FlyGrep.vim'
 Plug 'joshdick/onedark.vim'
@@ -71,7 +72,7 @@ set sidescrolloff=5
 set undofile
 
 " Gitgutter
-set updatetime=500 " Update time for git gutter
+set updatetime=250 " Update time for git gutter
 let g:gitgutter_highlight_linenrs = 1
 
 " Colors
