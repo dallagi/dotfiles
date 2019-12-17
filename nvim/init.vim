@@ -7,13 +7,16 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'bling/vim-airline'
 Plug 'jiangmiao/auto-pairs'
 Plug 'scrooloose/nerdtree'
-Plug 'ctrlpvim/ctrlp.vim'
+Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 Plug 'luochen1990/rainbow'
 Plug 'posva/vim-vue'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'wsdjeg/FlyGrep.vim'
 Plug 'joshdick/onedark.vim'
-Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
+Plug 'scrooloose/nerdcommenter'
+Plug 'mhinz/vim-signify'
+Plug 'mustache/vim-mustache-handlebars'
+Plug 'terryma/vim-multiple-cursors'
 
 " Initialize plugin system
 call plug#end()
@@ -23,6 +26,9 @@ set lazyredraw
 
 " Allow hidden buffers
 set hidden
+
+" Allow up to three symbols (e.g., linter errors) in sign column
+set signcolumn=auto:3
 
 " Sane tab default
 set smarttab
@@ -71,9 +77,8 @@ set sidescrolloff=5
 " Persist undos
 set undofile
 
-" Gitgutter
-set updatetime=250 " Update time for git gutter
-let g:gitgutter_highlight_linenrs = 1
+" Git gutter
+let g:signify_vcs_list = [ 'git' ] " Only consider git as VCS
 
 " Colors
 set background=dark
@@ -85,30 +90,41 @@ cmap cwd lcd %:p:h
 vnoremap < <gv
 vnoremap > >gv
 
-" Fuzzy-find file with Ctrl-P
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlP'
-" exclude gitignored and .git/ files
-let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']
+" Fuzzy finding / grepping with LeaderF
+map <C-p> :LeaderfFile<CR>
+map <leader>g :Leaderf rg<CR>
+map <leader>t :LeaderfTabBufferAll<CR>
+
+let g:Lf_WindowPosition = 'popup' " popup mode
+let g:Lf_PreviewInPopup = 1 " preview in popup
 
 " NERDTree
 map <C-e> :NERDTreeToggle<CR> " Toggle on ctrl-e
 map <leader>f :NERDTreeFind<CR> " Toggle in find mode
 let NERDTreeQuitOnOpen=1 " Hide after selection
 let NERDTreeShowHidden=1 " Show hidden files
-" Open a NERDTree automatically when vim starts up if no files were specified
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
+" (Uncomment to) Open a NERDTree automatically when vim starts up if no files were specified
+" autocmd StdinReadPre * let s:std_in=1
+" autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
 " Improve UI
 let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
 
+" NERDCommenter
+nmap <C-_> <Plug>NERDCommenterToggle " Map to ctrl-/
+vmap <C-_> <Plug>NERDCommenterToggle<CR>gv " Mapping for visual mode
+
+let g:NERDDefaultAlign = 'left' " Align comments on the left side
+let g:NERDSpaceDelims = 1 " Add space after comment
+
 
 " ==== Appearance ====
 
-"Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
-"If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
-"(see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
+" Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
+" If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
+" (see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
 if (empty($TMUX))
   if (has("nvim"))
     "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
@@ -140,9 +156,6 @@ inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
 " Make <cr> confirm the first completion when no item has been selected
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
-
-" Allow up to three symbols (e.g., linter errors) in sign column
-set signcolumn=auto:3
 
 " Use `lp` and `ln` for navigate diagnostics
 nmap <silent> <leader>lp <Plug>(coc-diagnostic-prev)
