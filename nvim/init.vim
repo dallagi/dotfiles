@@ -7,7 +7,6 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'bling/vim-airline'
 Plug 'jiangmiao/auto-pairs'
 Plug 'scrooloose/nerdtree'
-Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 Plug 'luochen1990/rainbow'
 Plug 'posva/vim-vue'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -17,6 +16,9 @@ Plug 'scrooloose/nerdcommenter'
 Plug 'mhinz/vim-signify'
 Plug 'mustache/vim-mustache-handlebars'
 Plug 'terryma/vim-multiple-cursors'
+Plug 'janko/vim-test'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 
 " Initialize plugin system
 call plug#end()
@@ -74,11 +76,9 @@ set nowrap
 set scrolloff=5
 set sidescrolloff=5
 
-" Persist undos
-set undofile
-
 " Git gutter
 let g:signify_vcs_list = [ 'git' ] " Only consider git as VCS
+set updatetime=100 " update time in ms
 
 " Colors
 set background=dark
@@ -90,13 +90,9 @@ cmap cwd lcd %:p:h
 vnoremap < <gv
 vnoremap > >gv
 
-" Fuzzy finding / grepping with LeaderF
-map <C-p> :LeaderfFile<CR>
-map <leader>g :Leaderf rg<CR>
-map <leader>t :LeaderfTabBufferAll<CR>
-
-let g:Lf_WindowPosition = 'popup' " popup mode
-let g:Lf_PreviewInPopup = 1 " preview in popup
+" Fuzzy finding / grepping with FZF
+map <C-p> :FZF<CR>
+map <leader>g :Rg<CR>
 
 " NERDTree
 map <C-e> :NERDTreeToggle<CR> " Toggle on ctrl-e
@@ -183,4 +179,34 @@ endfunction
 
 " Highlight symbol under cursor on CursorHold
 autocmd CursorHold * silent call CocActionAsync('highlight')
+
+
+" Mappings for vim-test
+nmap <silent> t<C-n> :TestNearest<CR>
+nmap <silent> t<C-f> :TestFile<CR>
+nmap <silent> t<C-s> :TestSuite<CR>
+nmap <silent> t<C-l> :TestLast<CR>
+nmap <silent> t<C-g> :TestVisit<CR>
+
+
+" RG uses Ripgrep for all searches (by default it uses it only for initial
+" one, and the uses FZF for fuzzy maching over all results as the query is
+" updated)
+function! RipgrepFzf(query, fullscreen)
+  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case %s || true'
+  let initial_command = printf(command_fmt, shellescape(a:query))
+  let reload_command = printf(command_fmt, '{q}')
+  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+endfunction
+
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+
+
+" FZF in a floating window
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
+" Border color
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6, 'highlight': 'Todo' } }
+" Border style (rounded / sharp / horizontal)
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6, 'highlight': 'Todo', 'border': 'sharp' } }
 
