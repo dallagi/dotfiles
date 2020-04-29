@@ -26,6 +26,11 @@ call plug#end()
 set number
 set lazyredraw
 
+" Enable syntax-based code folding
+" zc to close, zo to open
+setlocal foldmethod=syntax
+set foldlevelstart=99
+
 " Allow hidden buffers
 set hidden
 
