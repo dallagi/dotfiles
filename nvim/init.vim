@@ -55,11 +55,9 @@ set cursorline
 " Commands history (default was 10k)
 set history=1000
 
-" Status line
-set laststatus=2 " Alwsays show status line
-set noshowmode " Do not show mode in separate line (it is already in status line)
-let g:airline#extensions#tabline#enabled = 1 " List buffers on top
-let g:airline_theme='onedark'
+" Setup lightline and bufferline
+let g:lightline                  = {'colorscheme': 'one'}
+set showtabline=2
 
 " Keep indentation for new lines
 set autoindent
@@ -143,7 +141,6 @@ endif
 
 syntax enable
 let g:onedark_terminal_italics=1
-let g:airline_powerline_fonts = 1
 colorscheme onedark
 set background=dark
 
