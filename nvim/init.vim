@@ -95,10 +95,6 @@ cmap cwd lcd %:p:h
 vnoremap < <gv
 vnoremap > >gv
 
-" Fuzzy finding / grepping with FZF
-map <C-p> :FZF<CR>
-map <leader>g :Rg<CR>
-
 " NERDTree
 map <C-e> :NERDTreeToggle<CR> " Toggle on ctrl-e
 map <leader>f :NERDTreeFind<CR> " Toggle in find mode
@@ -192,12 +188,29 @@ nmap <silent> t<C-s> :TestSuite<CR>
 nmap <silent> t<C-l> :TestLast<CR>
 nmap <silent> t<C-g> :TestVisit<CR>
 
+" C-o to exit terminal insert mode (hence allowing scrolling of test results)
+if has('nvim')
+  tmap <C-o> <C-\><C-n>
+endif
 
-" RG uses Ripgrep for all searches (by default it uses it only for initial
-" one, and the uses FZF for fuzzy maching over all results as the query is
-" updated)
+" Fuzzy finding / grepping with FZF
+map <C-p> :FZF --layout=reverse-list<CR>
+map <leader>g :RG <CR>
+map <leader>b :Buffers<CR>
+
+" FZF in a floating window
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6, 'highlight': 'Todo', 'border': 'rounded'} }
+
+" Always enable preview window on the top with 60% width
+let g:fzf_preview_window = 'right:40%'
+
+" For FZF, consider all files that respect .gitignore (including hidden files)
+" except for .git/
+let $FZF_DEFAULT_COMMAND = 'rg --hidden --files --iglob !.git'
+
+" RG to match with Ripgrep instead of FZF
 function! RipgrepFzf(query, fullscreen)
-  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case %s || true'
+  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case --hidden --iglob !.git %s || true'
   let initial_command = printf(command_fmt, shellescape(a:query))
   let reload_command = printf(command_fmt, '{q}')
   let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
@@ -206,11 +219,4 @@ endfunction
 
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 
-
-" FZF in a floating window
-let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
-" Border color
-let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6, 'highlight': 'Todo' } }
-" Border style (rounded / sharp / horizontal)
-let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6, 'highlight': 'Todo', 'border': 'sharp' } }
 
