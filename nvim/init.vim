@@ -4,21 +4,23 @@ filetype off
 " Specify a directory for plugins
 call plug#begin('~/.local/share/nvim/plugged')
 
-Plug 'bling/vim-airline'
-Plug 'jiangmiao/auto-pairs'
-Plug 'scrooloose/nerdtree'
-Plug 'luochen1990/rainbow'
-Plug 'posva/vim-vue'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'joshdick/onedark.vim'
-Plug 'tpope/vim-fugitive'
-Plug 'scrooloose/nerdcommenter'
-Plug 'mhinz/vim-signify'
-Plug 'mustache/vim-mustache-handlebars'
-Plug 'terryma/vim-multiple-cursors'
+Plug 'ap/vim-buftabline'
+Plug 'itchyny/lightline.vim'
 Plug 'janko/vim-test'
+Plug 'jiangmiao/auto-pairs'
+Plug 'joshdick/onedark.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'luochen1990/rainbow'
+Plug 'mhinz/vim-signify'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'scrooloose/nerdcommenter'
+Plug 'scrooloose/nerdtree'
+Plug 'sheerun/vim-polyglot'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rails'
+Plug 'tpope/vim-surround'
 
 " Initialize plugin system
 call plug#end()
