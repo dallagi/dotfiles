@@ -219,4 +219,7 @@ endfunction
 
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 
+" Highlight extra whitespace
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
 
