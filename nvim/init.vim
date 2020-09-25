@@ -7,7 +7,6 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'ap/vim-buftabline'
 Plug 'itchyny/lightline.vim'
 Plug 'janko/vim-test'
-Plug 'jiangmiao/auto-pairs'
 Plug 'joshdick/onedark.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -21,11 +20,15 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-endwise'
 
 " Initialize plugin system
 call plug#end()
 
-set number
+" turn hybrid line numbers on
+:set number relativenumber
+:set nu rnu
+
 set lazyredraw
 
 " Enable indent-based code folding
@@ -69,10 +72,13 @@ set incsearch
 set ignorecase
 set smartcase
 
-" Use <C-L> to clear the highlighting of :set hlsearch.
-if maparg('<C-L>', 'n') ==# ''
-  nnoremap <silent> <C-L> :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
-endif
+" " Use <C-L> to clear the highlighting of :set hlsearch.
+" if maparg('<C-L>', 'n') ==# ''
+"   nnoremap <silent> <C-L> :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
+" endif
+
+" This unsets the "last search pattern" register by hitting return
+nnoremap <CR> :noh<CR><CR>
 
 " Do now wrap long lines
 set nowrap
@@ -100,6 +106,16 @@ map <C-e> :NERDTreeToggle<CR> " Toggle on ctrl-e
 map <leader>f :NERDTreeFind<CR> " Toggle in find mode
 let NERDTreeQuitOnOpen=1 " Hide after selection
 let NERDTreeShowHidden=1 " Show hidden files
+
+" Use ctrl-{h, j, k, l} to move across splits
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+" Open split buffers below and right
+set splitbelow
+set splitright
 
 " (Uncomment to) Open a NERDTree automatically when vim starts up if no files were specified
 " autocmd StdinReadPre * let s:std_in=1
@@ -146,12 +162,6 @@ set background=dark
 " Use <Tab> and <S-Tab> to navigate the completion list:
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-" Use <cr> to confirm completion
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-
-" Make <cr> confirm the first completion when no item has been selected
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 
 " Use `lp` and `ln` for navigate diagnostics
 nmap <silent> <leader>lp <Plug>(coc-diagnostic-prev)
