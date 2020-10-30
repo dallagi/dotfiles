@@ -20,10 +20,10 @@ echo "+ Done."
 
 read -r -p "+++ Installing COC plugins and language servers. You may have to stare at a blank screen for a while, and manually close a NVim window later. +++"
 echo "+ Installing COC plugins..."
-nvim -c 'CocInstall -sync coc-json coc-html coc-css coc-eslint coc-vetur coc-tsserver coc-solargraph coc-python |q'
+nvim -c 'CocInstall -sync coc-json coc-html coc-css coc-eslint coc-tsserver coc-solargraph coc-python |q'
 
 echo "+ Installing language servers..."
-npm install vue-language-server eslint eslint-plugin-vue -g
+npm install eslint -g
 gem install solargraph
 pip install python-language-server
 
