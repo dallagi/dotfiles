@@ -12,7 +12,12 @@ zstyle :compinstall filename '/home/marco/.zshrc'
 # append asdf completions to fpath
 fpath=(${ASDF_DIR}/completions $fpath)
 
-# set $JAVA_HOME from asdf
+# Enable pure prompt
+fpath+=('/usr/local/lib/node_modules/pure-prompt/functions')
+autoload -U promptinit; promptinit
+prompt pure
+
+# Set $JAVA_HOME from asdf
 . ~/.asdf/plugins/java/set-java-home.zsh
 
 autoload -Uz compinit
@@ -21,4 +26,4 @@ compinit
 alias vim=nvim
 
 eval "$(direnv hook zsh)"
-eval "$(starship init zsh)"
+
