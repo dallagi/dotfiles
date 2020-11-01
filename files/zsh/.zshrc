@@ -20,6 +20,11 @@ prompt pure
 # Set $JAVA_HOME from asdf
 . ~/.asdf/plugins/java/set-java-home.zsh
 
+# Load autojump (necessary only for debian-based linux distros)
+if apt --version > /dev/null; then
+    . /usr/share/autojump/autojump.sh
+fi
+
 autoload -Uz compinit
 compinit
 
