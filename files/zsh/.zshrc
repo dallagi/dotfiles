@@ -1,4 +1,3 @@
-# Lines configured by zsh-newuser-install
 HISTFILE=~/.histfile
 HISTSIZE=1000
 SAVEHIST=100000
@@ -8,8 +7,18 @@ bindkey -e
 # The following lines were added by compinstall
 zstyle :compinstall filename '/home/marco/.zshrc'
 
+# Enable asdf
+. $HOME/.asdf/asdf.sh
+# append asdf completions to fpath
+fpath=(${ASDF_DIR}/completions $fpath)
+
+# set $JAVA_HOME from asdf
+. ~/.asdf/plugins/java/set-java-home.zsh
+
 autoload -Uz compinit
 compinit
-# End of lines added by compinstall
 
+alias vim=nvim
+
+eval "$(direnv hook zsh)"
 eval "$(starship init zsh)"
