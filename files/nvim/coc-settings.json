@@ -1,3 +1,4 @@
 {
   // "suggest.autoTrigger": "trigger"
+  "rust-analyzer.serverPath": "/usr/local/bin/rust-analyzer"
 }

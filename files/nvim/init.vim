@@ -1,6 +1,9 @@
 set nocompatible " Don't be compatible with vi
 filetype off
 
+" disable sleuth in vim-polyglot, as it causes great startup delays
+let g:polyglot_disabled = ['autoindent']
+
 " Specify a directory for plugins
 call plug#begin('~/.local/share/nvim/plugged')
 
@@ -159,6 +162,9 @@ set background=dark
 
 " ==== COC stuff ====
 
+" Give more space for displaying messages.
+" set cmdheight=2
+
 " Use <Tab> and <S-Tab> to navigate the completion list:
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
@@ -189,6 +195,22 @@ endfunction
 
 " Highlight symbol under cursor on CursorHold
 autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Remap keys for applying codeAction to the current buffer.
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Apply AutoFix to problem on the current line.
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Add `:Format` command to format current buffer.
+command! -nargs=0 Format :call CocAction('format')
+
+" Add `:Fold` command to fold current buffer.
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+" Add `:OR` command for organize imports of the current buffer.
+command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+
+" ==== END OF COC stuff ====
 
 
 " Mappings for vim-test
