@@ -21,8 +21,12 @@ prompt pure
 . ~/.asdf/plugins/java/set-java-home.zsh
 
 # Load autojump (necessary only for debian-based linux distros)
-if apt --version > /dev/null; then
+if apt --version &> /dev/null; then
     . /usr/share/autojump/autojump.sh
+fi
+# Load autojump for zsh on macos, for autojump installed via brew
+if [[ "$(uname)" == "Darwin" ]]; then
+  [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
 fi
 
 autoload -Uz compinit
