@@ -15,6 +15,8 @@ echo "+ Configuring some asdf plugins..."
 . $HOME/.asdf/asdf.sh  # enable asdf
 asdf plugin add java
 asdf plugin-add kotlin https://github.com/asdf-community/asdf-kotlin.git
+asdf plugin-add erlang https://github.com/asdf-vm/asdf-erlang.git
+asdf plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git
 echo "+ Done."
 
 echo "+ Manual steps:"
