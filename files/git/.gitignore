@@ -1,2 +1,16 @@
-.envrc
+.envrc*
 .vim
+.DS_Store
+
+# JetBrains stuff
+.idea/
+*.iml
+
+# Vscode
+.vscode
+
+# Redis
+dump.rdb
+
+test_paperboy.sh
+run_paperboy.sh

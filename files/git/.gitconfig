@@ -5,7 +5,11 @@
 [core]
     editor = nvim
     excludesfile = ~/.gitignore
-    pager = "diff-so-fancy | less --tabs=4 -RFX"
+    ; pager = "diff-so-fancy | less --tabs=4 -RFX"
+    pager = delta
+
+[delta]
+    theme = base16
 
 [push]
     default = simple
@@ -25,3 +29,5 @@
 
 [rerere]
     enabled = true
+[github]
+	user = dallagi
