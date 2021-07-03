@@ -11,3 +11,6 @@ vim.g.mapleader = ' '
 
 -- Config without home yet
 vim.opt.timeoutlen = 300
+
+-- TODO
+-- Remove status line and replace with floating window with all info such as branch, filename, type etc.

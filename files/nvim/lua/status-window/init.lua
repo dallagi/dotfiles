@@ -61,8 +61,12 @@ local function open_window()
   api.nvim_win_set_option(win, 'cursorline', true) -- it highlight line with the cursor on it
 
   -- we can add title already here, because first line will never change
-  api.nvim_buf_set_lines(buf, 0, -1, false, { center('What have i done?'), '', ''})
-  api.nvim_buf_add_highlight(buf, -1, 'WhidHeader', 0, 0, -1)
+  -- api.nvim_buf_set_lines(buf, 0, -1, false, { center('What have i done?'), '', ''})
+  -- api.nvim_buf_add_highlight(buf, -1, 'WhidHeader', 0, 0, -1)
+end
+
+local function startswith(text, prefix)
+    return text:find(prefix, 1, true) == 1
 end
 
 local function update_view(direction)
@@ -70,16 +74,14 @@ local function update_view(direction)
   position = position + direction
   if position < 0 then position = 0 end
 
-  local result = vim.fn.systemlist('git diff-tree --no-commit-id --name-only -r  HEAD~'..position)
-  if #result == 0 then table.insert(result, '') end -- add  an empty line to preserve layout if there is no results
-  for k,v in pairs(result) do
-    result[k] = '  '..result[k]
-  end
+  local git_branch = vim.fn.systemlist('git branch --show-current')
+  if startswith(git_branch[1], "fatal: ") then git_branch[1] = "No git branch" end
 
-  api.nvim_buf_set_lines(buf, 1, 2, false, {center('HEAD~'..position)})
-  api.nvim_buf_set_lines(buf, 3, -1, false, result)
+  local branch_info = {"   " .. git_branch[1]}
 
-  api.nvim_buf_add_highlight(buf, -1, 'statusWindowSubHeader', 1, 0, -1)
+  api.nvim_buf_set_lines(buf, 1, 1, false, branch_info)
+
+  -- api.nvim_buf_add_highlight(buf, -1, 'statusWindowSubHeader', 1, 0, -1)
   api.nvim_buf_set_option(buf, 'modifiable', false)
 end
 
@@ -87,26 +89,9 @@ local function close_window()
   api.nvim_win_close(win, true)
 end
 
-local function open_file()
-  local str = api.nvim_get_current_line()
-  close_window()
-  api.nvim_command('edit '..str)
-end
-
-local function move_cursor()
-  local new_pos = math.max(4, api.nvim_win_get_cursor(win)[1] - 1)
-  api.nvim_win_set_cursor(win, {new_pos, 0})
-end
-
 local function set_mappings()
   local mappings = {
-    ['['] = 'update_view(-1)',
-    [']'] = 'update_view(1)',
-    ['<cr>'] = 'open_file()',
-    h = 'update_view(-1)',
-    l = 'update_view(1)',
     q = 'close_window()',
-    k = 'move_cursor()'
   }
 
   for k,v in pairs(mappings) do
@@ -129,13 +114,11 @@ local function show()
   open_window()
   set_mappings()
   update_view(0)
-  api.nvim_win_set_cursor(win, {4, 0})
+  api.nvim_win_set_cursor(win, {1, 0})
 end
 
 return {
   show = show,
   update_view = update_view,
-  open_file = open_file,
-  move_cursor = move_cursor,
   close_window = close_window
 }
