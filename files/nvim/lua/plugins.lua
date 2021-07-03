@@ -15,6 +15,14 @@ return require('packer').startup(function(use)
   use { 'navarasu/onedark.nvim' }
 
   use {
+    'lewis6991/gitsigns.nvim',
+    requires = {
+      'nvim-lua/plenary.nvim'
+    },
+    config = function() require("_gitsigns").config() end
+  }
+
+  use {
       'nvim-telescope/telescope.nvim',
       requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}},
       config = [[require('_telescope')]],
