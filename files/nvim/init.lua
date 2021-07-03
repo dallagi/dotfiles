@@ -11,6 +11,12 @@ vim.g.mapleader = ' '
 
 -- Config without home yet
 vim.opt.timeoutlen = 300
+vim.opt.hidden = true
+vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.scrolloff = 5
+vim.opt.title = true
+
 
 -- TODO
 -- Remove status line and replace with floating window with all info such as branch, filename, type etc.
