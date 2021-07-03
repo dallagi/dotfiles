@@ -28,4 +28,9 @@ return require('packer').startup(function(use)
       cmd = "NvimTreeToggle",
       config = function() require("_nvimtree").config() end
   }
+
+  use {
+    "folke/which-key.nvim",
+    config = [[require('_which-key')]]
+  }
 end)
