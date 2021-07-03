@@ -11,4 +11,3 @@ vim.g.mapleader = ' '
 
 -- Config without home yet
 vim.opt.timeoutlen = 300
-require('onedark').setup()

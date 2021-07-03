@@ -12,7 +12,7 @@ vim.cmd 'autocmd BufWritePost plugins.lua PackerCompile' -- Auto compile when th
 return require('packer').startup(function(use)
   use {'wbthomason/packer.nvim', opt = true}
 
-  use { 'navarasu/onedark.nvim' }
+  use { 'navarasu/onedark.nvim', config = function() require("_onedark").config() end }
 
   use {
     'lewis6991/gitsigns.nvim',
