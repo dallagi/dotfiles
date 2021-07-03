@@ -15,3 +15,9 @@ vim.api.nvim_set_keymap('x', 'J', ':move \'>+1<CR>gv-gv', {noremap = true, silen
 -- Do not copy replaced text when pasting
 vim.cmd('vnoremap p "0p')
 vim.cmd('vnoremap P "0P')
+
+-- Telescope mappings
+vim.api.nvim_set_keymap('n', '<Leader> ', ':Telescope find_files<CR>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<Leader>/', ':Telescope live_grep<CR>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<Leader>bb', ':Telescope buffers<CR>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<Leader>ct', ':Telescope help_tags<CR>', {noremap = true, silent = true})
