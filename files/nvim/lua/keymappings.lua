@@ -25,3 +25,6 @@ vim.api.nvim_set_keymap('n', '<Leader>/', ':Telescope live_grep<CR>', {noremap =
 vim.api.nvim_set_keymap('n', '<Leader>bb', ':Telescope buffers<CR>', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('n', '<Leader>ct', ':Telescope help_tags<CR>', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('n', '<Leader>*', ':Telescope grep_string<CR>', {noremap = true, silent = true})
+
+-- NvimTree mappings
+vim.api.nvim_set_keymap('n', '<Leader>op', ':NvimTreeToggle<CR>', {noremap = true, silent = true})
