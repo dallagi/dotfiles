@@ -1,5 +1,5 @@
 HISTFILE=~/.histfile
-HISTSIZE=1000
+HISTSIZE=100000
 SAVEHIST=100000
 setopt autocd beep extendedglob nomatch
 bindkey -e
@@ -17,6 +17,11 @@ fpath+=('/usr/local/lib/node_modules/pure-prompt/functions')
 autoload -U promptinit; promptinit
 prompt pure
 
+# Smarter git checkout
+gch() {
+ git checkout "$(git branch --all | fzf| tr -d '[:space:]')"
+}
+
 # Set $JAVA_HOME from asdf
 . ~/.asdf/plugins/java/set-java-home.zsh
 
@@ -32,7 +37,31 @@ fi
 autoload -Uz compinit
 compinit
 
+alias doom=~/.emacs.d/bin/doom
 alias vim=nvim
 
 eval "$(direnv hook zsh)"
 
+# When inside Emacs, move to project root
+# (by default DOOM Emacs opens the terminal in the buffer dir)
+if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
+  if [ -n "$PROOT" ]; then
+    cd "$PROOT"
+  fi
+fi
+
+export EDITOR=vim
+
+# Android dev
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+# Install erlang with documentation
+export KERL_BUILD_DOCS=yes
+
+# Load fzf
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[[ /usr/local/bin/kubectl ]] && source <(kubectl completion zsh)
