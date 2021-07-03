@@ -6,6 +6,7 @@ wk.register({
   [" "] = { ":Telescope find_files<CR>", "Find file in project" },
   ["/"] = { ":Telescope live_grep<CR>", "Search project" },
   ["*"] = { ":Telescope grep_string<CR>", "Search for symbol in project" },
+  s = { function() require("status-window").show() end, "Show status window" },
   b = {
     name = "+Buffer",
     b = { ":Telescope buffers<CR>", "Switch buffer" },
