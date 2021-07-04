@@ -22,6 +22,14 @@ return require('packer').startup(function(use)
     config = function() require("_gitsigns").config() end
   }
 
+  -- Automatically change the current working directory to the project's working directory using the native LSP.
+  use {
+    "ahmedkhalf/lsp-rooter.nvim",
+    config = function()
+      require("lsp-rooter").setup {}
+    end
+  }
+
   use {
       'nvim-telescope/telescope.nvim',
       requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}},
