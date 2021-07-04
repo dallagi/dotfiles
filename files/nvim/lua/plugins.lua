@@ -22,6 +22,9 @@ return require('packer').startup(function(use)
     config = function() require("_gitsigns").config() end
   }
 
+  use { 'neovim/nvim-lspconfig' }
+  use { 'kabouzeid/nvim-lspinstall', config = [[require('_lspinstall')]] }
+
   -- Automatically change the current working directory to the project's working directory using the native LSP.
   use {
     "ahmedkhalf/lsp-rooter.nvim",
@@ -37,7 +40,7 @@ return require('packer').startup(function(use)
       cmd = "Telescope"
   }
 
-  -- use {"nvim-treesitter/nvim-treesitter", run = ":TSUpdate"},
+  use { "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" }
 
   use {
     'hoob3rt/lualine.nvim',
@@ -55,4 +58,10 @@ return require('packer').startup(function(use)
     "folke/which-key.nvim",
     config = [[require('_which-key')]]
   }
+
+  -- Languages
+
+  -- Elixir
+  use {"elixir-editors/vim-elixir", ft = {"elixir", "eelixir", "euphoria3"}}
+
 end)
