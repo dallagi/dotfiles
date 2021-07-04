@@ -22,6 +22,15 @@ return require('packer').startup(function(use)
     config = function() require("_gitsigns").config() end
   }
 
+  use {
+        "hrsh7th/nvim-compe",
+        config = function() require("_compe").config() end
+    }
+
+  use {"hrsh7th/vim-vsnip", event = "InsertEnter"}
+  use {"rafamadriz/friendly-snippets", event = "InsertEnter"}
+
+
   use { 'neovim/nvim-lspconfig' }
   use { 'kabouzeid/nvim-lspinstall', config = [[require('_lspinstall')]] }
 
