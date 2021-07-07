@@ -3,6 +3,7 @@ local fn = vim.fn
 -- Import everything
 require('plugins')
 require('keymappings')
+require('_treesitter')
 
 -- Set leader key to space
 vim.api.nvim_set_keymap('n', ' ', '<NOP>',
