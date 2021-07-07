@@ -74,4 +74,7 @@ return require('packer').startup(function(use)
   -- Elixir
   use {"elixir-editors/vim-elixir", ft = {"elixir", "eelixir", "euphoria3"}}
 
+  -- Rust
+  use {"simrat39/rust-tools.nvim"}
+
 end)
