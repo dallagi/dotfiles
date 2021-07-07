@@ -33,6 +33,7 @@ return require('packer').startup(function(use)
 
   use { 'neovim/nvim-lspconfig' }
   use { 'kabouzeid/nvim-lspinstall', config = [[require('_lspinstall')]] }
+  use { 'glepnir/lspsaga.nvim '}
 
   -- Automatically change the current working directory to the project's working directory using the native LSP.
   use {

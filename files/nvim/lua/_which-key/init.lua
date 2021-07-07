@@ -11,9 +11,20 @@ wk.register({
     name = "+Buffer",
     b = { ":Telescope buffers<CR>", "Switch buffer" },
   },
+  c = {
+    name = "+Code",
+    a = { ":Lspsaga code_action<CR>", "Code Action" }
+  },
   o = {
     name = "+Open",
     p = { ":NvimTreeToggle<CR>", "Find file in project tree" },
   }
-}, { prefix = "<leader>" })
+}, { prefix = "<leader>", mode = "n" })
+
+wk.register({
+  c = {
+    name = "+Code",
+    a = { ":<C-U>Lspsaga range_code_action<CR>", "Code Action" }
+  }
+}, { prefix = "<leader>", mode = "v" })
 
