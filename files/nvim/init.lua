@@ -18,7 +18,6 @@ vim.opt.relativenumber = true
 vim.opt.scrolloff = 5
 vim.opt.title = true
 
-
 -- TODO
 -- Remove status line and replace with floating window with all info such as branch, filename, type etc.
 -- Replace colorscheme with one that supports treesitter (eg. https://github.com/NTBBloodbath/doom-one.nvim or https://github.com/ChristianChiarulli/nvcode-color-schemes.vim)

@@ -18,3 +18,12 @@ vim.cmd('vnoremap P "0P')
 
 -- Clear highlight of last search results
 vim.api.nvim_set_keymap('n', '<ESC>', ':noh<CR>', {noremap = true, silent = true})
+
+-- TODO move to lspsaga config
+vim.api.nvim_set_keymap('n', 'K', ":Lspsaga hover_doc<CR>", {noremap = true, silent = true})
+
+-- scroll down hover doc
+vim.api.nvim_set_keymap('n', '<C-j>', "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>", {noremap = true, silent = true})
+-- scroll up hover doc
+vim.api.nvim_set_keymap('n', '<C-k>', "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>", {noremap = true, silent = true})
+
