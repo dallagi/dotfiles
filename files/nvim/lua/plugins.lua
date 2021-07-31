@@ -30,10 +30,11 @@ return require('packer').startup(function(use)
   use {"hrsh7th/vim-vsnip", event = "InsertEnter"}
   use {"rafamadriz/friendly-snippets", event = "InsertEnter"}
 
-
   use { 'neovim/nvim-lspconfig' }
   use { 'kabouzeid/nvim-lspinstall', config = [[require('_lspinstall')]] }
-  use { 'glepnir/lspsaga.nvim '}
+  use { 'glepnir/lspsaga.nvim'}
+
+  use { 'tpope/vim-commentary' }
 
   -- Automatically change the current working directory to the project's working directory using the native LSP.
   use {

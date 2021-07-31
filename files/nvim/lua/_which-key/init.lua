@@ -17,16 +17,19 @@ wk.register({
   },
   c = {
     name = "+Code",
-    ["/"] = { ":Lspsaga lsp_finder<CR>", "Find" },
+    ["*"] = { ":Lspsaga lsp_finder<CR>", "Find" },
     a = { ":Lspsaga code_action<CR>", "Code action" },
-    d = { function() vim.lsp.buf.definition() end, "Go to definition" },
+    c = { ":Commentary<CR>", "Comment" },
+    d = { ":Telescope lsp_definitions<CR>", "Go to definition" },
+    D = { ":Lspsaga preview_definition<CR>", "Preview definition" },
     f = { function() vim.lsp.buf.formatting() end, "Format code" },
-    i = { function() vim.lsp.buf.implementation() end, "Go to implementation" },
+    i = { ":Telescope lsp_implementations<CR>", "Go to implementation" },
+    o = { ":Telescope lsp_document_symbols<CR>", "Find symbol in document" },
+    O = { ":Telescope lsp_workspace_symbols<CR>", "Find symbol in workspace" },
     s = { ":Lspsaga signature_help<CR>", "Signature help" },
     r = { ":Lspsaga rename<CR>", "Rename" },
     t = { function() vim.lsp.buf.type_definition() end, "Go to type definition" },
-
-    D = { ":Lspsaga preview_definition<CR>", "Preview definition" },
+    x = { ":Telescope lsp_references<CR>", "Find references" },
   },
   d = {
     name = "+Diagnostics",
@@ -37,14 +40,16 @@ wk.register({
   },
   o = {
     name = "+Open",
-    p = { ":NvimTreeToggle<CR>", "Find file in project tree" },
+    p = { ":NvimTreeToggle<CR>", "Toggle project tree" },
+    P = { ":NvimTreeFindFile<CR>", "Find file in project tree" },
   }
 }, { prefix = "<leader>", mode = "n" })
 
 wk.register({
   c = {
     name = "+Code",
-    a = { ":<C-U>Lspsaga range_code_action<CR>", "Code action" }
+    a = { ":<C-U>Lspsaga range_code_action<CR>", "Code action" },
+    c = { ":Commentary<CR>", "Comment" },
   }
 }, { prefix = "<leader>", mode = "v" })
 
