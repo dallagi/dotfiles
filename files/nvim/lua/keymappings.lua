@@ -27,3 +27,7 @@ vim.api.nvim_set_keymap('n', '<C-j>', "<cmd>lua require('lspsaga.action').smart_
 -- scroll up hover doc
 vim.api.nvim_set_keymap('n', '<C-k>', "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>", {noremap = true, silent = true})
 
+-- in terminal mode, <C-o> brings you to normal mode on the terminal buffer
+-- useful e.g. when running tests with vim-test, to scroll the terminal output
+vim.api.nvim_set_keymap('t', '<C-o>', '<C-\\><C-n>', {noremap = true, silent = true})
+

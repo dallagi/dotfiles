@@ -66,9 +66,16 @@ return require('packer').startup(function(use)
   }
 
   use {
-    "folke/which-key.nvim",
-    config = [[require('_which-key')]]
+      "folke/which-key.nvim",
+      config = [[require('_which-key')]]
   }
+
+  use {
+      "windwp/nvim-autopairs",
+      config = function() require('_autopairs') end
+  }
+
+  use { "vim-test/vim-test" }
 
   -- Languages
 
@@ -79,3 +86,4 @@ return require('packer').startup(function(use)
   use {"simrat39/rust-tools.nvim"}
 
 end)
+

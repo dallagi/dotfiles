@@ -20,7 +20,7 @@ wk.register({
     ["*"] = { ":Lspsaga lsp_finder<CR>", "Find" },
     a = { ":Lspsaga code_action<CR>", "Code action" },
     c = { ":Commentary<CR>", "Comment" },
-    d = { ":Telescope lsp_definitions<CR>", "Go to definition" },
+    d = { function() vim.lsp.buf.definition() end, "Go to definition" },
     D = { ":Lspsaga preview_definition<CR>", "Preview definition" },
     f = { function() vim.lsp.buf.formatting() end, "Format code" },
     i = { ":Telescope lsp_implementations<CR>", "Go to implementation" },
@@ -42,6 +42,14 @@ wk.register({
     name = "+Open",
     p = { ":NvimTreeToggle<CR>", "Toggle project tree" },
     P = { ":NvimTreeFindFile<CR>", "Find file in project tree" },
+  },
+  t = {
+    name = "+Test",
+    n = { ":TestNearest<CR>", "Run the test nearest to the cursor" },
+    f = { ":TestFile<CR>", "Run all tests in the current file" },
+    s = { ":TestSuite<CR>", "Run the whole suite" },
+    l = { ":TestLast<CR>", "Run the last test" },
+    g = { ":TestVisit<CR>", "Visits the test file from which you last run your tests" },
   }
 }, { prefix = "<leader>", mode = "n" })
 
