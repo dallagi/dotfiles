@@ -65,3 +65,11 @@ export KERL_BUILD_DOCS=yes
 # Load fzf
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [[ /usr/local/bin/kubectl ]] && source <(kubectl completion zsh)
+
+# Python bins (ie. poetry)
+export PATH=$PATH:/Users/marco/Library/Python/3.9/bin
+
+alias dcr='docker-compose run -d --rm --service-ports'
+
+export PATH="/usr/local/opt/openssl@3/bin:$PATH"
+export SAM_CLI_TELEMETRY=0
