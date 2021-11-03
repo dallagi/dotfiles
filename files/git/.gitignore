@@ -14,3 +14,5 @@ dump.rdb
 
 test_paperboy.sh
 run_paperboy.sh
+
+.tool-versions
