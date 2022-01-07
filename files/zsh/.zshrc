@@ -19,7 +19,7 @@ prompt pure
 
 # Smarter git checkout
 gch() {
- git checkout "$(git branch --all | fzf| tr -d '[:space:]')"
+ git switch "$(git branch --all | fzf| tr -d '[:space:]')"
 }
 
 # Set $JAVA_HOME from asdf
@@ -70,6 +70,8 @@ export KERL_BUILD_DOCS=yes
 export PATH=$PATH:/Users/marco/Library/Python/3.9/bin
 
 alias dcr='docker-compose run -d --rm --service-ports'
+
+source ~/.zshrc-prima
 
 export PATH="/usr/local/opt/openssl@3/bin:$PATH"
 export SAM_CLI_TELEMETRY=0
