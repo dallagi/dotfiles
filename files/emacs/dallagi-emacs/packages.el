@@ -106,3 +106,37 @@
 			  (agenda . 5)
 			  (registers . 5)))
   (dashboard-setup-startup-hook))
+
+(use-package magit
+  :ensure t
+  :commands magit-status
+  :config
+  (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
+
+(use-package git-gutter
+  :ensure t
+  :config
+  (git-gutter-mode)
+  ;; Update git-gutter on focus (in case I was using git externally)
+  (add-hook 'focus-in-hook #'git-gutter:update-all-windows)
+  ;; update git-gutter when using magit commands
+  (advice-add #'magit-stage-file   :after #'+vc-gutter-update-h)
+  (advice-add #'magit-unstage-file :after #'+vc-gutter-update-h)
+  )
+
+(use-package fringe-helper ;; necessary for git-gutter-fringe
+  :ensure t)
+
+(use-package git-gutter-fringe ;; place git gutters in fringe
+  :ensure t
+  :config
+  ;; standardize default fringe width
+  (if (fboundp 'fringe-mode) (fringe-mode '4))
+  ;; thin fringe bitmaps
+  (define-fringe-bitmap 'git-gutter-fr:added [224]
+    nil nil '(center repeated))
+  (define-fringe-bitmap 'git-gutter-fr:modified [224]
+    nil nil '(center repeated))
+  (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240]
+    nil nil 'bottom)
+  )
