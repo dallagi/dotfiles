@@ -42,7 +42,14 @@
 (use-package ivy
   :ensure t
   :config
-  (ivy-mode))
+  (ivy-mode)
+  (define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
+  (define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
+  (define-key ivy-minibuffer-map (kbd "C-u") 'ivy-scroll-down-command)
+  (define-key ivy-minibuffer-map (kbd "C-d") 'ivy-scroll-up-command)
+  (define-key ivy-minibuffer-map (kbd "C-g") 'ivy-beginning-of-buffer)
+  (define-key ivy-minibuffer-map (kbd "C-S-G") 'ivy-end-of-buffer)
+  )
 
 (use-package counsel
   :ensure t
