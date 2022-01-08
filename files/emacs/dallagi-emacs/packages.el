@@ -89,3 +89,20 @@
 
 (use-package ranger
   :ensure t)
+
+(use-package spaceline
+  :ensure t
+  :config
+  (require 'spaceline-config)
+  (spaceline-emacs-theme)
+  )
+
+(use-package dashboard
+  :ensure t
+  :config
+  (setq dashboard-projects-backend 'projectile)
+  (setq dashboard-items '((recents  . 5)
+			  (projects . 5)
+			  (agenda . 5)
+			  (registers . 5)))
+  (dashboard-setup-startup-hook))

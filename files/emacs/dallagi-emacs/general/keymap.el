@@ -17,6 +17,7 @@
     "bn" 'next-buffer
     "of" 'ranger
     "pa" 'projectile-add-known-project
+    "pd" 'projectile-remove-known-project
     "pp" 'projectile-switch-project
     "wh" 'windmove-left
     "wj" 'windmove-down
