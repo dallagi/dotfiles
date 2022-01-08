@@ -10,10 +10,12 @@
   (my-leader-def
     :keymaps 'normal
     "SPC" 'projectile-find-file
+    ":" 'counsel-M-x
     "cc" 'comment-line
     "bd" 'kill-current-buffer
     "bp" 'previous-buffer
     "bn" 'next-buffer
+    "of" 'ranger
     "pa" 'projectile-add-known-project
     "pp" 'projectile-switch-project
     "wh" 'windmove-left
