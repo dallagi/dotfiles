@@ -17,6 +17,7 @@
     "wq" 'delete-window
     "ws" 'split-window-below
     "wv" 'split-window-right
+    "ww" 'ace-window
     ) 
   (my-leader-def
     :keymaps 'visual

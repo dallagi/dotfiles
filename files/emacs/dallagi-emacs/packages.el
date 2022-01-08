@@ -30,6 +30,11 @@
   :config
   (ivy-mode))
 
+(use-package ace-window
+  :ensure t
+  :commands ace-window ;; defer loading until called
+  )
+
 (use-package which-key
   :ensure t
   :config
