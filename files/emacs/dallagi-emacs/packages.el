@@ -20,10 +20,18 @@
 
 (use-package evil
   :ensure t ;; install package if not installed
+  :init
+  (setq evil-want-keybinding nil) ;; necessary to use evil-collection
   :config ;; tweak package after loading it
   (evil-mode)
   (require 'general)
 )
+
+(use-package evil-collection
+  :ensure t
+  :config
+  (evil-collection-init) ;; TODO: only enable for some modes?
+  )
 
 (use-package projectile
   :ensure t
