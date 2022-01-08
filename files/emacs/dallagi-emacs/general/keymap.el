@@ -10,11 +10,14 @@
   (my-leader-def
     :keymaps 'normal
     "cc" 'comment-line
+    "bd" 'kill-current-buffer
+    "bp" 'previous-buffer
+    "bn" 'next-buffer
     "wh" 'windmove-left
     "wj" 'windmove-down
     "wk" 'windmove-up
     "wl" 'windmove-right
-    "wq" 'delete-window
+    "wd" 'delete-window
     "ws" 'split-window-below
     "wv" 'split-window-right
     "ww" 'ace-window

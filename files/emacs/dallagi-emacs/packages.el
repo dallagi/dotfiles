@@ -30,6 +30,11 @@
   :config
   (ivy-mode))
 
+(use-package counsel
+  :ensure t
+  :config
+  (counsel-mode))
+
 (use-package ace-window
   :ensure t
   :commands ace-window ;; defer loading until called
