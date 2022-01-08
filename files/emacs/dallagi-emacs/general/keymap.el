@@ -11,10 +11,11 @@
     :keymaps 'normal
     "SPC" 'projectile-find-file
     ":" 'counsel-M-x
-    "cc" 'comment-line
+    "cc" 'comment-or-uncomment-line
     "bd" 'kill-current-buffer
     "bp" 'previous-buffer
     "bn" 'next-buffer
+    "gg" 'magit-status
     "of" 'ranger
     "pa" 'projectile-add-known-project
     "pd" 'projectile-remove-known-project
@@ -30,5 +31,5 @@
     ) 
   (my-leader-def
     :keymaps 'visual
-    "cc" 'comment-region)
+    "cc" 'comment-or-uncomment-region)
   )
