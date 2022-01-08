@@ -61,3 +61,12 @@
   (which-key-configure-groups-description)
   (which-key-mode)
   )
+
+(use-package helpful
+  :ensure t
+  :config
+  (define-key evil-normal-state-map (kbd "K") #'helpful-at-point)
+  (setq counsel-describe-function-function #'helpful-callable)
+  (setq counsel-describe-variable-function #'helpful-variable)
+  (global-set-key (kbd "C-h k") #'helpful-key)
+  )
