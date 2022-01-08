@@ -9,10 +9,13 @@
   ;; prefix-based keybinds
   (my-leader-def
     :keymaps 'normal
+    "SPC" 'projectile-find-file
     "cc" 'comment-line
     "bd" 'kill-current-buffer
     "bp" 'previous-buffer
     "bn" 'next-buffer
+    "pa" 'projectile-add-known-project
+    "pp" 'projectile-switch-project
     "wh" 'windmove-left
     "wj" 'windmove-down
     "wk" 'windmove-up

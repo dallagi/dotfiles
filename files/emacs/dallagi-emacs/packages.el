@@ -25,6 +25,12 @@
   (require 'general)
 )
 
+(use-package projectile
+  :ensure t
+  :init
+  (projectile-mode +1)
+)
+
 (use-package ivy
   :ensure t
   :config
