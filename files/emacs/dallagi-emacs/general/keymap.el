@@ -11,7 +11,7 @@
     :keymaps 'normal
     "SPC" 'projectile-find-file
     ":" 'counsel-M-x
-    "cc" 'comment-or-uncomment-line
+    "cc" 'comment-line
     "bd" 'kill-current-buffer
     "bp" 'previous-buffer
     "bn" 'next-buffer

@@ -6,10 +6,22 @@
 ;; configure packages
 (load "packages.el")
 
-;; tweak appearance
+;; TWEAK APPEARANCE
+
+;; relative line numbers
 (global-display-line-numbers-mode)
 (setq display-line-numbers-type 'relative)
-(set-frame-font "FiraCode Nerd Font 18" nil t)
+
+;; font
+(set-face-attribute 'default nil
+                    :family "FiraCode"
+                    :height 160
+                    :weight 'semi-light)
+
+;; disable bars
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(toggle-scroll-bar -1)
 
 ;; TODO find out how to move these to another file
 (custom-set-variables

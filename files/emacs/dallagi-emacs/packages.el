@@ -113,17 +113,6 @@
   :config
   (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
 
-(use-package git-gutter
-  :ensure t
-  :config
-  (git-gutter-mode)
-  ;; Update git-gutter on focus (in case I was using git externally)
-  (add-hook 'focus-in-hook #'git-gutter:update-all-windows)
-  ;; update git-gutter when using magit commands
-  (advice-add #'magit-stage-file   :after #'+vc-gutter-update-h)
-  (advice-add #'magit-unstage-file :after #'+vc-gutter-update-h)
-  )
-
 (use-package fringe-helper ;; necessary for git-gutter-fringe
   :ensure t)
 
@@ -139,4 +128,15 @@
     nil nil '(center repeated))
   (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240]
     nil nil 'bottom)
+  )
+
+(use-package git-gutter
+  :ensure t
+  :config
+  (global-git-gutter-mode)
+  ;; Update git-gutter on focus (in case I was using git externally)
+  (add-hook 'focus-in-hook #'git-gutter:update-all-windows)
+  ;; update git-gutter when using magit commands
+  (advice-add #'magit-stage-file   :after #'+vc-gutter-update-h)
+  (advice-add #'magit-unstage-file :after #'+vc-gutter-update-h)
   )
