@@ -30,7 +30,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(diff-hl git-gutter-fringe fringe-helper git-gutter magit dashboard spaceline ranger doom-themes atom-one-dark-theme helpful evil-collection projectile counsel ace-window general which-key ivy use-package)))
+   '(evil-matchit smartparens elixir-mode tree-sitter-langs tree-sitter diff-hl git-gutter-fringe fringe-helper git-gutter magit dashboard spaceline ranger doom-themes atom-one-dark-theme helpful evil-collection projectile counsel ace-window general which-key ivy use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
