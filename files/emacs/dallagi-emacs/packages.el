@@ -11,6 +11,8 @@
 
 ;; configure packages
 
+(use-package delight :ensure t) ;; customize what's shown in modeline
+
 (use-package general
   :ensure t
   :config
@@ -29,6 +31,7 @@
 
 (use-package evil-collection
   :ensure t
+  :delight evil-collection-unimpaired-mode
   :config
   (evil-collection-init) ;; TODO: only enable for some modes?
   )
@@ -41,6 +44,7 @@
 
 (use-package ivy
   :ensure t
+  :delight ;; don't show ivy in modeline
   :config
   (ivy-mode)
   (define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
@@ -53,6 +57,7 @@
 
 (use-package counsel
   :ensure t
+  :delight
   :config
   (counsel-mode))
 
@@ -63,6 +68,7 @@
 
 (use-package which-key
   :ensure t
+  :delight
   :config
   (load "which-key/config.el")
   (which-key-configure-groups-description)
@@ -132,6 +138,7 @@
 
 (use-package git-gutter
   :ensure t
+  :delight
   :config
   (global-git-gutter-mode)
   ;; Update git-gutter on focus (in case I was using git externally)
