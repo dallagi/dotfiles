@@ -21,11 +21,14 @@
 ;; font string. You generally only need these two:
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
+(setq doom-font (font-spec :family "Fira Code" :size 20 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 20))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one)
+;; (setq doom-theme 'doom-vibrant)
+(setq doom-theme 'doom-solarized-dark)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -33,7 +36,6 @@
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-;; (setq display-line-numbers-type t)
 (setq display-line-numbers-type 'relative)
 
 
@@ -54,48 +56,41 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
-;; Set fonts
-(setq doom-font (font-spec :family "Fira Code" :size 20 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 20))
-
-;; Start maximized
-;; (add-to-list 'initial-frame-alist '(fullscreen . maximized))
-
-;; Set location of elixir-ls language server
-(setq lsp-clients-elixir-server-executable "~/.bin/elixir-ls/rel/language_server.sh")
-(setq lsp-clients-kotlin-server-executable "~/.bin/kotlin-language-server/server/build/install/server/bin/kotlin-language-server")
-(setq lsp-enable-file-watchers t)
-(setq lsp-file-watch-threshold 5000)
-
-;; Projectile config
-(setq projectile-enable-caching nil)
-(setq projectile-project-search-path '("~/Workspace"))
-
 ;; Make modeline smaller and using a variable-width font.
 ;; Note that height is given in units of 1/10th of point, so 150 -> 15pt
-(after! doom-modeline
-  (custom-set-faces!
-    '(mode-line :family "Fira Sans" :height 150)
-    '(mode-line-inactive :family "Fira Sans" :height 150))
-  (setq doom-modeline-height 0))
+(setq +modeline-height 20)
 
-;; Enable format and iex reload on save
-(after! lsp
-  (add-hook 'elixir-mode-hook
-            (lambda ()
-              (add-hook 'before-save-hook 'elixir-format nil t)
-              (add-hook 'after-save-hook 'alchemist-iex-reload-module))))
+;; Packages
+(use-package! ace-window :commands ace-window)
 
-;; Disable mapping for C-/ to avoid damage by pressing it mistakenly
-(map! "C-/" nil)
+(use-package! ranger :commands ranger)
 
-;; Allow mixed fonts in a buffer. This is particularly useful for Org mode, so I can mix source and prose blocks in the same document.
-(add-hook! 'org-mode-hook #'mixed-pitch-mode)
-(setq mixed-pitch-variable-pitch-cursor nil)
+(use-package! dashboard
+  :init
+  (setq dashboard-items '((recents  . 5)
+                          (projects . 5)
+                          (bookmarks . 3)
+                          (agenda . 3)))
+  (setq dashboard-startup-banner 2)
+  :config
+  (dashboard-setup-startup-hook))
 
-;; Set indent to 4 spaces on web mode
-(defun my-web-mode-hook ()
-  "Hooks for Web mode."
-  (setq web-mode-markup-indent-offset 2)
-)
-(add-hook 'web-mode-hook  'my-web-mode-hook)
+(use-package! tree-sitter
+  :config
+  (require 'tree-sitter-langs)
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+;; Custom keymaps
+(map! :nv "SPC e e" #'ranger)
+(define-key evil-window-map (kbd "w") 'ace-window)
+
+;; NOTE: for elixir-ls to work, the directory containing the
+;;       `language-server.sh' script must be in $PATH.
+
+;; Treesitter related stuff
+;; TODO: Add rust and elixir to tree-edit
+;;       see https://github.com/ethan-leba/tree-edit/blob/docs/doc/using-tree-edit.org#adding-new-languages-to-tree-edit
+;; (add-hook 'elixir-mode-hook #'evil-tree-edit-mode)
+;; (add-hook 'rust-mode-hook #'evil-tree-edit-mode)
+;; (add-hook 'evil-tree-edit-after-change-hook #'+format/buffer) ;; format after tree edit
