@@ -50,7 +50,6 @@
 ;(unpin! t)
 
 (package! ace-window)
-(package! ranger)
 (package! dashboard)
 
 (package! tree-sitter)

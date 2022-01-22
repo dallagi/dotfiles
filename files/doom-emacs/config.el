@@ -85,8 +85,18 @@
 (map! :nv "SPC e e" #'ranger)
 (define-key evil-window-map (kbd "w") 'ace-window)
 
+;; unmap C-RET and C-S-RET, as they overlap with useful ORG mode commands
+;; and I never used them anyway
+(map! :gi "C-RET"      nil
+      :gn [C-return]   nil
+      :gi "C-S-RET"    nil
+      :gn [C-S-return] nil)
+
 ;; NOTE: for elixir-ls to work, the directory containing the
 ;;       `language-server.sh' script must be in $PATH.
+
+;; ORG MODE
+(setq org-log-done 'time) ;; set timestamp when closing TODO item
 
 ;; Treesitter related stuff
 ;; TODO: Add rust and elixir to tree-edit
