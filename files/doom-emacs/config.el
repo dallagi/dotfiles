@@ -17,12 +17,11 @@
 ;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for
 ;;   presentations or streaming.
 ;;
-;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
-;; font string. You generally only need these two:
-;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
-;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-(setq doom-font (font-spec :family "Fira Code" :size 20 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 20))
+;; Double font size on Linux
+(let* ((base-font-size 20)
+       (my-font-size (if IS-LINUX (* base-font-size 2) base-font-size))) ;; double font-size on linux
+  (setq doom-font (font-spec :family "Fira Code" :size my-font-size :weight 'semi-light)
+        doom-variable-pitch-font (font-spec :family "Fira Sans" :size my-font-size)))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
