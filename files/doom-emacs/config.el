@@ -104,3 +104,6 @@
 ;; (add-hook 'elixir-mode-hook #'evil-tree-edit-mode)
 ;; (add-hook 'rust-mode-hook #'evil-tree-edit-mode)
 ;; (add-hook 'evil-tree-edit-after-change-hook #'+format/buffer) ;; format after tree edit
+
+;; Open dashboard as initial buffer by default
+(setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
