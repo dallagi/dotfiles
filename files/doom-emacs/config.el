@@ -111,3 +111,6 @@
 
 ;; Open dashboard as initial buffer by default
 (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
+
+;; Start maximized
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
