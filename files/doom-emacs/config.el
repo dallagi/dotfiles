@@ -80,6 +80,11 @@
   (global-tree-sitter-mode)
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
+;; Customize Ranger
+(setq ranger-show-hidden t)
+(setq ranger-max-preview-size 1) ;; MB - Lower max size for preview in Ranger
+(setq ranger-preview-delay 0.5) ;; seconds
+
 ;; Custom keymaps
 (map! :nv "SPC e e" #'ranger)
 (define-key evil-window-map (kbd "w") 'ace-window)

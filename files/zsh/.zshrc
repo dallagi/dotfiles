@@ -37,7 +37,7 @@ fi
 autoload -Uz compinit
 compinit
 
-alias doom=~/.emacs.d/bin/doom
+alias doom=~/.config/emacs/bin/doom
 alias vim=nvim
 
 eval "$(direnv hook zsh)"
@@ -73,5 +73,6 @@ alias dcr='docker-compose run -d --rm --service-ports'
 
 source ~/.zshrc-prima
 
-export PATH="/usr/local/opt/openssl@3/bin:$PATH"
+export PATH="/usr/local/opt/openssl@3/bin":$PATH
+export PATH=/Users/marco/.bin/elixir-ls:$PATH
 export SAM_CLI_TELEMETRY=0

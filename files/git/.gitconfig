@@ -29,5 +29,6 @@
 
 [rerere]
     enabled = true
+
 [github]
 	user = dallagi
