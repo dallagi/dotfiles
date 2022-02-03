@@ -51,6 +51,7 @@
 
 (package! ace-window)
 (package! dashboard)
+(package! material-theme)
 
 (package! tree-sitter)
 (package! tree-sitter-langs)
@@ -59,3 +60,5 @@
 (package! tree-edit)
 (package! evil-tree-edit)
 (package! evil-textobj-tree-sitter)
+
+(package! request)

@@ -27,7 +27,7 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 ;; (setq doom-theme 'doom-vibrant)
-(setq doom-theme 'doom-material)
+(setq doom-theme 'material)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -114,3 +114,78 @@
 
 ;; Start maximized
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+
+;; FUNCTIONS
+
+(use-package! request)
+
+
+(defun package-info (package-data)
+  (let* (
+         (name (cdr (assoc 'name package-data)))
+         (meta (cdr (assoc 'meta package-data)))
+         (description (cdr (assoc 'description meta)))
+         (configs (cdr (assoc 'configs package-data)))
+         (mix (cdr (assoc 'mix.exs configs)))
+         )
+    `((name . ,name) (description . ,description) (mix . ,mix))))
+
+
+(defun do-mix-add (name)
+  (request "https://hex.pm/api/packages"
+    :params `(("search" . ,name) ("sort" . "recent_downloads"))
+    :parser 'json-read
+    :success (cl-function
+              (lambda (&key data &allow-other-keys)
+                (let ((packages (cl-map 'vector 'package-info data)))
+                  (add-mix-package-among packages)))
+              )))
+
+
+(defun mix-add (name) (interactive "sPackage name:") (do-mix-add name))
+
+(defun completions-for (packages)
+  (append
+   (cl-map 'vector
+           (lambda (package-info)
+             (let ((package-name (cdr (assoc 'name package-info))))
+               `(,package-name . ,package-info))) packages)
+  nil))
+
+
+;; LAST PIECE TO FIX!!
+(defun choose-package (packages)
+  (let* (
+         (completions (completions-for packages))
+         (_ (message "%S" completions))
+         (package-name (completing-read "Which package?" completions nil t))
+         (package-info (cdr (assoc completions package-name)))
+        )
+    (do-add-mix-package package-info)))
+
+(defun add-mix-package-among (packages)
+  (cond
+   ((= 0 (length packages)) (message "No such package found!"))
+   ((= 1 (length packages)) (do-add-mix-package (aref packages 0)))
+   (t (choose-package packages))
+   ))
+
+(defun do-add-mix-package (package)
+  (let ((mix (cdr (assoc 'mix package))))
+    (insert mix)))
+
+
+;; TEST AREA
+(mix-add "excontainers")
+
+(mix-add "aws")
+
+(completions-for '[((name . "prova") ("mix" "asd"))])
+
+(setq packages [])
+(eq 0 (length packages))
+
+
+;; (defun mix-add ()
+;;   (completing-read "prova" 'complete-hex-package))
