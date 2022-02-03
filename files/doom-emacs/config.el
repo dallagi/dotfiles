@@ -173,5 +173,6 @@
 
 (defun do-add-mix-package (package)
   (let ((mix (cdr (assoc 'mix package))))
+    (end-of-line)
+    (newline-and-indent)
     (insert mix)))
-
