@@ -149,18 +149,18 @@
   (append
    (cl-map 'vector
            (lambda (package-info)
-             (let ((package-name (cdr (assoc 'name package-info))))
-               `(,package-name . ,package-info))) packages)
+             (let* (
+                   (package-name (cdr (assoc 'name package-info)))
+                   (package-description (cdr (assoc 'description package-info)))
+                   (entry (concat package-name " -- " package-description)))
+               `(,entry . ,package-info))) packages)
   nil))
 
-
-;; LAST PIECE TO FIX!!
 (defun choose-package (packages)
   (let* (
          (completions (completions-for packages))
-         (_ (message "%S" completions))
          (package-name (completing-read "Which package?" completions nil t))
-         (package-info (cdr (assoc completions package-name)))
+         (package-info (cdr (assoc package-name completions)))
         )
     (do-add-mix-package package-info)))
 
@@ -175,17 +175,3 @@
   (let ((mix (cdr (assoc 'mix package))))
     (insert mix)))
 
-
-;; TEST AREA
-(mix-add "excontainers")
-
-(mix-add "aws")
-
-(completions-for '[((name . "prova") ("mix" "asd"))])
-
-(setq packages [])
-(eq 0 (length packages))
-
-
-;; (defun mix-add ()
-;;   (completing-read "prova" 'complete-hex-package))
