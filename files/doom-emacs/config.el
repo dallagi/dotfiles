@@ -175,4 +175,5 @@
   (let ((mix (cdr (assoc 'mix package))))
     (end-of-line)
     (newline-and-indent)
-    (insert mix)))
+    (insert mix)
+    (insert ",")))
