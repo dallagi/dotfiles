@@ -29,9 +29,6 @@
 ;; (setq doom-theme 'doom-one)
 (setq doom-theme 'doom-tomorrow-night)
 
-;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -55,9 +52,9 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
-;; Make modeline smaller and using a variable-width font.
+;; Make modeline smaller.
 ;; Note that height is given in units of 1/10th of point, so 150 -> 15pt
-(setq +modeline-height 20)
+(setq +modeline-height 18)
 
 ;; Packages
 (use-package! ace-window :commands ace-window)
@@ -93,8 +90,9 @@
 (setq ranger-preview-delay 0.5) ;; seconds
 
 ;; Custom keymaps
-(map! :nv "SPC e e" #'ranger)
-(define-key evil-window-map (kbd "w") 'ace-window)
+(map! :nv "SPC e e" #'ranger) ;; ranger with SPC e e
+(define-key evil-window-map (kbd "w") 'ace-window) ;; ace-window with SPC w w
+(define-key evil-normal-state-map (kbd "C-/") 'evilnc-comment-or-uncomment-lines) ;; comment with C-/
 
 ;; unmap C-RET and C-S-RET, as they overlap with useful ORG mode commands
 ;; and I never used them anyway
@@ -106,8 +104,9 @@
 ;; NOTE: for elixir-ls to work, the directory containing the
 ;;       `language-server.sh' script must be in $PATH.
 
-;; ORG MODE
+;; org mode
 (setq org-log-done 'time) ;; set timestamp when closing TODO item
+(setq org-directory "~/org/")
 
 ;; Treesitter related stuff
 ;; TODO: Add rust and elixir to tree-edit
