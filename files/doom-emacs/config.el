@@ -151,8 +151,7 @@
                   (add-mix-package-among packages)))
               )))
 
-
-(defun mix-add (name) (interactive "sPackage name:") (do-mix-add name))
+(defun mix-add (name) (interactive "sSearch package:") (do-mix-add name))
 
 
 (defun completions-for (packages)
@@ -162,18 +161,25 @@
              (let* (
                    (package-name (cdr (assoc 'name package-info)))
                    (package-description (cdr (assoc 'description package-info)))
-                   (entry (concat package-name " | " package-description)))
-               `(,entry . ,package-info))) packages)
+               `(,package-name . ,package-info))) packages)
   'list))
-
 
 (defun choose-package (packages)
   (let* (
          (completions (completions-for packages))
-         (package-name (completing-read "Which package?" completions nil nil))
+         (annotation-function (apply-partially #'annotate-choices completions))
+         (completion-extra-properties `(:annotation-function ,annotation-function))
+         (package-name (completing-read "Choose: " completions nil t))
          (package-info (cdr (assoc package-name completions)))
         )
     (do-add-mix-package package-info)))
+
+(defun annotate-choices (completions candidate)
+  (let* ((candidate-info (cdr (assoc candidate completions)))
+         (candidate-description (cdr (assoc 'description candidate-info)))
+         (normalized-description (replace-regexp-in-string (regexp-quote "\n") " " candidate-description nil 'literal)))
+
+    (concat " " normalized-description)))
 
 (defun add-mix-package-among (packages)
   (cond
