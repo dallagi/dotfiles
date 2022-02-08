@@ -31,4 +31,7 @@
     enabled = true
 
 [github]
-	user = dallagi
+    user = dallagi
+
+[init]
+    defaultBranch = main
