@@ -80,6 +80,9 @@
   (global-tree-sitter-mode)
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
+;; LSP
+(setq lsp-auto-execute-action nil)
+
 ;; Customize Ranger
 (setq ranger-show-hidden t)
 (setq ranger-max-preview-size 1) ;; MB - Lower max size for preview in Ranger
