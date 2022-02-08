@@ -148,21 +148,23 @@
 
 (defun mix-add (name) (interactive "sPackage name:") (do-mix-add name))
 
+
 (defun completions-for (packages)
-  (append
+  (seq-into
    (cl-map 'vector
            (lambda (package-info)
              (let* (
                    (package-name (cdr (assoc 'name package-info)))
                    (package-description (cdr (assoc 'description package-info)))
-                   (entry (concat package-name " -- " package-description)))
+                   (entry (concat package-name " | " package-description)))
                `(,entry . ,package-info))) packages)
-  nil))
+  'list))
+
 
 (defun choose-package (packages)
   (let* (
          (completions (completions-for packages))
-         (package-name (completing-read "Which package?" completions nil t))
+         (package-name (completing-read "Which package?" completions nil nil))
          (package-info (cdr (assoc package-name completions)))
         )
     (do-add-mix-package package-info)))
