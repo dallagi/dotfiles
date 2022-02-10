@@ -26,8 +26,8 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-;; (setq doom-theme 'doom-vibrant)
-(setq doom-theme 'material)
+;; (setq doom-theme 'doom-one)
+(setq doom-theme 'doom-tomorrow-night)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -115,8 +115,11 @@
 ;; Open dashboard as initial buffer by default
 (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 
-;; Start maximized
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
+;; Start maximized in linux
+(if IS-LINUX (add-to-list 'default-frame-alist '(fullscreen . maximized)))
+
+;; Keep n rows above/below cursor
+(setq scroll-margin 5)
 
 
 ;; FUNCTIONS
