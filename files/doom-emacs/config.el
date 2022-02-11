@@ -83,6 +83,10 @@
 ;; LSP
 (setq lsp-auto-execute-action nil)
 
+;; Projectile
+(setq projectile-auto-discover t)
+(setq projectile-project-search-path '("~/Workspace"))
+
 ;; Customize Ranger
 (setq ranger-show-hidden t)
 (setq ranger-max-preview-size 1) ;; MB - Lower max size for preview in Ranger
