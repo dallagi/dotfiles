@@ -178,7 +178,6 @@
   (let* ((candidate-info (cdr (assoc candidate completions)))
          (candidate-description (cdr (assoc 'description candidate-info)))
          (normalized-description (replace-regexp-in-string (regexp-quote "\n") " " candidate-description nil 'literal)))
-
     (concat " " normalized-description)))
 
 (defun add-mix-package-among (packages)
