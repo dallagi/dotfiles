@@ -32,7 +32,7 @@
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type 'relative)
+(setq display-line-numbers-type 'visual) ;; relative to screen lines - ie. ignoring folds
 
 
 ;; Here are some additional functions/macros that could help you configure Doom:
@@ -105,8 +105,21 @@
 ;;       `language-server.sh' script must be in $PATH.
 
 ;; org mode
-(setq org-log-done 'time) ;; set timestamp when closing TODO item
+
 (setq org-directory "~/org/")
+
+(after! org
+  (setq org-log-done 'time) ;; set timestamp when closing TODO item
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "WIP(p)" "BLOCKED(w)" "KILLED(k)" "POSTPONED(p)" "DONE(d)")))
+  )
+
+;; anki
+(use-package anki-editor
+  :config
+  (setq anki-editor-create-decks 't))
+
+
 
 ;; Treesitter related stuff
 ;; TODO: Add rust and elixir to tree-edit

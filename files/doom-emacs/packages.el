@@ -56,6 +56,8 @@
 (package! tree-sitter)
 (package! tree-sitter-langs)
 
+(package! anki-editor)
+
 ;; TODO: configure us!!
 (package! tree-edit)
 (package! evil-tree-edit)
