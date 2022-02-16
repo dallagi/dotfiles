@@ -111,7 +111,7 @@
 (after! org
   (setq org-log-done 'time) ;; set timestamp when closing TODO item
   (setq org-todo-keywords
-        '((sequence "TODO(t)" "WIP(p)" "BLOCKED(w)" "KILLED(k)" "POSTPONED(p)" "DONE(d)")))
+        '((sequence "TODO(t)" "WIP(p)" "BLOCKED(w)" "|" "KILLED(k)" "DONE(d)" "POSTPONED(p)")))
   )
 
 ;; anki
