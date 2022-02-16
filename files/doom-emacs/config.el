@@ -172,10 +172,11 @@
    (cl-map 'vector
            (lambda (package-info)
              (let* (
-                   (package-name (cdr (assoc 'name package-info)))
-                   (package-description (cdr (assoc 'description package-info)))
+                    (package-name (cdr (assoc 'name package-info)))
+                    (package-description (cdr (assoc 'description package-info))))
                `(,package-name . ,package-info))) packages)
-  'list))
+   'list))
+
 
 (defun choose-package (packages)
   (let* (
@@ -184,8 +185,10 @@
          (completion-extra-properties `(:annotation-function ,annotation-function))
          (package-name (completing-read "Choose: " completions nil t))
          (package-info (cdr (assoc package-name completions)))
-        )
+         )
     (do-add-mix-package package-info)))
+
+
 
 (defun annotate-choices (completions candidate)
   (let* ((candidate-info (cdr (assoc candidate completions)))
