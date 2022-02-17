@@ -177,24 +177,25 @@
                `(,package-name . ,package-info))) packages)
    'list))
 
-
 (defun choose-package (packages)
   (let* (
          (completions (completions-for packages))
-         (annotation-function (apply-partially #'annotate-choices completions))
+         (annotation-function (apply-partially #'annotate-choices completions (annotations-padding completions)))
          (completion-extra-properties `(:annotation-function ,annotation-function))
          (package-name (completing-read "Choose: " completions nil t))
          (package-info (cdr (assoc package-name completions)))
          )
     (do-add-mix-package package-info)))
 
+(defun annotations-padding (completions)
+  (seq-max (mapcar (lambda (candidate) (length (car candidate))) completions)))
 
-
-(defun annotate-choices (completions candidate)
+(defun annotate-choices (completions padding candidate)
   (let* ((candidate-info (cdr (assoc candidate completions)))
          (candidate-description (cdr (assoc 'description candidate-info)))
-         (normalized-description (replace-regexp-in-string (regexp-quote "\n") " " candidate-description nil 'literal)))
-    (concat " " normalized-description)))
+         (normalized-description (replace-regexp-in-string (regexp-quote "\n") " " candidate-description nil 'literal))
+         (margin (make-string (- padding (length candidate)) ? )))
+    (concat " " margin normalized-description)))
 
 (defun add-mix-package-among (packages)
   (cond
