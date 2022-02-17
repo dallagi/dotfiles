@@ -140,8 +140,39 @@
 
 ;; FUNCTIONS
 
+;; TODO: allow setting deps for dev/test only
+
 (use-package! request)
 
+;; HEX-SEARCH
+
+(with-output-to-temp-buffer "*Mix xxx*"
+  (princ "`excontainers' - Throwaway containers for your tests\n")
+  (princ "\tPublisher: `dallagi'\n")
+  (princ "\tOwners:    `dallagi'\n\n")
+
+  (princ "License:      `GPL-3.0-or-later'\n")
+  (princ "Last version: `0.3.0' (Apr 03, 2021)\n\n")
+
+  (princ "Downloads:\n")
+  (princ "\tThis version: 1\n")
+  (princ "\tYesterday:    1\n")
+  (princ "\tLast 7 days:  1\n")
+  (princ "\tAll time:     1\n\n")
+
+  (princ "Dependencies: `gestalt' ~> 1.0, `hackney' ~> 1.16.0, `jason' ~> 1.0.0, `tesla' ~> 1.4.0\n\n")
+
+  (princ "Links:\n")
+  (princ "\tHex.pm: `https://hex.pm/packages/excontainers'\n")
+  (princ "\tGithub: `https://github.com/dallagi/excontainers'\n\n")
+
+  (princ "Versions:\n")
+  (princ "`0.3.0' (Apr 03, 2021)\n")
+  (princ "`0.2.1' (Apr 03, 2021)\n")
+  (princ "`0.2.0' (Apr 03, 2021)\n")
+  )
+
+;; MIX-ADD
 
 (defun package-info (package-data)
   (let* (
@@ -164,7 +195,9 @@
                   (add-mix-package-among packages)))
               )))
 
-(defun mix-add (name) (interactive "sSearch package:") (do-mix-add name))
+(defun mix-add (name)
+  "Search and insert hex package in format for mix.exs."
+  (interactive "sSearch package:") (do-mix-add name))
 
 
 (defun completions-for (packages)
@@ -188,6 +221,7 @@
     (do-add-mix-package package-info)))
 
 (defun annotations-padding (completions)
+  "Determines the max length of a candidate name, to be used as padding to align annotations"
   (seq-max (mapcar (lambda (candidate) (length (car candidate))) completions)))
 
 (defun annotate-choices (completions padding candidate)
