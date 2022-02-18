@@ -111,7 +111,7 @@
 (after! org
   (setq org-log-done 'time) ;; set timestamp when closing TODO item
   (setq org-todo-keywords
-        '((sequence "TODO(t)" "WIP(p)" "BLOCKED(w)" "|" "KILLED(k)" "DONE(d)" "POSTPONED(p)")))
+        '((sequence "TODO(t)" "WIP(w)" "BLOCKED(b)" "|" "KILLED(k)" "DONE(d)" "POSTPONED(p)")))
   )
 
 ;; anki
@@ -146,25 +146,25 @@
 
 ;; HEX-SEARCH
 
-;; (defun info-result (package-data)
-;;   (let* (
-;;          (name (cdr (assoc 'name package-data)))
-;;          (meta (cdr (assoc 'meta package-data)))
-;;          (description (cdr (assoc 'description meta)))
-;;          (configs (cdr (assoc 'configs package-data)))
-;;          (mix (cdr (assoc 'mix.exs configs)))
-;;          )
-;;     `((name . ,name) (description . ,description) (mix . ,mix))))
+(defun hex-info (package-name) "Search PACKAGE-NAME on Hex and show info." (interactive "sSearch package:")
+       (mix-search
+        package-name
+        (lambda (packages)
+          (let* ((choosen-package (choose-package packages))
+                 (xx (setq choosen-pkg choosen-package))
+                 (choosen-package-name (cdr (assoc 'name choosen-package))))
+            (do-hex-info choosen-package-name))
+          )))
 
 
-(defun do-hex-info (name success-callback)
+(defun get-hex-info (name success-callback)
   (request (concat "https://hex.pm/api/packages/" name)
     :parser 'json-read
     :success (cl-function
               (lambda (&key data &allow-other-keys) (funcall success-callback data)))))
 
-(defun hex-info (package-name) "Show info of Hex package PACKAGE-NAME." (interactive)
-  (do-hex-info
+(defun do-hex-info (package-name) "Show info of Hex package PACKAGE-NAME."
+  (get-hex-info
    package-name
    (lambda (package-data)
      (let ((buffer-name (concat "*hex-info-" package-name "*")))
@@ -218,7 +218,7 @@
                          "\n\t"))
        )))))
 
-(hex-info "excontainers")
+;; (hex-info "aws")
 
 
 (defun string-quote (text) (concat "`" text "'"))
@@ -272,7 +272,7 @@
          (package-name (completing-read "Choose: " completions nil t))
          (package-info (cdr (assoc package-name completions)))
          )
-    (do-add-mix-package package-info)))
+    package-info))
 
 (defun annotations-padding (completions)
   "Determines the max length of a candidate name, to be used as padding to align annotations"
@@ -286,10 +286,15 @@
     (concat " " margin normalized-description)))
 
 (defun add-mix-package-among (packages)
+  (apply-to-mix-package-among packages 'do-add-mix-package)
+  )
+
+(defun apply-to-mix-package-among (packages callback)
+  "Apply a function over the given mix package. If multiple packages are supplied, asks user for selection of a single one."
   (cond
    ((= 0 (length packages)) (message "No such package found!"))
-   ((= 1 (length packages)) (do-add-mix-package (aref packages 0)))
-   (t (choose-package packages))
+   ((= 1 (length packages)) (funcall callback (aref packages 0)))
+   (t (funcall callback (choose-package packages)))
    ))
 
 (defun do-add-mix-package (package)
