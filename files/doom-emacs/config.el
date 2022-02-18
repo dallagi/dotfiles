@@ -146,35 +146,86 @@
 
 ;; HEX-SEARCH
 
-(with-output-to-temp-buffer "*Mix xxx*"
-  (princ "`excontainers' - Throwaway containers for your tests\n")
-  (princ "\tPublisher: `dallagi'\n")
-  (princ "\tOwners:    `dallagi'\n\n")
+;; (defun info-result (package-data)
+;;   (let* (
+;;          (name (cdr (assoc 'name package-data)))
+;;          (meta (cdr (assoc 'meta package-data)))
+;;          (description (cdr (assoc 'description meta)))
+;;          (configs (cdr (assoc 'configs package-data)))
+;;          (mix (cdr (assoc 'mix.exs configs)))
+;;          )
+;;     `((name . ,name) (description . ,description) (mix . ,mix))))
 
-  (princ "License:      `GPL-3.0-or-later'\n")
-  (princ "Last version: `0.3.0' (Apr 03, 2021)\n\n")
 
-  (princ "Downloads:\n")
-  (princ "\tThis version: 1\n")
-  (princ "\tYesterday:    1\n")
-  (princ "\tLast 7 days:  1\n")
-  (princ "\tAll time:     1\n\n")
+(defun do-hex-info (name success-callback)
+  (request (concat "https://hex.pm/api/packages/" name)
+    :parser 'json-read
+    :success (cl-function
+              (lambda (&key data &allow-other-keys) (funcall success-callback data)))))
 
-  (princ "Dependencies: `gestalt' ~> 1.0, `hackney' ~> 1.16.0, `jason' ~> 1.0.0, `tesla' ~> 1.4.0\n\n")
+(defun hex-info (package-name) "Show info of Hex package PACKAGE-NAME." (interactive)
+  (do-hex-info
+   package-name
+   (lambda (package-data)
+     (let ((buffer-name (concat "*hex-info-" package-name "*")))
+     (with-output-to-temp-buffer buffer-name
+       (princ (string-quote (cdr (assoc 'name package-data))))
+       (princ (concat " - " (cdr (assoc 'description (cdr (assoc 'meta package-data))))))
+       (princ "\n\nInfo:")
 
-  (princ "Links:\n")
-  (princ "\tHex.pm: `https://hex.pm/packages/excontainers'\n")
-  (princ "\tGithub: `https://github.com/dallagi/excontainers'\n\n")
+       (princ "\n\tLicenses:       ")
+       (princ (mapconcat
+               (lambda (license) (string-quote license))
+               (cdr (assoc 'licenses (cdr (assoc 'meta package-data))))
+               ", "))
 
-  (princ "Versions:\n")
-  (princ "`0.3.0' (Apr 03, 2021)\n")
-  (princ "`0.2.1' (Apr 03, 2021)\n")
-  (princ "`0.2.0' (Apr 03, 2021)\n")
-  )
+       (princ "\n\tLatest version: ")
+       (princ (string-quote (cdr (assoc 'latest_stable_version package-data))))
+
+       (princ "\n\tOwners:         ")
+       (princ (mapconcat
+               (lambda (owner-data) (string-quote (cdr (assoc 'username owner-data))))
+               (cdr (assoc 'owners package-data))
+               ", "))
+
+       ;; TODO align values
+       (princ "\n\nLinks:")
+       (let* ((package-custom-links (cdr (assoc 'links (cdr (assoc 'meta package-data)))))
+              (links (append
+                      `((Hex . ,(cdr (assoc 'html_url package-data)))
+                        (Docs . ,(cdr (assoc 'docs_html_url package-data))))
+                      package-custom-links)))
+         (princ "\n\t")
+         (princ (mapconcat (lambda (link) (concat (symbol-name (car link)) ": " (string-quote (cdr link)))) links "\n\t"))
+         )
+
+       (princ "\n\nDownloads:")
+       (princ "\n\tAll:    ")
+       (princ (cdr (assoc 'all (cdr (assoc 'downloads package-data)))))
+       (princ "\n\tRecent: ")
+       (princ (cdr (assoc 'recent (cdr (assoc 'downloads package-data)))))
+
+       (princ "\n\nReleases:")
+       (princ "\n\t")
+       (princ (mapconcat (lambda (release) (concat
+                                            (string-quote (cdr (assoc 'version release)))
+                                            " ("
+                                            (format-time-string "%F" (encode-time (iso8601-parse (cdr (assoc 'inserted_at release)))))
+                                            ") - "
+                                            (string-quote (cdr (assoc 'url release)))
+                                            ))
+                         (cdr (assoc 'releases package-data))
+                         "\n\t"))
+       )))))
+
+(hex-info "excontainers")
+
+
+(defun string-quote (text) (concat "`" text "'"))
 
 ;; MIX-ADD
 
-(defun package-info (package-data)
+(defun search-result-package-info (package-data)
   (let* (
          (name (cdr (assoc 'name package-data)))
          (meta (cdr (assoc 'meta package-data)))
@@ -184,19 +235,22 @@
          )
     `((name . ,name) (description . ,description) (mix . ,mix))))
 
-
-(defun do-mix-add (name)
+(defun mix-search (name success-callback)
   (request "https://hex.pm/api/packages"
     :params `(("search" . ,name) ("sort" . "recent_downloads"))
     :parser 'json-read
     :success (cl-function
               (lambda (&key data &allow-other-keys)
-                (let ((packages (cl-map 'vector 'package-info data)))
-                  (add-mix-package-among packages)))
+                (let ((packages (cl-map 'vector 'search-result-package-info data)))
+                  (funcall success-callback packages)
+                  ))
               )))
 
+(defun do-mix-add (name)
+  (mix-search name (lambda (found-packages) (add-mix-package-among found-packages))))
+
 (defun mix-add (name)
-  "Search and insert hex package in format for mix.exs."
+  "Search hex package NAME and insert it in format for mix.exs."
   (interactive "sSearch package:") (do-mix-add name))
 
 
