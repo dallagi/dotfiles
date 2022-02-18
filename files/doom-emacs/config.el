@@ -146,22 +146,25 @@
 
 ;; HEX-SEARCH
 
-(defun hex-info (package-name) "Search PACKAGE-NAME on Hex and show info." (interactive "sSearch package:")
+(defun hex-search-info (package-name) "Search PACKAGE-NAME on Hex and show info." (interactive "sSearch package: ")
        (mix-search
         package-name
         (lambda (packages)
-          (let* ((choosen-package (choose-package packages))
-                 (xx (setq choosen-pkg choosen-package))
-                 (choosen-package-name (cdr (assoc 'name choosen-package))))
-            (do-hex-info choosen-package-name))
+          (apply-to-mix-package-among
+           packages
+           (lambda (package) (do-hex-info (cdr (assoc 'name package)))))
           )))
 
+(defun hex-info (package-name) "Show info about Hex package PACKAGE-NAME" (interactive "sPackage name: ")
+       (do-hex-info package-name))
 
 (defun get-hex-info (name success-callback)
   (request (concat "https://hex.pm/api/packages/" name)
     :parser 'json-read
+    :status-code '((404 . (lambda (&rest _) (message "Package not found."))))
     :success (cl-function
-              (lambda (&key data &allow-other-keys) (funcall success-callback data)))))
+              (lambda (&key data &allow-other-keys) (funcall success-callback data)))
+    ))
 
 (defun do-hex-info (package-name) "Show info of Hex package PACKAGE-NAME."
   (get-hex-info
@@ -187,6 +190,15 @@
                (lambda (owner-data) (string-quote (cdr (assoc 'username owner-data))))
                (cdr (assoc 'owners package-data))
                ", "))
+
+
+       (princ (concat "\n\nConfig:"))
+       (princ (concat "\n\t"))
+       (princ (mapconcat
+               (lambda (config) (concat (symbol-name (car config)) ": " (string-quote (cdr config))))
+               (cdr (assoc 'configs package-data))
+               "\n\t"))
+
 
        ;; TODO align values
        (princ "\n\nLinks:")
@@ -217,8 +229,6 @@
                          (cdr (assoc 'releases package-data))
                          "\n\t"))
        )))))
-
-;; (hex-info "aws")
 
 
 (defun string-quote (text) (concat "`" text "'"))
