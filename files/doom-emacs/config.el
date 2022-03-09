@@ -111,15 +111,15 @@
 (after! org
   (setq org-log-done 'time) ;; set timestamp when closing TODO item
   (setq org-todo-keywords
-        '((sequence "TODO(t)" "WIP(w)" "BLOCKED(b)" "|" "KILLED(k)" "DONE(d)" "POSTPONED(p)")))
+        '((sequence "TODO(t)" "WIP(w)" "BLOCKED(b)" "|" "DONE(d)" "KILLED(k)" "POSTPONED(p)")))
   )
 
+(setq company-global-modes '(not org-mode)) ;; disable company-mode for org-mode
+
 ;; anki
-(use-package anki-editor
+(use-package! anki-editor
   :config
   (setq anki-editor-create-decks 't))
-
-
 
 ;; Treesitter related stuff
 ;; TODO: Add rust and elixir to tree-edit
@@ -137,6 +137,9 @@
 ;; Keep n rows above/below cursor
 (setq scroll-margin 5)
 
+;; Remove doom-specific title
+(setq frame-title-format "%b – Emacs")
+
 
 ;; FUNCTIONS
 
@@ -146,7 +149,7 @@
 
 ;; HEX-SEARCH
 
-(defun hex-search-info (package-name) "Search PACKAGE-NAME on Hex and show info." (interactive "sSearch package: ")
+(defun hex-search (package-name) "Search PACKAGE-NAME on Hex and show info." (interactive "sSearch package: ")
        (mix-search
         package-name
         (lambda (packages)
@@ -155,7 +158,7 @@
            (lambda (package) (do-hex-info (cdr (assoc 'name package)))))
           )))
 
-(defun hex-info (package-name) "Show info about Hex package PACKAGE-NAME" (interactive "sPackage name: ")
+(defun hex-info (package-name) "Show info about Hex package PACKAGE-NAME." (interactive "sPackage name: ")
        (do-hex-info package-name))
 
 (defun get-hex-info (name success-callback)
