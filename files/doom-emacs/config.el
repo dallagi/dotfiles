@@ -18,16 +18,10 @@
 ;; - `doom-unicode-font' -- for unicode glyphs
 ;; - `doom-serif-font' -- for the `fixed-pitch-serif' face
 ;;
-;; See 'C-h v doom-font' for documentation and more examples of what they
-;; accept. For example:
-;;
-(setq doom-font (font-spec :family "Fira Code" :size 20 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 21))
-;;
-;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
-;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
-;; refresh your font settings. If Emacs still can't find your font, it likely
-;; wasn't installed correctly. Font issues are rarely Doom issues!
+;; Double font size on Linux (currently disabled)
+(let* ((font-size 25))
+  (setq doom-font (font-spec :family "Fira Code" :size font-size :weight 'semi-light)
+        doom-variable-pitch-font (font-spec :family "Fira Sans" :size font-size)))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -86,7 +80,7 @@
 
 (use-package! dashboard
   :init
-  (setq dashboard-items '((recents  . 5)
+  (setq dashboard-items '((agenda  . 5)
                           (projects . 5)))
   (setq dashboard-startup-banner 2)
 
@@ -100,7 +94,17 @@
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
 ;; LSP
-(setq lsp-auto-execute-action nil)
+(with-eval-after-load 'lsp-mode
+  (setq lsp-auto-execute-action nil)
+  (setq lsp-file-watch-threshold 2000)
+  (setq lsp-rust-analyzer-server-display-inlay-hints t)
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\target\\'")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\target-docker\\'")
+  )
+
+
+;; Which key
+(setq which-key-use-C-h-commands t)
 
 ;; Projectile
 (setq projectile-auto-discover t)
@@ -159,6 +163,15 @@
 
 ;; Remove doom-specific title
 (setq frame-title-format "%b – Emacs")
+
+;; Mail
+;; recommended by doom emacs documentation
+(after! mu4e
+  (setq sendmail-program (executable-find "msmtp")
+        send-mail-function #'smtpmail-send-it
+        message-sendmail-f-is-evil t
+        message-sendmail-extra-arguments '("--read-envelope-from")
+        message-send-mail-function #'message-send-mail-with-sendmail))
 
 
 ;; FUNCTIONS
@@ -336,3 +349,38 @@
     (newline-and-indent)
     (insert mix)
     (insert ",")))
+
+
+;;;;;;;;;;;;;;;;;;;
+;; PRODIGY STUFF ;;
+;;;;;;;;;;;;;;;;;;;
+
+(prodigy-define-service
+  :name "Lira"
+  :command "docker"
+  :args '("compose" "run" "--rm" "--service-ports" "web" "sh -c \"cargo make db-reset && cargo make run\"")
+  :cwd "~/Workspace/Prima/lira"
+  :tags '(work)
+  :ready-message "Starting [0-9]+ workers"
+  :url "http://localhost:3102/"
+  :stop-signal 'sigterm
+  :kill-process-buffer-on-stop t)
+
+(prodigy-define-service
+  :name "PG Frontend"
+  :command "docker"
+  :args '("compose" "up")
+  :cwd "~/Workspace/Prima/platform-global-fe"
+  :tags '(work)
+  :ready-message "Project is running at"
+  :stop-signal 'sigterm
+  :kill-process-buffer-on-stop t)
+
+(prodigy-define-service
+  :name "PG Backend"
+  :command "docker"
+  :args '("compose" "run" "--rm" "--service-ports" "web" "sh -c \"cargo make run\"")
+  :cwd "~/Workspace/Prima/platform-global"
+  :tags '(work)
+  :stop-signal 'sigterm
+  :kill-process-buffer-on-stop t)
