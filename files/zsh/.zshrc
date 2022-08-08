@@ -5,42 +5,30 @@ setopt autocd beep extendedglob nomatch
 bindkey -e
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
-zstyle :compinstall filename '/home/marco/.zshrc'
+zstyle :compinstall filename '~/.zshrc'
 
 # Enable asdf
 . $HOME/.asdf/asdf.sh
-# append asdf completions to fpath
+# append completions to fpath
 fpath=(${ASDF_DIR}/completions $fpath)
 
-# Enable pure prompt
-fpath+=('/usr/local/lib/node_modules/pure-prompt/functions')
-autoload -U promptinit; promptinit
-prompt pure
-
-# Smarter git checkout
-gch() {
- git switch "$(git branch --all | fzf| tr -d '[:space:]')"
-}
-
-# Set $JAVA_HOME from asdf
-. ~/.asdf/plugins/java/set-java-home.zsh
-
-# Load autojump (necessary only for debian-based linux distros)
-if apt --version &> /dev/null; then
-    . /usr/share/autojump/autojump.sh
-fi
-# Load autojump for zsh on macos, for autojump installed via brew
-if [[ "$(uname)" == "Darwin" ]]; then
-  [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
-fi
+# # Set $JAVA_HOME from asdf
+# . ~/.asdf/plugins/java/set-java-home.zsh
 
 autoload -Uz compinit
 compinit
+
+# Load zsh-autosuggestions
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 alias doom=~/.config/emacs/bin/doom
 alias vim=nvim
 
 eval "$(direnv hook zsh)"
+
+eval "$(zoxide init zsh)"
+
+source $HOME/.cargo/env
 
 # When inside Emacs, move to project root
 # (by default DOOM Emacs opens the terminal in the buffer dir)
@@ -50,14 +38,10 @@ if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
   fi
 fi
 
-export EDITOR=vim
+# Enable starship as prompt
+eval "$(starship init zsh)"
 
-# Android dev
-export ANDROID_HOME=$HOME/Library/Android/sdk
-export PATH=$PATH:$ANDROID_HOME/emulator
-export PATH=$PATH:$ANDROID_HOME/tools
-export PATH=$PATH:$ANDROID_HOME/tools/bin
-export PATH=$PATH:$ANDROID_HOME/platform-tools
+export EDITOR=vim
 
 # Install erlang with documentation
 export KERL_BUILD_DOCS=yes
@@ -66,13 +50,12 @@ export KERL_BUILD_DOCS=yes
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [[ /usr/local/bin/kubectl ]] && source <(kubectl completion zsh)
 
-# Python bins (ie. poetry)
-export PATH=$PATH:/Users/marco/Library/Python/3.9/bin
+# Personal bins
+export PATH=$PATH:$HOME/.bin
 
-alias dcr='docker-compose run -d --rm --service-ports'
+alias dc='docker compose'
+alias dcr='dc run -d --rm --service-ports'
 
-source ~/.zshrc-prima
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$HOME/.local/bin:$PATH"
 
-export PATH="/usr/local/opt/openssl@3/bin":$PATH
-export PATH=/Users/marco/.bin/elixir-ls:$PATH
 export SAM_CLI_TELEMETRY=0
