@@ -17,11 +17,10 @@
 ;;   presentations or streaming.
 ;; - `doom-unicode-font' -- for unicode glyphs
 ;; - `doom-serif-font' -- for the `fixed-pitch-serif' face
-;;
-;; Double font size on Linux (currently disabled)
-(let* ((font-size 25))
-  (setq doom-font (font-spec :family "Fira Code" :size font-size :weight 'semi-light)
-        doom-variable-pitch-font (font-spec :family "Fira Sans" :size font-size)))
+(let* ((font-size 30))
+  (setq doom-font (font-spec :family "FiraCode Nerd Font" :size font-size :weight 'semi-light))
+  doom-font (font-spec :family "FiraCode Nerd Font" :size font-size :weight 'semi-light)
+        doom-variable-pitch-font (font-spec :family "Fira Sans" :size font-size))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -76,7 +75,10 @@
 ;; Packages
 (use-package! ace-window :commands ace-window)
 
-(use-package! ranger :commands ranger)
+;; Customize dirvish
+(after! dirvish
+  (setq dirvish-hide-details t)
+  (setq dirvish-attributes 'all-the-icons))
 
 (use-package! dashboard
   :init
@@ -99,9 +101,7 @@
   (setq lsp-file-watch-threshold 2000)
   (setq lsp-rust-analyzer-server-display-inlay-hints t)
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\target\\'")
-  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\target-docker\\'")
-  )
-
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\target-docker\\'"))
 
 ;; Which key
 (setq which-key-use-C-h-commands t)
@@ -110,15 +110,11 @@
 (setq projectile-auto-discover t)
 (setq projectile-project-search-path '("~/Workspace"))
 
-;; Customize Ranger
-(setq ranger-show-hidden t)
-(setq ranger-max-preview-size 1) ;; MB - Lower max size for preview in Ranger
-(setq ranger-preview-delay 0.5) ;; seconds
-
 ;; Custom keymaps
-(map! :nv "SPC e e" #'ranger) ;; ranger with SPC e e
+(map! :nv "SPC e e" #'dirvish) ;; dirvish with SPC e e
 (define-key evil-window-map (kbd "w") 'ace-window) ;; ace-window with SPC w w
 (define-key evil-normal-state-map (kbd "C-/") 'evilnc-comment-or-uncomment-lines) ;; comment with C-/
+(define-key doom-leader-code-map (kbd "X") 'flycheck-explain-error-at-point)
 
 ;; unmap C-RET and C-S-RET, as they overlap with useful ORG mode commands
 ;; and I never used them anyway
@@ -135,8 +131,8 @@
 (after! org
   (setq org-log-done 'time) ;; set timestamp when closing TODO item
   (setq org-todo-keywords
-        '((sequence "TODO(t)" "WIP(w)" "BLOCKED(b)" "|" "DONE(d)" "KILLED(k)" "POSTPONED(p)")))
-  )
+        '((sequence "TODO(t)" "WIP(w)" "BLOCKED(b)" "|" "DONE(d)" "KILLED(k)" "POSTPONED(p)"))))
+  
 
 (setq company-global-modes '(not org-mode)) ;; disable company-mode for org-mode
 
@@ -144,6 +140,9 @@
 (use-package! anki-editor
   :config
   (setq anki-editor-create-decks 't))
+
+;; docker
+(after! docker (setq docker-compose-command "docker compose"))
 
 ;; Treesitter related stuff
 ;; TODO: Add rust and elixir to tree-edit
@@ -188,8 +187,8 @@
         (lambda (packages)
           (apply-to-mix-package-among
            packages
-           (lambda (package) (do-hex-info (cdr (assoc 'name package)))))
-          )))
+           (lambda (package) (do-hex-info (cdr (assoc 'name package))))))))
+          
 
 (defun hex-info (package-name) "Show info about Hex package PACKAGE-NAME." (interactive "sPackage name: ")
        (do-hex-info package-name))
@@ -199,72 +198,72 @@
     :parser 'json-read
     :status-code '((404 . (lambda (&rest _) (message "Package not found."))))
     :success (cl-function
-              (lambda (&key data &allow-other-keys) (funcall success-callback data)))
-    ))
+              (lambda (&key data &allow-other-keys) (funcall success-callback data)))))
+    
 
 (defun do-hex-info (package-name) "Show info of Hex package PACKAGE-NAME."
   (get-hex-info
    package-name
    (lambda (package-data)
      (let ((buffer-name (concat "*hex-info-" package-name "*")))
-     (with-output-to-temp-buffer buffer-name
-       (princ (string-quote (cdr (assoc 'name package-data))))
-       (princ (concat " - " (cdr (assoc 'description (cdr (assoc 'meta package-data))))))
-       (princ "\n\nInfo:")
+      (with-output-to-temp-buffer buffer-name
+        (princ (string-quote (cdr (assoc 'name package-data))))
+        (princ (concat " - " (cdr (assoc 'description (cdr (assoc 'meta package-data))))))
+        (princ "\n\nInfo:")
 
-       (princ "\n\tLicenses:       ")
-       (princ (mapconcat
-               (lambda (license) (string-quote license))
-               (cdr (assoc 'licenses (cdr (assoc 'meta package-data))))
-               ", "))
+        (princ "\n\tLicenses:       ")
+        (princ (mapconcat
+                (lambda (license) (string-quote license))
+                (cdr (assoc 'licenses (cdr (assoc 'meta package-data))))
+                ", "))
 
-       (princ "\n\tLatest version: ")
-       (princ (string-quote (cdr (assoc 'latest_stable_version package-data))))
+        (princ "\n\tLatest version: ")
+        (princ (string-quote (cdr (assoc 'latest_stable_version package-data))))
 
-       (princ "\n\tOwners:         ")
-       (princ (mapconcat
-               (lambda (owner-data) (string-quote (cdr (assoc 'username owner-data))))
-               (cdr (assoc 'owners package-data))
-               ", "))
-
-
-       (princ (concat "\n\nConfig:"))
-       (princ (concat "\n\t"))
-       (princ (mapconcat
-               (lambda (config) (concat (symbol-name (car config)) ": " (string-quote (cdr config))))
-               (cdr (assoc 'configs package-data))
-               "\n\t"))
+        (princ "\n\tOwners:         ")
+        (princ (mapconcat
+                (lambda (owner-data) (string-quote (cdr (assoc 'username owner-data))))
+                (cdr (assoc 'owners package-data))
+                ", "))
 
 
-       ;; TODO align values
-       (princ "\n\nLinks:")
-       (let* ((package-custom-links (cdr (assoc 'links (cdr (assoc 'meta package-data)))))
-              (links (append
-                      `((Hex . ,(cdr (assoc 'html_url package-data)))
-                        (Docs . ,(cdr (assoc 'docs_html_url package-data))))
-                      package-custom-links)))
-         (princ "\n\t")
-         (princ (mapconcat (lambda (link) (concat (symbol-name (car link)) ": " (string-quote (cdr link)))) links "\n\t"))
-         )
+        (princ (concat "\n\nConfig:"))
+        (princ (concat "\n\t"))
+        (princ (mapconcat
+                (lambda (config) (concat (symbol-name (car config)) ": " (string-quote (cdr config))))
+                (cdr (assoc 'configs package-data))
+                "\n\t"))
 
-       (princ "\n\nDownloads:")
-       (princ "\n\tAll:    ")
-       (princ (cdr (assoc 'all (cdr (assoc 'downloads package-data)))))
-       (princ "\n\tRecent: ")
-       (princ (cdr (assoc 'recent (cdr (assoc 'downloads package-data)))))
 
-       (princ "\n\nReleases:")
-       (princ "\n\t")
-       (princ (mapconcat (lambda (release) (concat
-                                            (string-quote (cdr (assoc 'version release)))
-                                            " ("
-                                            (format-time-string "%F" (encode-time (iso8601-parse (cdr (assoc 'inserted_at release)))))
-                                            ") - "
-                                            (string-quote (cdr (assoc 'url release)))
-                                            ))
-                         (cdr (assoc 'releases package-data))
-                         "\n\t"))
-       )))))
+        ;; TODO align values
+        (princ "\n\nLinks:")
+        (let* ((package-custom-links (cdr (assoc 'links (cdr (assoc 'meta package-data)))))
+               (links (append
+                       `((Hex . ,(cdr (assoc 'html_url package-data)))
+                         (Docs . ,(cdr (assoc 'docs_html_url package-data))))
+                       package-custom-links)))
+          (princ "\n\t")
+          (princ (mapconcat (lambda (link) (concat (symbol-name (car link)) ": " (string-quote (cdr link)))) links "\n\t")))
+         
+
+        (princ "\n\nDownloads:")
+        (princ "\n\tAll:    ")
+        (princ (cdr (assoc 'all (cdr (assoc 'downloads package-data)))))
+        (princ "\n\tRecent: ")
+        (princ (cdr (assoc 'recent (cdr (assoc 'downloads package-data)))))
+
+        (princ "\n\nReleases:")
+        (princ "\n\t")
+        (princ (mapconcat (lambda (release) (concat
+                                             (string-quote (cdr (assoc 'version release)))
+                                             " ("
+                                             (format-time-string "%F" (encode-time (iso8601-parse (cdr (assoc 'inserted_at release)))))
+                                             ") - "
+                                             (string-quote (cdr (assoc 'url release)))))
+                                            
+                          (cdr (assoc 'releases package-data))
+                          "\n\t")))))))
+       
 
 
 (defun string-quote (text) (concat "`" text "'"))
@@ -277,8 +276,8 @@
          (meta (cdr (assoc 'meta package-data)))
          (description (cdr (assoc 'description meta)))
          (configs (cdr (assoc 'configs package-data)))
-         (mix (cdr (assoc 'mix.exs configs)))
-         )
+         (mix (cdr (assoc 'mix.exs configs))))
+         
     `((name . ,name) (description . ,description) (mix . ,mix))))
 
 (defun mix-search (name success-callback)
@@ -288,9 +287,8 @@
     :success (cl-function
               (lambda (&key data &allow-other-keys)
                 (let ((packages (cl-map 'vector 'search-result-package-info data)))
-                  (funcall success-callback packages)
-                  ))
-              )))
+                  (funcall success-callback packages))))))
+                  
 
 (defun do-mix-add (name)
   (mix-search name (lambda (found-packages) (add-mix-package-among found-packages))))
@@ -316,8 +314,8 @@
          (annotation-function (apply-partially #'annotate-choices completions (annotations-padding completions)))
          (completion-extra-properties `(:annotation-function ,annotation-function))
          (package-name (completing-read "Choose: " completions nil t))
-         (package-info (cdr (assoc package-name completions)))
-         )
+         (package-info (cdr (assoc package-name completions))))
+         
     package-info))
 
 (defun annotations-padding (completions)
@@ -328,20 +326,20 @@
   (let* ((candidate-info (cdr (assoc candidate completions)))
          (candidate-description (cdr (assoc 'description candidate-info)))
          (normalized-description (replace-regexp-in-string (regexp-quote "\n") " " candidate-description nil 'literal))
-         (margin (make-string (- padding (length candidate)) ? )))
+         (margin (make-string (- padding (length candidate)) ?\ )))
     (concat " " margin normalized-description)))
 
 (defun add-mix-package-among (packages)
-  (apply-to-mix-package-among packages 'do-add-mix-package)
-  )
+  (apply-to-mix-package-among packages 'do-add-mix-package))
+  
 
 (defun apply-to-mix-package-among (packages callback)
   "Apply a function over the given mix package. If multiple packages are supplied, asks user for selection of a single one."
   (cond
    ((= 0 (length packages)) (message "No such package found!"))
    ((= 1 (length packages)) (funcall callback (aref packages 0)))
-   (t (funcall callback (choose-package packages)))
-   ))
+   (t (funcall callback (choose-package packages)))))
+   
 
 (defun do-add-mix-package (package)
   (let ((mix (cdr (assoc 'mix package))))
@@ -350,37 +348,3 @@
     (insert mix)
     (insert ",")))
 
-
-;;;;;;;;;;;;;;;;;;;
-;; PRODIGY STUFF ;;
-;;;;;;;;;;;;;;;;;;;
-
-(prodigy-define-service
-  :name "Lira"
-  :command "docker"
-  :args '("compose" "run" "--rm" "--service-ports" "web" "sh -c \"cargo make db-reset && cargo make run\"")
-  :cwd "~/Workspace/Prima/lira"
-  :tags '(work)
-  :ready-message "Starting [0-9]+ workers"
-  :url "http://localhost:3102/"
-  :stop-signal 'sigterm
-  :kill-process-buffer-on-stop t)
-
-(prodigy-define-service
-  :name "PG Frontend"
-  :command "docker"
-  :args '("compose" "up")
-  :cwd "~/Workspace/Prima/platform-global-fe"
-  :tags '(work)
-  :ready-message "Project is running at"
-  :stop-signal 'sigterm
-  :kill-process-buffer-on-stop t)
-
-(prodigy-define-service
-  :name "PG Backend"
-  :command "docker"
-  :args '("compose" "run" "--rm" "--service-ports" "web" "sh -c \"cargo make run\"")
-  :cwd "~/Workspace/Prima/platform-global"
-  :tags '(work)
-  :stop-signal 'sigterm
-  :kill-process-buffer-on-stop t)
