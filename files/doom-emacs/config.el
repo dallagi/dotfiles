@@ -17,7 +17,7 @@
 ;;   presentations or streaming.
 ;; - `doom-unicode-font' -- for unicode glyphs
 ;; - `doom-serif-font' -- for the `fixed-pitch-serif' face
-(let* ((font-size 30))
+(let* ((font-size 36))
   (setq doom-font (font-spec :family "FiraCode Nerd Font" :size font-size :weight 'semi-light))
   doom-font (font-spec :family "FiraCode Nerd Font" :size font-size :weight 'semi-light)
         doom-variable-pitch-font (font-spec :family "Fira Sans" :size font-size))
@@ -78,7 +78,8 @@
 ;; Customize dirvish
 (after! dirvish
   (setq dirvish-hide-details t)
-  (setq dirvish-attributes 'all-the-icons))
+  (setq dirvish-attributes 'all-the-icons)
+  (setq dired-omit-files "\\`[.]?#\\|\\`[.][.]?\\'"))
 
 (use-package! dashboard
   :init
@@ -100,6 +101,8 @@
   (setq lsp-auto-execute-action nil)
   (setq lsp-file-watch-threshold 2000)
   (setq lsp-rust-analyzer-server-display-inlay-hints t)
+  (setq lsp-rust-analyzer-import-prefix "by_crate")
+  (setq lsp-rust-analyzer-max-inlay-hint-length 20)
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\target\\'")
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\target-docker\\'"))
 
@@ -348,3 +351,4 @@
     (insert mix)
     (insert ",")))
 
+(setq org-clock-sound t)

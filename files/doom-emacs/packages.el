@@ -54,5 +54,6 @@
 
 (package! anki-editor)
 
+(package! string-inflection)
 
 (package! request)
