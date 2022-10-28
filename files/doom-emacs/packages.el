@@ -57,3 +57,9 @@
 (package! string-inflection)
 
 (package! request)
+
+(package! protobuf-mode)
+
+(package! mermaid-mode) ;; mermaid charts support
+
+(package! feature-mode) ;; cucumber tests support

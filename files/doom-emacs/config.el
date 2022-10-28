@@ -17,7 +17,7 @@
 ;;   presentations or streaming.
 ;; - `doom-unicode-font' -- for unicode glyphs
 ;; - `doom-serif-font' -- for the `fixed-pitch-serif' face
-(let* ((font-size 36))
+(let* ((font-size 34))
   (setq doom-font (font-spec :family "FiraCode Nerd Font" :size font-size :weight 'semi-light))
   doom-font (font-spec :family "FiraCode Nerd Font" :size font-size :weight 'semi-light)
         doom-variable-pitch-font (font-spec :family "Fira Sans" :size font-size))
@@ -72,6 +72,10 @@
 ;; Note that height is given in units of 1/10th of point, so 150 -> 15pt
 (setq +modeline-height 18)
 
+;; Enable auto-save and backup files
+(setq auto-save-default t
+      make-backup-files t)
+
 ;; Packages
 (use-package! ace-window :commands ace-window)
 
@@ -112,12 +116,17 @@
 ;; Projectile
 (setq projectile-auto-discover t)
 (setq projectile-project-search-path '("~/Workspace"))
+(setq projectile-enable-caching nil)
 
 ;; Custom keymaps
-(map! :nv "SPC e e" #'dirvish) ;; dirvish with SPC e e
-(define-key evil-window-map (kbd "w") 'ace-window) ;; ace-window with SPC w w
-(define-key evil-normal-state-map (kbd "C-/") 'evilnc-comment-or-uncomment-lines) ;; comment with C-/
-(define-key doom-leader-code-map (kbd "X") 'flycheck-explain-error-at-point)
+(map! :leader :nv :desc "Run dirvish" "e e" #'dirvish) ;; dirvish with SPC e e
+(map! :leader :desc "Explain error at point" "c X" #'flycheck-explain-error-at-point)
+(map! :desc "Comment or uncomment lines" "C-/" #'evilnc-comment-or-uncomment-lines)
+
+;; Explicitly use flycheck to move between errors
+;; The standard way doesn't seem to work reliably
+(define-key evil-motion-state-map (kbd "] e") #'flycheck-next-error)
+(define-key evil-motion-state-map (kbd "[ e") #'flycheck-previous-error)
 
 ;; unmap C-RET and C-S-RET, as they overlap with useful ORG mode commands
 ;; and I never used them anyway
@@ -165,6 +174,36 @@
 
 ;; Remove doom-specific title
 (setq frame-title-format "%b – Emacs")
+
+;; Python
+;; Override 'poetry-tracking-mode to prevent doom from enabling it
+(advice-add 'poetry-tracking-mode :override (lambda () ()))
+
+;; Custom function to reload poetry environment
+;; Taken from https://github.com/cybniv/poetry.el/issues/39
+(defun my/reload-poetry-venv ()
+  "Update Python Poetry Virtual Environment"
+  (interactive)
+
+  ; Deactivate the current environment
+  (pyvenv-deactivate)
+
+  ; Reset internal poetry configs to trigger a reload of the current project
+  (setq poetry-project-venv nil)
+  (setq poetry-project-root nil)
+  (setq poetry-project-name nil)
+  (setq poetry-saved-venv nil)
+
+  ; Re-deduce our project directory and venv, and activate it.
+  (poetry-venv-workon)
+
+  ; Reload language server to use the new venv
+  (lsp-restart-workspace))
+
+
+(map! :leader
+      :desc "Update Python Poetry Virtual Environment"
+      "p u" 'my/reload-poetry-venv)
 
 ;; Mail
 ;; recommended by doom emacs documentation
