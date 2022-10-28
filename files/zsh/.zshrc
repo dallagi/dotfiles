@@ -41,7 +41,7 @@ fi
 # Enable starship as prompt
 eval "$(starship init zsh)"
 
-export EDITOR=vim
+export EDITOR=nvim
 
 # Install erlang with documentation
 export KERL_BUILD_DOCS=yes
