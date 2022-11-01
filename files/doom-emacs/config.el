@@ -175,6 +175,9 @@
 ;; Remove doom-specific title
 (setq frame-title-format "%b – Emacs")
 
+;; Live preview in project search
+(map! :leader "/" #'+vertico/project-search :desc "Search project")
+
 ;; Python
 ;; Override 'poetry-tracking-mode to prevent doom from enabling it
 (advice-add 'poetry-tracking-mode :override (lambda () ()))
