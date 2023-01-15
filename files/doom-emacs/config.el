@@ -99,7 +99,9 @@
         lsp-file-watch-threshold 2000
         lsp-rust-analyzer-server-display-inlay-hints t
         lsp-rust-analyzer-import-prefix "by_crate"
-        lsp-rust-analyzer-max-inlay-hint-length 20)
+        lsp-rust-analyzer-max-inlay-hint-length 20
+        lsp-rust-analyzer-display-reborrow-hints "never"
+        lsp-rust-analyzer-server-display-inlay-hints nil)
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\target\\'")
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\target-docker\\'"))
 
