@@ -26,8 +26,9 @@ Setup evil and evil-collections.
    (use-package evil
     :ensure t
     :init
-    (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
-    (setq evil-want-keybinding nil)
+    (setq evil-want-keybinding nil) ;; Expected by evil-collection
+    (setq evil-want-integration t) ;; Expected by evil-collection
+    (setq evil-want-C-u-scroll t) ;; Keep vim behavior for C-u
     :config
     (evil-mode 1))
 
@@ -121,7 +122,6 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
 
 ** Font
 #+begin_src emacs-lisp
-
   ;; Font
   (set-face-attribute 'default nil
                        :font "Fira Code Retina"
@@ -139,10 +139,24 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
                     :height 120)
 #+end_src
 
+** Line numbers
+#+begin_src emacs-lisp
+  (global-display-line-numbers-mode t)
+
+  ;; Disable line numbers for some modes
+  (dolist (mode '(term-mode-hook
+		  shell-mode-hook
+		  eshell-mode-hook))
+    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+#+end_src
 ** Modeline
 #+begin_src emacs-lisp
+  ;; Diminish minor modes
   (use-package diminish
     :ensure t
     :config
     (diminish 'auto-revert-mode))
+
+  ;; Show column number
+  (column-number-mode) 
 #+end_src
