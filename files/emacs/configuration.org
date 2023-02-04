@@ -1,0 +1,137 @@
+* Package management
+Setup melpa.
+
+#+begin_src emacs-lisp
+  (require 'package)
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+  (package-initialize)
+#+end_src
+
+* Basic UX
+#+begin_src emacs-lisp
+  ;; Use y-n instead of yes-no
+  (setq use-short-answers t)
+
+  ;; Setup visible bell and disable sound bell
+  (setq visible-bell t)
+
+  ;; don't show warning buffer when native-comp warnings are logged
+  (setq native-comp-async-report-warnings-errors 'silent)
+#+end_src
+
+* Evil
+Setup evil and evil-collections.
+
+#+begin_src emacs-lisp
+   (use-package evil
+    :ensure t
+    :init
+    (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
+    (setq evil-want-keybinding nil)
+    :config
+    (evil-mode 1))
+
+  (use-package evil-collection
+    :after evil
+    :ensure t
+    :config
+    (evil-collection-init)) 
+#+end_src
+
+* Git
+#+begin_src emacs-lisp
+  (use-package magit
+    :ensure t
+    :init
+    ;; display magit status buffer in full screen
+    (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
+#+end_src
+* Keep folders clean
+Keep backups, autosaves, etc. in their own directory, in order not to clutter emacs config directory.org
+
+#+begin_src emacs-lisp
+  (use-package no-littering
+    :ensure t
+    :init
+    ;; no-littering doesn't set this by default so we must place
+    ;; auto save files in the same path as it uses for sessions
+    (setq auto-save-file-name-transforms
+	  `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+    )
+#+end_src
+* Keybinds
+#+begin_src emacs-lisp
+  (use-package which-key
+    :ensure t
+    :init (which-key-mode)
+    :diminish which-key-mode
+    :config
+    (setq which-key-idle-delay 1))
+
+  (use-package general
+    :ensure t
+    :config
+    (general-override-mode) ;; allow overriding key definitions
+    (general-create-definer my-leader-def :prefix "SPC")
+    (my-leader-def
+      :states '(motion normal visual)
+      :keymaps 'override
+
+      "g" '(:ignore t :which-key "Git")
+      "gg" '(magit-status :which-key "Magit status")
+      ))
+#+end_src
+
+* Org
+#+begin_src emacs-lisp
+  (use-package evil-org
+    :ensure t
+    :after org
+    :diminish evil-org
+    :hook (org-mode . (lambda () (evil-org-mode)))
+    :config
+    (require 'evil-org-agenda)
+    (evil-org-agenda-set-keys))
+#+end_src
+
+* UI
+** Keep minimal UI elements
+
+#+begin_src emacs-lisp
+  (setq inhibit-startup-message t) ; Disable emacs welcome screen
+  (scroll-bar-mode -1)             ; Disable visible scrollbar
+  (tool-bar-mode -1)               ; Disable the toolbar
+  (tooltip-mode -1)                ; Disable tooltips
+  (menu-bar-mode -1)               ; Disable the menu bar
+#+end_src
+
+** Theme
+#+begin_src emacs-lisp
+  (setq custom-safe-themes t)   ; Treat all themes as safe
+
+  (use-package color-theme-sanityinc-tomorrow
+      :ensure t
+      :config
+      (color-theme-sanityinc-tomorrow-night))
+#+end_src
+
+** Font
+#+begin_src emacs-lisp
+
+  ;; Font
+  (set-face-attribute 'default nil
+                       :font "Fira Code Retina"
+                       :weight 'regular
+                       :height 120)
+
+  (set-face-attribute 'fixed-pitch nil
+                    :font "Fira Code Retina"
+                    :weight 'regular
+                    :height 120)
+
+  (set-face-attribute 'variable-pitch nil
+                    :font "Fira Sans"
+                    :weight 'regular
+                    :height 120)
+#+end_src
+
