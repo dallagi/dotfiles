@@ -34,12 +34,16 @@ Setup evil and evil-collections.
   (use-package evil-collection
     :after evil
     :ensure t
+    :diminish (evil-collection-unimpaired-mode . "")
     :config
     (evil-collection-init)) 
 #+end_src
 
 * Git
 #+begin_src emacs-lisp
+  ;; follow symlinks, instead of opening the symlink directly
+  (setq vc-follow-symlinks t)
+
   (use-package magit
     :ensure t
     :init
@@ -64,7 +68,7 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
   (use-package which-key
     :ensure t
     :init (which-key-mode)
-    :diminish which-key-mode
+    :diminish ""
     :config
     (setq which-key-idle-delay 1))
 
@@ -87,7 +91,7 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
   (use-package evil-org
     :ensure t
     :after org
-    :diminish evil-org
+    :diminish ""
     :hook (org-mode . (lambda () (evil-org-mode)))
     :config
     (require 'evil-org-agenda)
@@ -135,3 +139,10 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
                     :height 120)
 #+end_src
 
+** Modeline
+#+begin_src emacs-lisp
+  (use-package diminish
+    :ensure t
+    :config
+    (diminish 'auto-revert-mode))
+#+end_src
