@@ -48,10 +48,20 @@ Setup evil and evil-collections.
       :states '(motion normal visual)
       :keymaps 'override
 
-      "g" '(:ignore t :which-key "Git")
-      "gg" '(magit-status :which-key "Magit status")
+      ":" '(execute-extended-command :which-key "M-x")
       ))
 #+end_src
+
+** Snippets
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :ensure t
+    :hook ((lsp-mode . yas-minor-mode))
+    :config (yas-global-mode 1))
+
+  (use-package yasnippet-snippets :ensure t)
+#+end_src
+
 
 * Git
 #+begin_src emacs-lisp
@@ -62,7 +72,16 @@ Setup evil and evil-collections.
     :ensure t
     :init
     ;; display magit status buffer in full screen
-    (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
+    (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
+
+    :general
+    (my-leader-def
+      :states '(motion normal visual)
+      :keymaps 'override
+
+      "g" '(:ignore t :which-key "Git")
+      "gg" '(magit-status :which-key "Magit status")
+      ))
 #+end_src
 * Config files management
 Keep backups, autosaves, etc. in their own directory, in order not to clutter emacs config directory.org
@@ -89,6 +108,10 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
 
   ;; don't show warning buffer when native-comp warnings are logged
   (setq native-comp-async-report-warnings-errors 'silent)
+
+  ;; Enable recursive minibuffers
+  ;; Useful when something needs to open a minibuffer within the minibuffer
+  (setq enable-recursive-minibuffers t)
 #+end_src
 
 ** Keep minimal UI elements
@@ -140,6 +163,35 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
 		  eshell-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 #+end_src
+
+** Vertical selection
+#+begin_src emacs-lisp
+  (use-package vertico
+    :ensure t
+    :bind (:map vertico-map
+		("C-j" . vertico-next)
+		("C-k" . vertico-previous))
+    :custom
+    (vertico-cycle t) ;; cycle among results - go back to beginning once bottom is reached
+    :init
+    (vertico-mode))
+
+  (use-package orderless
+    :ensure t
+    :after vertico
+    :init
+    (setq completion-styles '(orderless basic)
+	  completion-category-defaults nil
+	  ;; allow opening multiple files via wildcard
+	  completion-category-overrides '((file (styles partial-completion)))))
+
+  (use-package marginalia
+    :ensure t
+    :after vertico
+    :init
+    (marginalia-mode))
+#+end_src
+
 ** Modeline
 #+begin_src emacs-lisp
   ;; Diminish minor modes
@@ -172,6 +224,8 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
     (my-leader-def
       :states '(motion normal visual)
       :keymaps 'override
+
+      "SPC" '(projectile-find-file :which-key "Find file in project")
 
       "p" '(:ignore t :which-key "Project")
       "pa" '(projectile-add-known-project :which-key "Add known project")
