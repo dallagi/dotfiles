@@ -21,7 +21,7 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 ;;
-(let* ((font-size 15))
+(let* ((font-size 30))
   (setq doom-font (font-spec :family "Fira Code" :size font-size :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "Fira Sans" :size font-size)))
 
@@ -34,7 +34,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-tomorrow-night)
+(setq doom-theme 'doom-solarized-light)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -86,12 +86,11 @@
         dirvish-attributes 'all-the-icons
         dired-omit-files "\\`[.]?#\\|\\`[.][.]?\\'"))
 
-(use-package! dashboard
-  :init
-  (setq dashboard-items '((agenda  . 5) (projects . 5))
-        dashboard-startup-banner 2)
-  :config
-  (dashboard-setup-startup-hook))
+;; (use-package! dashboard
+;;    :init
+;;    (setq dashboard-items '((agenda  . 5) (projects . 5))
+;;          dashboard-startup-banner 2
+;;    (dashboard-setup-startup-hook)))
 
 ;; LSP
 (with-eval-after-load 'lsp-mode
