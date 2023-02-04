@@ -152,6 +152,37 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
   (column-number-mode) 
 #+end_src
 
+* Files and projects
+** Projects
+
+#+begin_src emacs-lisp
+  (use-package projectile
+    :ensure t
+
+    :init
+    (projectile-mode +1)
+    (setq
+     projectile-project-search-path '(("~/Workspace" . 2))
+     projectile-auto-discover t)
+
+    :config
+    ;; (define-key projectile-mode-map (kbd "SPC p") 'projectile-command-map)
+
+    :general
+    (my-leader-def
+      :states '(motion normal visual)
+      :keymaps 'override
+
+      "p" '(:ignore t :which-key "Project")
+      "pa" '(projectile-add-known-project :which-key "Add known project")
+      "pi" '(projectile-invalidate-cache :which-key "Invalidate cache")
+      "pp" '(projectile-switch-project :which-key "Switch project")
+      "px" '(:keymap projectile-command-map :whick-key "Projectile commands")
+      ))
+
+  (use-package rg :ensure t)
+#+end_src
+
 * Languages
 ** Org
 #+begin_src emacs-lisp
