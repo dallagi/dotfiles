@@ -7,19 +7,8 @@ Setup melpa.
   (package-initialize)
 #+end_src
 
-* Basic UX
-#+begin_src emacs-lisp
-  ;; Use y-n instead of yes-no
-  (setq use-short-answers t)
-
-  ;; Setup visible bell and disable sound bell
-  (setq visible-bell t)
-
-  ;; don't show warning buffer when native-comp warnings are logged
-  (setq native-comp-async-report-warnings-errors 'silent)
-#+end_src
-
-* Evil
+* Editor
+** Evil
 Setup evil and evil-collections.
 
 #+begin_src emacs-lisp
@@ -29,6 +18,7 @@ Setup evil and evil-collections.
     (setq evil-want-keybinding nil) ;; Expected by evil-collection
     (setq evil-want-integration t) ;; Expected by evil-collection
     (setq evil-want-C-u-scroll t) ;; Keep vim behavior for C-u
+    (setq evil-undo-system 'undo-redo) ;; Simple undo/redo
     :config
     (evil-mode 1))
 
@@ -40,31 +30,7 @@ Setup evil and evil-collections.
     (evil-collection-init)) 
 #+end_src
 
-* Git
-#+begin_src emacs-lisp
-  ;; follow symlinks, instead of opening the symlink directly
-  (setq vc-follow-symlinks t)
-
-  (use-package magit
-    :ensure t
-    :init
-    ;; display magit status buffer in full screen
-    (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
-#+end_src
-* Keep folders clean
-Keep backups, autosaves, etc. in their own directory, in order not to clutter emacs config directory.org
-
-#+begin_src emacs-lisp
-  (use-package no-littering
-    :ensure t
-    :init
-    ;; no-littering doesn't set this by default so we must place
-    ;; auto save files in the same path as it uses for sessions
-    (setq auto-save-file-name-transforms
-	  `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
-    )
-#+end_src
-* Keybinds
+** Keybinds
 #+begin_src emacs-lisp
   (use-package which-key
     :ensure t
@@ -87,19 +53,44 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
       ))
 #+end_src
 
-* Org
+* Git
 #+begin_src emacs-lisp
-  (use-package evil-org
+  ;; follow symlinks, instead of opening the symlink directly
+  (setq vc-follow-symlinks t)
+
+  (use-package magit
     :ensure t
-    :after org
-    :diminish ""
-    :hook (org-mode . (lambda () (evil-org-mode)))
-    :config
-    (require 'evil-org-agenda)
-    (evil-org-agenda-set-keys))
+    :init
+    ;; display magit status buffer in full screen
+    (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
+#+end_src
+* Config files management
+Keep backups, autosaves, etc. in their own directory, in order not to clutter emacs config directory.org
+
+#+begin_src emacs-lisp
+  (use-package no-littering
+    :ensure t
+    :init
+    ;; no-littering doesn't set this by default so we must place
+    ;; auto save files in the same path as it uses for sessions
+    (setq auto-save-file-name-transforms
+	  `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+    )
+#+end_src
+* Appearance
+** Basic UX
+
+#+begin_src emacs-lisp
+  ;; Use y-n instead of yes-no
+  (setq use-short-answers t)
+
+  ;; Setup visible bell and disable sound bell
+  (setq visible-bell t)
+
+  ;; don't show warning buffer when native-comp warnings are logged
+  (setq native-comp-async-report-warnings-errors 'silent)
 #+end_src
 
-* UI
 ** Keep minimal UI elements
 
 #+begin_src emacs-lisp
@@ -159,4 +150,17 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
 
   ;; Show column number
   (column-number-mode) 
+#+end_src
+
+* Languages
+** Org
+#+begin_src emacs-lisp
+  (use-package evil-org
+    :ensure t
+    :after org
+    :diminish ""
+    :hook (org-mode . (lambda () (evil-org-mode)))
+    :config
+    (require 'evil-org-agenda)
+    (evil-org-agenda-set-keys))
 #+end_src
