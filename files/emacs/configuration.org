@@ -168,9 +168,18 @@ Setup evil and evil-collections.
     :custom
     (lsp-completion-provider :none) ;; we use Corfu!
 
-    :hook ((rust-ts-mode . lsp-deferred)
-	   (lsp-mode . lsp-enable-which-key-integration)
+    :hook ((lsp-mode . lsp-enable-which-key-integration)
 	   (lsp-completion-mode . my/lsp-mode-setup-completion))
+  
+    :general
+    (my-leader-def
+      :states '(motion normal)
+      :keymaps 'override
+
+      "c" '(:ignore t :which-key "Code")
+      "cd" '(lsp-find-definition :which-key "Find definition")
+      "ct" '(lsp-find-type-definition :which-key "Find type definition")
+      "cr" '(lsp-rename :which-key "Rename"))
 
   :commands (lsp lsp-deferred))
 #+end_src
@@ -346,6 +355,7 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
       "pa" '(projectile-add-known-project :which-key "Add known project")
       "pi" '(projectile-invalidate-cache :which-key "Invalidate cache")
       "pp" '(projectile-switch-project :which-key "Switch project")
+      "po" '(projectile-switch-open-project :which-key "Switch to opened project")
       "px" '(:keymap projectile-command-map :whick-key "Projectile commands")
       ))
 
@@ -366,5 +376,8 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
 #+end_src
 ** Rust
 #+begin_src emacs-lisp
-(use-package rust-ts-mode)
+  (use-package rust-ts-mode
+    :mode "\\.rs\\'"
+    :hook
+    (rust-ts-mode . lsp-deferred))
 #+end_src
