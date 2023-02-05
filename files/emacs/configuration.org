@@ -56,7 +56,23 @@ Setup evil and evil-collections.
       :keymaps 'override
 
       ":" '(execute-extended-command :which-key "M-x")
+
+      "f" '(:ignore t :which-key "Files")
       "fp" '(my/open-private-config-file :which-key "Open configuration.org")
+
+      "h" '(:ignore t :which-key "Help")
+      "hf" '(describe-function :which-key "Describe function")
+      "hk" '(describe-key :which-key "Describe key")
+      "hv" '(describe-variable :which-key "Describe variable")
+
+      "w" '(:ignore t :which-key "Window")
+      "wd" '(delete-window :which-key "Delete")
+      "wh" '(windmove-left :which-key "Move left")
+      "wj" '(windmove-down :which-key "Move down")
+      "wk" '(windmove-up :which-key "Move up")
+      "wl" '(windmove-right :which-key "Move right")
+      "wv" '(split-window-right :which-key "Split vertically")
+      "ws" '(split-window-below :which-key "Split horizontally")
       ))
 #+end_src
 
