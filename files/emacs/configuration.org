@@ -19,6 +19,7 @@ Setup evil and evil-collections.
     (setq evil-want-integration t) ;; Expected by evil-collection
     (setq evil-want-C-u-scroll t) ;; Keep vim behavior for C-u
     (setq evil-undo-system 'undo-redo) ;; Simple undo/redo
+    (setq evil-lookup-func 'helpful-at-point) ;; Use helpful for doc at point (K)
     :config
     ;; keep vim-like tab behavior
     (define-key evil-insert-state-map (kbd "TAB") 'tab-to-tab-stop)
@@ -60,11 +61,6 @@ Setup evil and evil-collections.
 
       "f" '(:ignore t :which-key "Files")
       "fp" '(my/open-private-config-file :which-key "Open configuration.org")
-
-      "h" '(:ignore t :which-key "Help")
-      "hf" '(describe-function :which-key "Describe function")
-      "hk" '(describe-key :which-key "Describe key")
-      "hv" '(describe-variable :which-key "Describe variable")
 
       "w" '(:ignore t :which-key "Window")
       "wd" '(delete-window :which-key "Delete")
@@ -160,6 +156,9 @@ Setup evil and evil-collections.
 #+begin_src emacs-lisp
   (use-package lsp-mode
     :ensure t
+    :hook
+    ((lsp-mode . (lambda () (setq-local evil-lookup-func #'lsp-describe-thing-at-point)))
+     (lsp-mode . lsp-enable-which-key-integration))
     :init
     (setq lsp-keymap-prefix "C-c l")
     (defun my/lsp-mode-setup-completion ()
@@ -363,6 +362,22 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 
   ;; Show column number
   (column-number-mode) 
+#+end_src
+
+** Helpful
+#+begin_src emacs-lisp
+  (use-package helpful
+    :ensure t
+
+    :general
+    (my-leader-def
+      :states '(motion normal visual)
+      :keymaps 'override
+
+      "h" '(:ignore t :which-key "Help")
+      "hf" '(helpful-function :which-key "Describe function")
+      "hk" '(helpful-key :which-key "Describe key")
+      "hv" '(helpful-variable :which-key "Describe variable")))
 #+end_src
 
 * Projects and files
