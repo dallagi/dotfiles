@@ -57,6 +57,7 @@ Setup evil and evil-collections.
 
       ":" '(execute-extended-command :which-key "M-x")
 
+
       "f" '(:ignore t :which-key "Files")
       "fp" '(my/open-private-config-file :which-key "Open configuration.org")
 
@@ -167,21 +168,43 @@ Setup evil and evil-collections.
 	    '(orderless)))
     :custom
     (lsp-completion-provider :none) ;; we use Corfu!
+    (lsp-auto-execute-action nil) ;; always list code actions before executing them
+    (lsp-lens-enable nil)
+    (lsp-headerline-breadcrumb-enable nil)
 
     :hook ((lsp-mode . lsp-enable-which-key-integration)
 	   (lsp-completion-mode . my/lsp-mode-setup-completion))
-  
+
     :general
     (my-leader-def
       :states '(motion normal)
       :keymaps 'override
 
       "c" '(:ignore t :which-key "Code")
+      "ca" '(lsp-execute-code-action :which-key "Code action")
       "cd" '(lsp-find-definition :which-key "Find definition")
       "ct" '(lsp-find-type-definition :which-key "Find type definition")
       "cr" '(lsp-rename :which-key "Rename"))
 
-  :commands (lsp lsp-deferred))
+    :commands (lsp lsp-deferred))
+#+end_src
+
+** Autosave and format
+Save files when they lose focus, and autoformat on save
+
+#+begin_src emacs-lisp
+  (use-package super-save
+    :ensure t
+    :diminish ""
+    :config
+    (super-save-mode +1))
+
+  (use-package format-all
+    :ensure t
+    :hook
+    ;; enable for most programming languages
+    (prog-mode . format-all-mode)
+    (format-all-mode . format-all-ensure-formatter))
 #+end_src
 
 * Git
@@ -277,6 +300,20 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
                     :height 120)
 #+end_src
 
+** Icons
+Remember to run ~M-x all-the-icons-install-fonts~ the first time!
+
+#+begin_src emacs-lisp
+  (use-package all-the-icons :ensure t)
+
+  ;; Icons in completions (eg. vertico)
+  (use-package all-the-icons-completion
+    :ensure t
+    :after (marginalia all-the-icons)
+    :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
+    :init
+    (all-the-icons-completion-mode))
+#+end_src
 ** Line numbers
 #+begin_src emacs-lisp
   (global-display-line-numbers-mode t)
@@ -328,40 +365,27 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
   (column-number-mode) 
 #+end_src
 
-* Files and projects
-** Projects
-
+* Projects and files
 #+begin_src emacs-lisp
-  (use-package projectile
+  (use-package rg :ensure t)
+
+  (use-package project
     :ensure t
+  
 
-    :init
-    (projectile-mode +1)
-    (setq
-     projectile-project-search-path '(("~/Workspace" . 2))
-     projectile-auto-discover t)
-
-    :config
-    ;; (define-key projectile-mode-map (kbd "SPC p") 'projectile-command-map)
+    :custom
+    (project-switch-commands 'project-find-file)
 
     :general
     (my-leader-def
       :states '(motion normal visual)
       :keymaps 'override
 
-      "SPC" '(projectile-find-file :which-key "Find file in project")
-
       "p" '(:ignore t :which-key "Project")
-      "pa" '(projectile-add-known-project :which-key "Add known project")
-      "pi" '(projectile-invalidate-cache :which-key "Invalidate cache")
-      "pp" '(projectile-switch-project :which-key "Switch project")
-      "po" '(projectile-switch-open-project :which-key "Switch to opened project")
-      "px" '(:keymap projectile-command-map :whick-key "Projectile commands")
-      ))
-
-  (use-package rg :ensure t)
+      "pp" '(project-switch-project :which-key "Switch to project")
+      "pk" '(project-kill-buffers :which-key "Kill all buffers")
+      "po" '(project-switch-to-buffer :which-key "Open buffer in project")))
 #+end_src
-
 * Languages
 ** Org
 #+begin_src emacs-lisp
