@@ -12,7 +12,7 @@ Setup melpa.
 Setup evil and evil-collections.
 
 #+begin_src emacs-lisp
-   (use-package evil
+  (use-package evil
     :ensure t
     :init
     (setq evil-want-keybinding nil) ;; Expected by evil-collection
@@ -20,6 +20,8 @@ Setup evil and evil-collections.
     (setq evil-want-C-u-scroll t) ;; Keep vim behavior for C-u
     (setq evil-undo-system 'undo-redo) ;; Simple undo/redo
     :config
+    ;; keep vim-like tab behavior
+    (define-key evil-insert-state-map (kbd "TAB") 'tab-to-tab-stop)
     (evil-mode 1))
 
   (use-package evil-collection
@@ -39,6 +41,11 @@ Setup evil and evil-collections.
     :config
     (setq which-key-idle-delay 1))
 
+  (defun my/open-private-config-file ()
+    "Open private configuration file"
+    (interactive)
+    (find-file (locate-user-emacs-file "configuration.org")))
+
   (use-package general
     :ensure t
     :config
@@ -49,6 +56,7 @@ Setup evil and evil-collections.
       :keymaps 'override
 
       ":" '(execute-extended-command :which-key "M-x")
+      "fp" '(my/open-private-config-file :which-key "Open configuration.org")
       ))
 #+end_src
 
@@ -56,12 +64,41 @@ Setup evil and evil-collections.
 #+begin_src emacs-lisp
   (use-package yasnippet
     :ensure t
+    :diminish ""
     :hook ((lsp-mode . yas-minor-mode))
     :config (yas-global-mode 1))
 
   (use-package yasnippet-snippets :ensure t)
 #+end_src
 
+** Autocomplete
+#+begin_src emacs-lisp
+  (use-package corfu
+    :ensure t
+    :custom
+    (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+    (corfu-auto t)                 ;; Enable auto completion
+    (corfu-popupinfo-delay 0.5)
+
+    ;; Enable Corfu only for certain modes.
+    ;; :hook ((prog-mode . corfu-mode)
+    ;;        (shell-mode . corfu-mode)
+    ;;        (eshell-mode . corfu-mode))
+
+    :init
+    (global-corfu-mode)
+    (corfu-popupinfo-mode)
+    )
+
+  ;; Icons for corfu
+  (use-package kind-icon
+    :ensure t
+    :after corfu
+    :custom
+    (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
+    :config
+    (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+#+end_src
 
 * Git
 #+begin_src emacs-lisp
@@ -108,6 +145,9 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
 
   ;; don't show warning buffer when native-comp warnings are logged
   (setq native-comp-async-report-warnings-errors 'silent)
+
+  ;; only show the warning buffer for errors
+  (setq warning-minimum-level :error)
 
   ;; Enable recursive minibuffers
   ;; Useful when something needs to open a minibuffer within the minibuffer
