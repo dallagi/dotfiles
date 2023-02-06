@@ -2,6 +2,9 @@
 ** TODO make dired use a single buffer
 ** TODO disable C-\
 ** TODO toggle comment with C-/
+** TODO replace yasnippet with templer
+** TODO git time machine
+** TODO consult
 
 * Package management
 Setup melpa.
@@ -63,8 +66,17 @@ Setup evil and evil-collections.
 
       ":" '(execute-extended-command :which-key "M-x")
 
+      "b" '(:ignore t :which-key "Buffer")
+      "bd" '(kill-this-buffer :which-key "Kill")
+      "bp" '(previous-buffer :which-key "Previous")
+      "bn" '(previous-buffer :which-key "Next")
+      "bs" '(save-buffer :which-key "Save")
+
       "f" '(:ignore t :which-key "Files")
       "fp" '(my/open-private-config-file :which-key "Open configuration.org")
+
+      "g" '(:ignore t :which-key "Git")
+      "gR" '(vc-revert :which-key "Revert file")
 
       "w" '(:ignore t :which-key "Window")
       "wd" '(delete-window :which-key "Delete")
@@ -165,6 +177,7 @@ Setup evil and evil-collections.
     ((lsp-mode . (lambda () (setq-local evil-lookup-func #'lsp-describe-thing-at-point)))
      (lsp-mode . lsp-enable-which-key-integration))
     :init
+    ;; TODO remap on "SPC c ..."
     (setq lsp-keymap-prefix "C-c l")
     (defun my/lsp-mode-setup-completion ()
       ;; Configure orderless for matching lsp completions
@@ -212,6 +225,7 @@ Save files when they lose focus, and autoformat on save
 #+end_src
 
 * Git
+** Magit
 #+begin_src emacs-lisp
   ;; follow symlinks, instead of opening the symlink directly
   (setq vc-follow-symlinks t)
@@ -227,9 +241,25 @@ Save files when they lose focus, and autoformat on save
       :states '(motion normal visual)
       :keymaps 'override
 
-      "g" '(:ignore t :which-key "Git")
-      "gg" '(magit-status :which-key "Magit status")
+      "gb" '(magit-blame-addition :which-key "Blame")
+      "gg" '(magit-status :which-key "Status")
+      "gl" '(magit-log-buffer-file :which-key "Buffer log")
       ))
+#+end_src
+** Gutter
+#+begin_src emacs-lisp
+  (use-package diff-hl
+    :ensure t
+    :diminish ""
+    :general
+    (my-leader-def
+      :states '(motion normal visual)
+      :keymaps 'override
+  
+      "gr" '(diff-hl-revert-hunk :which-key "Revert hunk"))
+  :config
+  (global-diff-hl-mode)
+  (diff-hl-flydiff-mode))
 #+end_src
 * Config files management
 Keep backups, autosaves, etc. in their own directory, in order not to clutter emacs config directory.org
