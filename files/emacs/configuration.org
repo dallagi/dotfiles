@@ -1,3 +1,8 @@
+* TODOs
+** TODO make dired use a single buffer
+** TODO disable C-\
+** TODO toggle comment with C-/
+
 * Package management
 Setup melpa.
 
@@ -58,7 +63,6 @@ Setup evil and evil-collections.
 
       ":" '(execute-extended-command :which-key "M-x")
 
-
       "f" '(:ignore t :which-key "Files")
       "fp" '(my/open-private-config-file :which-key "Open configuration.org")
 
@@ -95,6 +99,7 @@ Setup evil and evil-collections.
     (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
     (corfu-auto t)                 ;; Enable auto completion
     (corfu-popupinfo-delay 0.5)
+    (corfu-auto-prefix 1)          ;; show autocomplete at first char
 
     ;; Enable Corfu only for certain modes.
     ;; :hook ((prog-mode . corfu-mode)
@@ -386,7 +391,6 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 
   (use-package project
     :ensure t
-  
 
     :custom
     (project-switch-commands 'project-find-file)
@@ -396,7 +400,10 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
       :states '(motion normal visual)
       :keymaps 'override
 
+      "SPC" '(project-find-file :which-key "Find file in project")
+
       "p" '(:ignore t :which-key "Project")
+      "pd" '(project-dired :which-key "Open dired in project root")
       "pp" '(project-switch-project :which-key "Switch to project")
       "pk" '(project-kill-buffers :which-key "Kill all buffers")
       "po" '(project-switch-to-buffer :which-key "Open buffer in project")))
