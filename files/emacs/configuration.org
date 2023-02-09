@@ -67,9 +67,11 @@ Setup evil and evil-collections.
       ":" '(execute-extended-command :which-key "M-x")
 
       "b" '(:ignore t :which-key "Buffer")
+      "bb" '(project-switch-to-buffer :which-key "Switch to project buffer")
+      "bB" '(switch-to-buffer :which-key "Switch to buffer")
       "bd" '(kill-this-buffer :which-key "Kill")
       "bp" '(previous-buffer :which-key "Previous")
-      "bn" '(previous-buffer :which-key "Next")
+      "bn" '(next-buffer :which-key "Next")
       "bs" '(save-buffer :which-key "Save")
 
       "f" '(:ignore t :which-key "Files")
@@ -242,7 +244,7 @@ Save files when they lose focus, and autoformat on save
       :keymaps 'override
 
       "gb" '(magit-blame-addition :which-key "Blame")
-      "gg" '(magit-status :which-key "Status")
+      "gg" '(magit-project-status :which-key "Status")
       "gl" '(magit-log-buffer-file :which-key "Buffer log")
       ))
 #+end_src
@@ -435,8 +437,8 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
       "p" '(:ignore t :which-key "Project")
       "pd" '(project-dired :which-key "Open dired in project root")
       "pp" '(project-switch-project :which-key "Switch to project")
-      "pk" '(project-kill-buffers :which-key "Kill all buffers")
-      "po" '(project-switch-to-buffer :which-key "Open buffer in project")))
+      "pk" '(project-kill-buffers :which-key "Kill all buffers")))
+
 #+end_src
 * Languages
 ** Org
