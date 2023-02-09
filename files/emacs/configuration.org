@@ -238,6 +238,8 @@ Save files when they lose focus, and autoformat on save
     ;; display magit status buffer in full screen
     (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
 
+    :hook (with-editor-mode . evil-insert-state)
+
     :general
     (my-leader-def
       :states '(motion normal visual)
