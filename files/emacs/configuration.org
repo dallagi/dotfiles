@@ -1,9 +1,6 @@
 * TODOs
 ** TODO make dired use a single buffer
-** TODO disable C-\
-** TODO toggle comment with C-/
 ** TODO replace yasnippet with templer
-** TODO git time machine
 ** TODO consult
 
 * Package management
@@ -16,31 +13,6 @@ Setup melpa.
 #+end_src
 
 * Editor
-** Evil
-Setup evil and evil-collections.
-
-#+begin_src emacs-lisp
-  (use-package evil
-    :ensure t
-    :init
-    (setq evil-want-keybinding nil) ;; Expected by evil-collection
-    (setq evil-want-integration t) ;; Expected by evil-collection
-    (setq evil-want-C-u-scroll t) ;; Keep vim behavior for C-u
-    (setq evil-undo-system 'undo-redo) ;; Simple undo/redo
-    (setq evil-lookup-func 'helpful-at-point) ;; Use helpful for doc at point (K)
-    :config
-    ;; keep vim-like tab behavior
-    (define-key evil-insert-state-map (kbd "TAB") 'tab-to-tab-stop)
-    (evil-mode 1))
-
-  (use-package evil-collection
-    :after evil
-    :ensure t
-    :diminish (evil-collection-unimpaired-mode . "")
-    :config
-    (evil-collection-init)) 
-#+end_src
-
 ** Keybinds
 #+begin_src emacs-lisp
   (use-package which-key
@@ -89,6 +61,37 @@ Setup evil and evil-collections.
       "wv" '(split-window-right :which-key "Split vertically")
       "ws" '(split-window-below :which-key "Split horizontally")
       ))
+#+end_src
+
+** Evil
+Setup evil and evil-collections.
+
+#+begin_src emacs-lisp
+  (use-package evil
+    :ensure t
+    :init
+    (setq evil-want-keybinding nil) ;; Expected by evil-collection
+    (setq evil-want-integration t) ;; Expected by evil-collection
+    (setq evil-want-C-u-scroll t) ;; Keep vim behavior for C-u
+    (setq evil-undo-system 'undo-redo) ;; Simple undo/redo
+    (setq evil-lookup-func 'helpful-at-point) ;; Use helpful for doc at point (K)
+    :config
+    ;; keep vim-like tab behavior
+    (define-key evil-insert-state-map (kbd "TAB") 'tab-to-tab-stop)
+    (evil-mode 1))
+
+  (use-package evil-collection
+    :after evil
+    :ensure t
+    :diminish (evil-collection-unimpaired-mode . "")
+    :config
+    (evil-collection-init)) 
+
+  (use-package evil-nerd-commenter
+    :after evil
+    :ensure t
+    :general
+    ("C-/" '(evilnc-comment-or-uncomment-lines :which-key "Comment")))
 #+end_src
 
 ** Snippets
@@ -264,6 +267,18 @@ Save files when they lose focus, and autoformat on save
   :config
   (global-diff-hl-mode)
   (diff-hl-flydiff-mode))
+#+end_src
+** Git utils
+#+begin_src emacs-lisp
+  (use-package git-timemachine
+    :commands git-timemachine
+    :ensure t
+    :general
+    (my-leader-def
+      :states '(motion normal visual)
+      :keymaps 'override
+
+      "gt" '(git-timemachine :which-key "Time machine")))
 #+end_src
 * Config files management
 Keep backups, autosaves, etc. in their own directory, in order not to clutter emacs config directory.org
