@@ -246,7 +246,7 @@ Save files when they lose focus, and autoformat on save
       :keymaps 'override
 
       "gb" '(magit-blame-addition :which-key "Blame")
-      "gg" '(magit-project-status :which-key "Status")
+      "gg" '(magit-status :which-key "Status")
       "gl" '(magit-log-buffer-file :which-key "Buffer log")
       ))
 #+end_src
@@ -297,11 +297,16 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
   ;; Enable recursive minibuffers
   ;; Useful when something needs to open a minibuffer within the minibuffer
   (setq enable-recursive-minibuffers t)
+
+  ;; Keep n rows above/below cursor
+  (setq scroll-margin 5)
 #+end_src
 
 ** Keep minimal UI elements
 
 #+begin_src emacs-lisp
+  (setq frame-title-format "%b") ; Simple title
+
   (setq inhibit-startup-message t) ; Disable emacs welcome screen
   (scroll-bar-mode -1)             ; Disable visible scrollbar
   (tool-bar-mode -1)               ; Disable the toolbar
@@ -452,7 +457,12 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     :hook (org-mode . (lambda () (evil-org-mode)))
     :config
     (require 'evil-org-agenda)
-    (evil-org-agenda-set-keys))
+    (evil-org-agenda-set-keys)
+
+    (setq org-log-done 'time ;; set timestamp when closing TODO item
+	  org-todo-keywords
+	  '((sequence "TODO(t)" "WIP(w)" "BLOCKED(b)" "|" "DONE(d)" "KILLED(k)" "POSTPONED(p)"))))
+  )
 #+end_src
 ** Rust
 #+begin_src emacs-lisp
