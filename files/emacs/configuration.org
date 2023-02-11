@@ -4,6 +4,7 @@
 ** TODO consult
 ** TODO embark
 ** TODO flycheck
+** TODO modeline?
 
 * Manual steps
 ** Language servers
@@ -45,8 +46,6 @@ Setup melpa.
       ":" '(execute-extended-command :which-key "M-x")
 
       "b" '(:ignore t :which-key "Buffer")
-      "bb" '(project-switch-to-buffer :which-key "Switch to project buffer")
-      "bB" '(switch-to-buffer :which-key "Switch to buffer")
       "bd" '(kill-this-buffer :which-key "Kill")
       "bp" '(previous-buffer :which-key "Previous")
       "bn" '(next-buffer :which-key "Next")
@@ -214,14 +213,19 @@ Save files when they lose focus, and autoformat on save
 
 ** Consult
 #+begin_src emacs-lisp
-  (use-package consult
-  :ensure t
-  :general
-  (my-leader-def
-    :states '(motion normal visual)
-    :keymaps 'override
+    (use-package consult
+      :ensure t
+      :general
+      (my-leader-def
+	:states '(motion normal visual)
+	:keymaps 'override
 
-    ;; "" '(magit-log-buffer-file :which-key "Buffer log")
+	"/" '(consult-ripgrep :which-key "Search project")
+
+	"bb" '(consult-project-buffer :which-key "Switch to project buffer")
+	"bB" '(consult-buffer :which-key "Switch to buffer")
+  
+	"ci" '(consult-imenu :which-key "Imenu")
   ))
 #+end_src
 
