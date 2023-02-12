@@ -230,6 +230,21 @@ Save files when they lose focus, and autoformat on save
   ))
 #+end_src
 
+** Flycheck
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :ensure t
+    :general
+    (my-leader-def
+      :states '(motion normal visual)
+      :keymaps 'override
+
+      "e" '(:ignore t :which-key "Errors")
+      "e]" '(flycheck-next-error :which-key "Next")
+      "e[" '(flycheck-previous-error :which-key "Previous")
+      "ex" '(flycheck-explain-error-at-point :which-key "Explain"))
+  :init (global-flycheck-mode))
+#+end_src
 * Git
 ** Magit
 #+begin_src emacs-lisp
