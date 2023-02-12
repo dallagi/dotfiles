@@ -55,6 +55,8 @@ Setup melpa.
 
       "g" '(:ignore t :which-key "Git")
       "gR" '(vc-revert :which-key "Revert file")
+  
+      "m" '(:ignore t :which-key "Mode-specific")
 
       "w" '(:ignore t :which-key "Window")
       "wd" '(delete-window :which-key "Delete")
@@ -156,40 +158,63 @@ Setup evil and evil-collections.
 
 ** LSP
 #+begin_src emacs-lisp
-    (use-package lsp-mode
-      :ensure t
-      :hook
-      ((lsp-mode . (lambda () (setq-local evil-lookup-func #'lsp-describe-thing-at-point)))
-       (lsp-mode . lsp-enable-which-key-integration))
-      :init
-      ;; TODO remap on "SPC c ..."
-      (setq lsp-keymap-prefix "C-c l")
-      (defun my/lsp-mode-setup-completion ()
-	;; Configure orderless for matching lsp completions
-	(setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
-	      '(orderless)))
-      :custom
-      (lsp-completion-provider :none) ;; we use Corfu!
-      (lsp-auto-execute-action nil) ;; always list code actions before executing them
-      (lsp-lens-enable nil)
-      (lsp-headerline-breadcrumb-enable nil)
+      (add-to-list 'display-buffer-alist
+		   '((lambda (buffer _) (with-current-buffer buffer
+					  (seq-some (lambda (mode)
+						      (derived-mode-p mode))
+						    '(help-mode))))
+		     (display-buffer-reuse-window display-buffer-below-selected)
+		     (reusable-frames . visible)
+		     (window-height . 0.33)))
 
-      :hook ((lsp-mode . lsp-enable-which-key-integration)
-	     (lsp-completion-mode . my/lsp-mode-setup-completion)
-	     ((python-ts-mode rust-ts-mode) . lsp-deferred))
+      (use-package lsp-mode
+	:ensure t
+	:hook
+	((lsp-mode . (lambda () (setq-local evil-lookup-func #'lsp-describe-thing-at-point)))
+	 (lsp-mode . lsp-enable-which-key-integration))
+	:init
+	;; TODO remap on "SPC c ..."
+	(setq lsp-keymap-prefix "C-c l")
+	(defun my/lsp-mode-setup-completion ()
+	  ;; Configure orderless for matching lsp completions
+	  (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+		'(orderless)))
+	:custom
+	(lsp-completion-provider :none) ;; we use Corfu!
+	(lsp-auto-execute-action nil) ;; always list code actions before executing them
+	(lsp-lens-enable nil) ;; disable lens (eg. "Run test / Debug test")
+	(lsp-headerline-breadcrumb-enable nil)
+	(lsp-ui-sideline-enable nil)
 
-      :general
-      (my-leader-def
-	:states '(motion normal)
-	:keymaps 'override
+	:hook ((lsp-mode . lsp-enable-which-key-integration)
+	       (lsp-completion-mode . my/lsp-mode-setup-completion)
+	       ((python-ts-mode rust-ts-mode) . lsp-deferred))
 
-	"c" '(:ignore t :which-key "Code")
-	"ca" '(lsp-execute-code-action :which-key "Code action")
-	"cd" '(lsp-find-definition :which-key "Find definition")
-	"ct" '(lsp-find-type-definition :which-key "Find type definition")
-	"cr" '(lsp-rename :which-key "Rename"))
+	:general
+	(my-leader-def
+	  :states '(motion normal)
+	  :keymaps 'override
 
-      :commands (lsp lsp-deferred))
+	  "c" '(:ignore t :which-key "Code")
+	  "ca" '(lsp-execute-code-action :which-key "Code action")
+	  "cd" '(lsp-find-definition :which-key "Find definition")
+	  "cd" '(lsp-find-references :which-key "Find references")
+	  "ct" '(lsp-find-type-definition :which-key "Find type definition")
+	  "cr" '(lsp-rename :which-key "Rename"))
+
+	:commands (lsp lsp-deferred))
+
+      (use-package consult-lsp
+	:ensure t
+	:commands (consult-lsp-file-symbols consult-lsp-symbols)
+	:general
+	(my-leader-def
+	  :states '(motion normal)
+	  :keymaps 'override
+
+	  "cj" '(consult-lsp-file-symbols :which-key "File symbols")
+	  "cJ" '(consult-lsp-symbols :which-key "Project symbols")
+	  "cx" '(consult-lsp-diagnostics :which-key "Diagnostics")))
 #+end_src
 
 ** Autosave and format
@@ -212,22 +237,25 @@ Save files when they lose focus, and autoformat on save
 
 ** Consult
 #+begin_src emacs-lisp
-    (use-package consult
-      :ensure t
-      :custom
-      (consult-async-min-input 0)
-      :general
-      (my-leader-def
-	:states '(motion normal visual)
-	:keymaps 'override
+  (setq xref-show-xrefs-function #'consult-xref)
+  (setq xref-show-definitions-function #'consult-xref)
 
-	"/" '(consult-ripgrep :which-key "Search project")
+  (use-package consult
+    :ensure t
+    :custom
+    (consult-async-min-input 0)
+    :general
+    (my-leader-def
+      :states '(motion normal visual)
+      :keymaps 'override
 
-	"bb" '(consult-project-buffer :which-key "Switch to project buffer")
-	"bB" '(consult-buffer :which-key "Switch to buffer")
+      "/" '(consult-ripgrep :which-key "Search project")
 
-	"ci" '(consult-imenu :which-key "Imenu")
-  ))
+      "bb" '(consult-project-buffer :which-key "Switch to project buffer")
+      "bB" '(consult-buffer :which-key "Switch to buffer")
+
+      "ci" '(consult-imenu :which-key "Imenu")
+      ))
 #+end_src
 
 ** Flycheck
@@ -451,8 +479,10 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
   (column-number-mode) 
 #+end_src
 
-** Helpful
+** Help / Helpful
 #+begin_src emacs-lisp
+  (setq help-window-select t) ;; auto select help popup windows
+  
   (use-package helpful
     :ensure t
 
@@ -528,6 +558,19 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 #+begin_src emacs-lisp
   (use-package rust-ts-mode
     :mode "\\.rs\\'"
+    :hook
+    ;; disable inlay hints by default
+    ((lsp-rust-analyzer-after-open . (lambda () (lsp-rust-analyzer-inlay-hints-mode -1))))
+    :general
+    (my-leader-def
+      :states '(motion normal visual)
+      :keymaps 'override
+
+      "mc" '(lsp-rust-analyzer-open-cargo-toml :which-key "Open Cargo.toml")
+      "mp" '(lsp-rust-analyzer-find-parent-module :which-key "Open Cargo.toml")
+      "mt" '(lsp-rust-analyzer-inlay-hints-mode :which-key "Toggle inline hints"))
+    :init
+    (setq lsp-rust-analyzer-server-display-inlay-hints t)
     :config
     (lsp-deferred))
 #+end_src
