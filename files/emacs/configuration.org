@@ -332,6 +332,18 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
   ;; Keep n rows above/below cursor
   (setq scroll-margin 5)
 #+end_src
+** Dashboard
+#+begin_src emacs-lisp
+  (use-package dashboard
+    :ensure t
+    :init
+    (setq dashboard-set-footer nil)
+    (setq dashboard-center-content t)
+    (setq dashboard-projects-backend 'project-el)
+    (setq dashboard-items '((projects . 5) (agenda . 5)))
+    :config
+    (dashboard-setup-startup-hook))
+#+end_src
 
 ** Keep minimal UI elements
 
