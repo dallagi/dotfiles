@@ -273,11 +273,10 @@ Save files when they lose focus, and autoformat on save
       :states '(motion normal visual)
       :keymaps 'override
 
-      "e" '(:ignore t :which-key "Errors")
-      "e]" '(flycheck-next-error :which-key "Next")
-      "e[" '(flycheck-previous-error :which-key "Previous")
-      "ex" '(flycheck-explain-error-at-point :which-key "Explain"))
-  :init (global-flycheck-mode))
+      "c[" '(flycheck-previous-error :which-key "Previous error")
+      "c]" '(flycheck-next-error :which-key "Next error")
+      "cx" '(flycheck-explain-error-at-point :which-key "Explain"))
+    :init (global-flycheck-mode))
 #+end_src
 * Git
 ** Magit
