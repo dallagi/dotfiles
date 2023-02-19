@@ -1,5 +1,4 @@
 * TODOs
-** TODO make dired use a single buffer
 ** TODO replace yasnippet with templer
 ** TODO embark
 ** TODO flycheck
@@ -500,6 +499,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 #+end_src
 
 * Projects and files
+** Projects
 #+begin_src emacs-lisp
   (defun my/find-note ()
     "Find a note in `org-directory'"
@@ -526,10 +526,31 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
       "nf" '(my/find-note :which-key "Find")
 
       "p" '(:ignore t :which-key "Project")
-      "pd" '(project-dired :which-key "Open dired in project root")
       "pp" '(project-switch-project :which-key "Switch to project")
       "pk" '(project-kill-buffers :which-key "Kill all buffers")))
+#+end_src
 
+** File management
+#+begin_src emacs-lisp
+  (use-package dired
+    :commands (dired dired-jump)
+    :init
+    ;; reuse buffers in dired
+    (setq dired-kill-when-opening-new-dired-buffer t)
+
+    :general
+    (my-leader-def
+      :states '(motion normal visual)
+      :keymaps 'override
+      "ee" '(dired-jump :which-key "Open dired at current buffer")
+      "ep" '(project-dired :which-key "Open dired in project root")))
+
+  (use-package dirvish
+    :ensure t
+    :commands dirvish
+    :config
+    (dirvish-override-dired-mode)
+    (evil-make-overriding-map dirvish-mode-map 'normal))
 #+end_src
 * Languages
 ** Org
