@@ -1,7 +1,6 @@
 * TODOs
 ** TODO replace yasnippet with templer
 ** TODO embark
-** TODO flycheck
 ** TODO modeline?
 
 * Manual steps
@@ -99,6 +98,12 @@ Setup evil and evil-collections.
     :ensure t
     :general
     ("C-/" '(evilnc-comment-or-uncomment-lines :which-key "Comment")))
+
+  (use-package evil-surround
+    :after evil
+    :ensure t
+    :config
+    (global-evil-surround-mode 1))
 #+end_src
 
 ** Snippets
