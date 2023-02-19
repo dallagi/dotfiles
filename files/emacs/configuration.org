@@ -204,7 +204,7 @@ Setup evil and evil-collections.
 	  "c" '(:ignore t :which-key "Code")
 	  "ca" '(lsp-execute-code-action :which-key "Code action")
 	  "cd" '(lsp-find-definition :which-key "Find definition")
-	  "cd" '(lsp-find-references :which-key "Find references")
+	  "cD" '(lsp-find-references :which-key "Find references")
 	  "ct" '(lsp-find-type-definition :which-key "Find type definition")
 	  "cr" '(lsp-rename :which-key "Rename"))
 
