@@ -1,7 +1,6 @@
 * TODOs
 ** TODO replace yasnippet with templer
 ** TODO embark
-** TODO modeline?
 
 * Manual steps
 ** Language servers
@@ -482,6 +481,12 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 
   ;; Show column number
   (column-number-mode) 
+
+  (use-package doom-modeline
+    :ensure t
+    :init (doom-modeline-mode 1)
+    :config
+    (setq doom-modeline-height 20))
 #+end_src
 
 ** Help / Helpful
