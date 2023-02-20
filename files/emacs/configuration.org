@@ -259,6 +259,11 @@ Save files when they lose focus, and autoformat on save
   (setq xref-show-xrefs-function #'consult-xref)
   (setq xref-show-definitions-function #'consult-xref)
 
+  (defun my/search-notes ()
+    "Grep on notes directory"
+    (interactive)
+    (consult-ripgrep org-directory))
+
   (use-package consult
     :ensure t
     :custom
@@ -274,6 +279,8 @@ Save files when they lose focus, and autoformat on save
       "bB" '(consult-buffer :which-key "Switch to buffer")
 
       "ci" '(consult-imenu :which-key "Imenu")
+
+      "n/" '(my/search-notes :which-key "Search notes")
       ))
 #+end_src
 
