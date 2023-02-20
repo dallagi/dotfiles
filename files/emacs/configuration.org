@@ -600,12 +600,14 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 #+end_src
 
 ** Python
-# #+begin_src emacs-lisp
-#   (use-package python-ts-mode
-#     :commands python-ts-mode
-#     :config
-#     (lsp-deferred))
-# #+end_src
+#+begin_src emacs-lisp
+  (use-package python-ts-mode
+    :commands python-ts-mode
+    :config
+    (setq indent-tabs-mode nil)
+    (setq tab-width 4)
+    (setq python-indent-offset 4))
+#+end_src
 
 ** Rust
 #+begin_src emacs-lisp
@@ -623,7 +625,5 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
       "mp" '(lsp-rust-analyzer-find-parent-module :which-key "Open Cargo.toml")
       "mt" '(lsp-rust-analyzer-inlay-hints-mode :which-key "Toggle inline hints"))
     :init
-    (setq lsp-rust-analyzer-server-display-inlay-hints t)
-    :config
-    (lsp-deferred))
+    (setq lsp-rust-analyzer-server-display-inlay-hints t))
 #+end_src
