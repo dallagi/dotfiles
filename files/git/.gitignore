@@ -18,3 +18,7 @@ run_paperboy.sh
 .tool-versions
 
 .docker
+
+# Syncthing
+.stversions
+.stfolder
