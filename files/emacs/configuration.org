@@ -1,6 +1,7 @@
 * TODOs
 ** TODO replace yasnippet with templer
 ** TODO embark
+** TODO org-roam
 
 * Manual steps
 ** Language servers
@@ -13,6 +14,19 @@ Setup melpa.
   (require 'package)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
   (package-initialize)
+#+end_src
+
+* Terminals and shells
+** Exec path
+#+begin_src emacs-lisp
+  (use-package exec-path-from-shell
+    :ensure t
+    :init
+    (when (memq window-system '(mac ns x))
+      (exec-path-from-shell-initialize))
+    (when (daemonp)
+      (exec-path-from-shell-initialize))
+    )
 #+end_src
 
 * Editor
