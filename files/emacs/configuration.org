@@ -2,6 +2,13 @@
 ** TODO replace yasnippet with templer
 ** TODO embark
 ** TODO org-roam
+** TODO straight (or other package manager)
+** TODO variable pitch font in modeline?
+(set-face-attribute 'mode-line nil :inherit 'variable-pitch)
+** TODO beautify org
+See https://zzamboni.org/post/beautifying-org-mode-in-emacs/
+See also package org-appear
+** TODO replace format-all with apheleia?
 
 * Manual steps
 ** Language servers
@@ -66,7 +73,10 @@ Setup melpa.
 
       "g" '(:ignore t :which-key "Git")
       "gR" '(vc-revert :which-key "Revert file")
-  
+
+      "h" '(:ignore t :which-key "Help")
+      "hm" '(describe-mode :which-key "Describe mode")
+
       "m" '(:ignore t :which-key "Mode-specific")
 
       "w" '(:ignore t :which-key "Window")
@@ -244,7 +254,10 @@ Save files when they lose focus, and autoformat on save
     :ensure t
     :diminish ""
     :config
-    (super-save-mode +1))
+    (super-save-mode +1)
+    ;; disable super save for lv buffer
+    ;; this prevents a problem where save is triggered on signature help from lsp-mode
+    (setq super-save-exclude '(" *LV*")))
 
   (use-package format-all
     :ensure t
@@ -424,12 +437,12 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
 #+begin_src emacs-lisp
   ;; Font
   (set-face-attribute 'default nil
-                       :font "Fira Code Retina"
+                       :font "Hack"
                        :weight 'regular
                        :height 120)
 
   (set-face-attribute 'fixed-pitch nil
-                    :font "Fira Code Retina"
+                    :font "Hack"
                     :weight 'regular
                     :height 120)
 
@@ -522,7 +535,6 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
       :states '(motion normal visual)
       :keymaps 'override
 
-      "h" '(:ignore t :which-key "Help")
       "hf" '(helpful-function :which-key "Describe function")
       "hk" '(helpful-key :which-key "Describe key")
       "hv" '(helpful-variable :which-key "Describe variable")))
@@ -594,9 +606,10 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     (require 'evil-org-agenda)
     (evil-org-agenda-set-keys)
 
+    (org-indent-mode)
     (setq org-log-done 'time ;; set timestamp when closing TODO item
-	  org-todo-keywords
-	  '((sequence "TODO(t)" "WIP(w)" "BLOCKED(b)" "|" "DONE(d)" "KILLED(k)" "POSTPONED(p)"))))
+          org-todo-keywords
+          '((sequence "TODO(t)" "WIP(w)" "BLOCKED(b)" "|" "DONE(d)" "KILLED(k)" "POSTPONED(p)"))))
 #+end_src
 
 ** Python
