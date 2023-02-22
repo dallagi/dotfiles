@@ -5,6 +5,9 @@
 ** TODO beautify org
 See https://zzamboni.org/post/beautifying-org-mode-in-emacs/
 See also package org-appear
+** TODO org-dwim-at-point
+see how doom emacs implemented it
+see also https://www.reddit.com/r/emacs/comments/1161zcs/dynamic_action_in_org_mode_based_on_content_at/
 ** TODO replace format-all with apheleia?
 
 * Manual steps
@@ -33,6 +36,21 @@ Setup melpa.
       (exec-path-from-shell-initialize))
     (when (daemonp)
       (exec-path-from-shell-initialize)))
+#+end_src
+** Eshell
+#+begin_src emacs-lisp
+  (use-package eshell
+    :bind
+    (:map eshell-mode-map
+	  ("C-l" . eshell/clear))
+
+    (my-leader-def
+      :states '(motion normal)
+      :keymaps 'override
+
+      "os" '(project-eshell :which-key "Shell at project path")
+      "oS" '(eshell :which-key "Shell at current path")
+      ))
 #+end_src
 
 * Editor
@@ -82,6 +100,8 @@ Setup melpa.
       "hm" '(describe-mode :which-key "Describe mode")
 
       "m" '(:ignore t :which-key "Mode-specific")
+  
+      "o" '(:ignore t :which-key "Open")
 
       "w" '(:ignore t :which-key "Window")
       "wd" '(delete-window :which-key "Delete")
@@ -172,6 +192,16 @@ Setup evil and evil-collections.
     (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
     :config
     (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+
+  ;; Enable in minibuffer (eg. for eval-expression prompt)
+  (defun corfu-enable-in-minibuffer ()
+    "Enable Corfu in the minibuffer if `completion-at-point' is bound."
+    (when (where-is-internal #'completion-at-point (list (current-local-map)))
+      ;; (setq-local corfu-auto nil) ;; Enable/disable auto completion
+      (setq-local corfu-echo-delay nil ;; Disable automatic echo and popup
+		  corfu-popupinfo-delay nil)
+      (corfu-mode 1)))
+  (add-hook 'minibuffer-setup-hook #'corfu-enable-in-minibuffer)
 #+end_src
 
 ** Treesitter
@@ -630,8 +660,8 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 
     (org-indent-mode)
     (setq org-log-done 'time ;; set timestamp when closing TODO item
-          org-todo-keywords
-          '((sequence "TODO(t)" "WIP(w)" "BLOCKED(b)" "|" "DONE(d)" "KILLED(k)" "POSTPONED(p)"))))
+	  org-todo-keywords
+	  '((sequence "TODO(t)" "WIP(w)" "BLOCKED(b)" "|" "DONE(d)" "KILLED(k)" "POSTPONED(p)"))))
 #+end_src
 
 ** Python
