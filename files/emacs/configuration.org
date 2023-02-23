@@ -640,3 +640,9 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     :init
     (setq lsp-rust-analyzer-server-display-inlay-hints t))
 #+end_src
+
+** Elixir
+#+begin_src emacs-lisp
+  (use-package elixir-ts-mode
+    :ensure t)
+#+end_src
