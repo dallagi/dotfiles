@@ -217,7 +217,7 @@ Setup evil and evil-collections.
 
 	:hook ((lsp-mode . lsp-enable-which-key-integration)
 	       (lsp-completion-mode . my/lsp-mode-setup-completion)
-	       ((python-ts-mode rust-ts-mode) . lsp-deferred))
+	       ((python-ts-mode rust-ts-mode elixir-ts-mode heex-ts-mode) . lsp-deferred))
 
 	:general
 	(my-leader-def
