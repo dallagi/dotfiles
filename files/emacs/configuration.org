@@ -32,8 +32,7 @@ Setup melpa.
     (when (memq window-system '(mac ns x))
       (exec-path-from-shell-initialize))
     (when (daemonp)
-      (exec-path-from-shell-initialize))
-    )
+      (exec-path-from-shell-initialize)))
 #+end_src
 
 * Editor
@@ -89,6 +88,9 @@ Setup melpa.
       "ws" '(split-window-below :which-key "Split horizontally")
       "w=" '(balance-windows :which-key "Balance")
       "wo" '(maximize-window :which-key "Balance")
+
+      "q" '(:ignore t :which-key "Quit")
+      "qr" '(restart-emacs :which-key "Restart Emacs")
       ))
 #+end_src
 
@@ -311,6 +313,14 @@ Save files when they lose focus, and autoformat on save
       "cx" '(flycheck-explain-error-at-point :which-key "Explain"))
     :init (global-flycheck-mode))
 #+end_src
+** Multiple cursors
+#+begin_src emacs-lisp
+  (use-package evil-multiedit
+    :ensure t
+    :config
+    (evil-multiedit-mode)
+    (evil-multiedit-default-keybinds))
+#+end_src
 * Git
 ** Magit
 #+begin_src emacs-lisp
@@ -427,10 +437,15 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
 #+begin_src emacs-lisp
   (setq custom-safe-themes t)   ; Treat all themes as safe
 
-  (use-package color-theme-sanityinc-tomorrow
-      :ensure t
-      :config
-      (color-theme-sanityinc-tomorrow-night))
+  (use-package zenburn-theme
+    :ensure t
+    :config
+    (load-theme 'zenburn))
+  
+    ;; (use-package color-theme-sanityinc-tomorrow
+    ;;     :ensure t
+    ;;     :config
+    ;;     (color-theme-sanityinc-tomorrow-night))
 #+end_src
 
 ** Font
@@ -538,6 +553,13 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
       "hf" '(helpful-function :which-key "Describe function")
       "hk" '(helpful-key :which-key "Describe key")
       "hv" '(helpful-variable :which-key "Describe variable")))
+#+end_src
+
+** Rainbow delimiters
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :hook prog-mode
+    :ensure t)
 #+end_src
 
 * Projects and files
