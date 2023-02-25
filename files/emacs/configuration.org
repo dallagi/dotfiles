@@ -36,6 +36,11 @@ Setup melpa.
 #+end_src
 
 * Editor
+** General Editor UX
+#+begin_src emacs-lisp
+  ;; automatic parens pairing
+  (electric-pair-mode t)
+#+end_src
 ** Keybinds
 #+begin_src emacs-lisp
   (use-package which-key
