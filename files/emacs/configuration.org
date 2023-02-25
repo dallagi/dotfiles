@@ -696,6 +696,8 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     :hook
     ;; disable inlay hints by default
     ((lsp-rust-analyzer-after-open . (lambda () (lsp-rust-analyzer-inlay-hints-mode -1))))
+    :config
+    (setq lsp-rust-analyzer-import-granularity "module")
     :general
     (my-leader-def
       :states '(motion normal visual)
