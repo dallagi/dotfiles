@@ -10,6 +10,9 @@ See also package org-appear
 * Manual steps
 ** Language servers
 - Python: ~pip install python-lsp-server[all]~
+- Rust:
+  (once available) ~rustup component add rust-analyzer~
+  (until the above works) see https://rust-analyzer.github.io/manual.html#rust-analyzer-language-server-binary
 
 * Package management
 Setup melpa.
@@ -135,13 +138,7 @@ Setup evil and evil-collections.
 
 ** Snippets
 #+begin_src emacs-lisp
-  (use-package yasnippet
-    :ensure t
-    :diminish yas-minor-mode
-    :hook ((lsp-mode . yas-minor-mode))
-    :config (yas-global-mode 1))
-
-  (use-package yasnippet-snippets :ensure t)
+  ;; TODO
 #+end_src
 
 ** Autocomplete
@@ -190,64 +187,37 @@ Setup evil and evil-collections.
 #+end_src
 
 ** LSP
+*** Eglot
 #+begin_src emacs-lisp
-      (add-to-list 'display-buffer-alist
-		   '((lambda (buffer _) (with-current-buffer buffer
-					  (seq-some (lambda (mode)
-						      (derived-mode-p mode))
-						    '(help-mode))))
-		     (display-buffer-reuse-window display-buffer-below-selected)
-		     (reusable-frames . visible)
-		     (window-height . 0.33)))
+  (use-package eglot
+    :demand
+    :hook
+    ((python-ts-mode rust-ts-mode elixir-ts-mode heex-ts-mode) . eglot-ensure)
+    :general
+    (my-leader-def
+      :states '(motion normal)
+      :keymaps 'override
 
-      (use-package lsp-mode
-	:ensure t
-	:hook
-	((lsp-mode . (lambda () (setq-local evil-lookup-func #'lsp-describe-thing-at-point)))
-	 (lsp-mode . lsp-enable-which-key-integration))
-	:init
-	;; TODO remap on "SPC c ..."
-	(setq lsp-keymap-prefix "C-c l")
-	(defun my/lsp-mode-setup-completion ()
-	  ;; Configure orderless for matching lsp completions
-	  (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
-		'(orderless)))
-	:custom
-	(lsp-completion-provider :none) ;; we use Corfu!
-	(lsp-auto-execute-action nil) ;; always list code actions before executing them
-	(lsp-lens-enable nil) ;; disable lens (eg. "Run test / Debug test")
-	(lsp-headerline-breadcrumb-enable nil)
-	(lsp-ui-sideline-enable nil)
+      "c" '(:ignore t :which-key "Code")
+      "ca" '(eglot-code-actions :which-key "Code action")
+      "cd" '(eglot-find-declaration :which-key "Find declaration")
+      "cD" '(xref-find-definitions :which-key "Find definitions")
+      "cx" '(xref-find-references :which-key "Find references")
+      "ci" '(eglot-find-implementation :which-key "Find implementation")
+      "ct" '(eglot-find-typeDefinition :which-key "Find type definition")
+      "cr" '(eglot-rename :which-key "Rename"))
+    )
 
-	:hook ((lsp-mode . lsp-enable-which-key-integration)
-	       (lsp-completion-mode . my/lsp-mode-setup-completion)
-	       ((python-ts-mode rust-ts-mode elixir-ts-mode heex-ts-mode) . lsp-deferred))
+  (use-package consult-eglot
+    :ensure t
+    :commands 'consult-eglot-symbols
 
-	:general
-	(my-leader-def
-	  :states '(motion normal)
-	  :keymaps 'override
+    :general
+    (my-leader-def
+      :states '(motion normal)
+      :keymaps 'override
 
-	  "c" '(:ignore t :which-key "Code")
-	  "ca" '(lsp-execute-code-action :which-key "Code action")
-	  "cd" '(lsp-find-definition :which-key "Find definition")
-	  "cD" '(lsp-find-references :which-key "Find references")
-	  "ct" '(lsp-find-type-definition :which-key "Find type definition")
-	  "cr" '(lsp-rename :which-key "Rename"))
-
-	:commands (lsp lsp-deferred))
-
-      (use-package consult-lsp
-	:ensure t
-	:commands (consult-lsp-file-symbols consult-lsp-symbols)
-	:general
-	(my-leader-def
-	  :states '(motion normal)
-	  :keymaps 'override
-
-	  "cj" '(consult-lsp-file-symbols :which-key "File symbols")
-	  "cJ" '(consult-lsp-symbols :which-key "Project symbols")
-	  "cx" '(consult-lsp-diagnostics :which-key "Diagnostics")))
+      "cj" '(consult-eglot-symbols :which-key "Find symbols")))
 #+end_src
 
 ** Autosave and format
@@ -301,20 +271,6 @@ Save files when they lose focus, and autoformat on save
       ))
 #+end_src
 
-** Flycheck
-#+begin_src emacs-lisp
-  (use-package flycheck
-    :ensure t
-    :general
-    (my-leader-def
-      :states '(motion normal visual)
-      :keymaps 'override
-
-      "c[" '(flycheck-previous-error :which-key "Previous error")
-      "c]" '(flycheck-next-error :which-key "Next error")
-      "cx" '(flycheck-explain-error-at-point :which-key "Explain"))
-    :init (global-flycheck-mode))
-#+end_src
 ** Multiple cursors
 #+begin_src emacs-lisp
   (use-package evil-multiedit
