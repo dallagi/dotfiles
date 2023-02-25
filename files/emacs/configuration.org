@@ -1,10 +1,7 @@
 * TODOs
 ** TODO replace yasnippet with templer
-** TODO embark
 ** TODO org-roam
 ** TODO straight (or other package manager)
-** TODO variable pitch font in modeline?
-(set-face-attribute 'mode-line nil :inherit 'variable-pitch)
 ** TODO beautify org
 See https://zzamboni.org/post/beautifying-org-mode-in-emacs/
 See also package org-appear
