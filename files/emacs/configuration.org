@@ -110,7 +110,8 @@ Setup evil and evil-collections.
     (setq evil-want-integration t) ;; Expected by evil-collection
     (setq evil-want-C-u-scroll t) ;; Keep vim behavior for C-u
     (setq evil-undo-system 'undo-redo) ;; Simple undo/redo
-    (setq evil-lookup-func 'helpful-at-point) ;; Use helpful for doc at point (K)
+    :general
+    (:keymaps 'evil-motion-state-map "K" nil)
     :config
     ;; keep vim-like tab behavior
     (define-key evil-insert-state-map (kbd "TAB") 'tab-to-tab-stop)
@@ -161,8 +162,7 @@ Setup evil and evil-collections.
 
     :init
     (global-corfu-mode)
-    (corfu-popupinfo-mode)
-    )
+    (corfu-popupinfo-mode))
 
   ;; Icons for corfu
   (use-package kind-icon
@@ -305,11 +305,6 @@ Save files when they lose focus, and autoformat on save
     :init
     ;; Optionally replace the key help with a completing-read interface
     (setq prefix-help-command #'embark-prefix-help-command)
-
-    ;; Show the Embark target at point via Eldoc.  You may adjust the Eldoc
-    ;; strategy, if you want to see the documentation from multiple providers.
-    (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
-    ;; (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
 
     :config
 
@@ -544,11 +539,13 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 ** Help / Helpful
 #+begin_src emacs-lisp
   (setq help-window-select t) ;; auto select help popup windows
-  
+
   (use-package helpful
     :ensure t
 
     :general
+    (:keymaps 'emacs-lisp-mode-map "K" 'helpful-at-point)
+
     (my-leader-def
       :states '(motion normal visual)
       :keymaps 'override
