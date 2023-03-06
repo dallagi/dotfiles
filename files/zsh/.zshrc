@@ -21,6 +21,7 @@ compinit
 # Load zsh-autosuggestions
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
+alias ec=emacsclient
 alias doom=~/.config/emacs/bin/doom
 alias vim=nvim
 
