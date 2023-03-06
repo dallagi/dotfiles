@@ -54,3 +54,5 @@
 (package! protobuf-mode) ;; protobuf file support
 (package! mermaid-mode) ;; mermaid charts support
 (package! feature-mode) ;; cucumber tests support
+(package! google-translate)
+(package! xml-format)

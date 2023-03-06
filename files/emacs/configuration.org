@@ -9,6 +9,9 @@ See also package org-appear
 see how doom emacs implemented it
 see also https://www.reddit.com/r/emacs/comments/1161zcs/dynamic_action_in_org_mode_based_on_content_at/
 ** TODO replace format-all with apheleia?
+** TODO hydra to resize windows
+** TODO perspectives
+** TODO mixed-pitch-mode
 
 * Manual steps
 ** Language servers
@@ -24,33 +27,6 @@ Setup melpa.
   (require 'package)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
   (package-initialize)
-#+end_src
-
-* Terminals and shells
-** Exec path
-#+begin_src emacs-lisp
-  (use-package exec-path-from-shell
-    :ensure t
-    :init
-    (when (memq window-system '(mac ns x))
-      (exec-path-from-shell-initialize))
-    (when (daemonp)
-      (exec-path-from-shell-initialize)))
-#+end_src
-** Eshell
-#+begin_src emacs-lisp
-  (use-package eshell
-    :bind
-    (:map eshell-mode-map
-	  ("C-l" . eshell/clear))
-
-    (my-leader-def
-      :states '(motion normal)
-      :keymaps 'override
-
-      "os" '(project-eshell :which-key "Shell at project path")
-      "oS" '(eshell :which-key "Shell at current path")
-      ))
 #+end_src
 
 * Editor
@@ -100,7 +76,7 @@ Setup melpa.
       "hm" '(describe-mode :which-key "Describe mode")
 
       "m" '(:ignore t :which-key "Mode-specific")
-  
+
       "o" '(:ignore t :which-key "Open")
 
       "w" '(:ignore t :which-key "Window")
@@ -112,10 +88,10 @@ Setup melpa.
       "wv" '(split-window-right :which-key "Split vertically")
       "ws" '(split-window-below :which-key "Split horizontally")
       "w=" '(balance-windows :which-key "Balance")
-      "wo" '(maximize-window :which-key "Balance")
+      "wo" '(maximize-window :which-key "Maximize")
 
       "q" '(:ignore t :which-key "Quit")
-      "qr" '(restart-emacs :which-key "Restart Emacs")
+      "qr" '(restart-emacs :which-key "Restart")
       ))
 #+end_src
 
@@ -192,16 +168,6 @@ Setup evil and evil-collections.
     (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
     :config
     (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
-
-  ;; Enable in minibuffer (eg. for eval-expression prompt)
-  (defun corfu-enable-in-minibuffer ()
-    "Enable Corfu in the minibuffer if `completion-at-point' is bound."
-    (when (where-is-internal #'completion-at-point (list (current-local-map)))
-      ;; (setq-local corfu-auto nil) ;; Enable/disable auto completion
-      (setq-local corfu-echo-delay nil ;; Disable automatic echo and popup
-		  corfu-popupinfo-delay nil)
-      (corfu-mode 1)))
-  (add-hook 'minibuffer-setup-hook #'corfu-enable-in-minibuffer)
 #+end_src
 
 ** Treesitter
@@ -349,6 +315,51 @@ Save files when they lose focus, and autoformat on save
     :hook
     (embark-collect-mode . consult-preview-at-point-mode))
 #+end_src
+* Terminals and shells
+** Exec path
+#+begin_src emacs-lisp
+  (use-package exec-path-from-shell
+    :ensure t
+    :init
+    (when (memq window-system '(mac ns x))
+      (exec-path-from-shell-initialize))
+    (when (daemonp)
+      (exec-path-from-shell-initialize))
+    )
+#+end_src
+** Eshell
+#+begin_src emacs-lisp
+  (use-package eshell
+    :general
+    (:keymaps 'eshell-mode-map 
+	      "C-l" 'eshell/clear)
+    (my-leader-def
+      :states '(motion normal)
+      :keymaps 'override
+
+      "os" '(project-eshell :which-key "Shell at project path")
+      "oS" '(eshell :which-key "Shell at current path")))
+#+end_src
+** Vterm
+#+begin_src emacs-lisp
+  (defun my/project-vterm ()
+  "Open vterm at project root"
+  (interactive)
+  ;; TODO
+  ;; for inspiration: https://github.com/bbatsov/projectile/pull/1474/files#diff-a448a7e36d92f29a14e851a15a0ea0c384ccd9721d6474dc45e7bf4999090859R3413
+  )
+
+  (use-package vterm
+    :ensure t
+    :general
+    (my-leader-def
+      :states '(motion normal)
+      :keymaps 'override
+
+      "ot" '(my/project-vterm :which-key "Shell at project path")
+      "oT" '(vterm :which-key "Vterm at current path")))
+#+end_src
+
 * Git
 ** Magit
 #+begin_src emacs-lisp
@@ -684,13 +695,14 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     :config
     (setq lsp-rust-analyzer-import-granularity "module")
     :general
-    (my-leader-def
-      :states '(motion normal visual)
-      :keymaps 'override
+    (:keymaps 'rust-ts-mode-map
+	      :states '(motion normal visual)
+	      :keymaps 'override
+	      :prefix "SPC"
 
-      "mc" '(lsp-rust-analyzer-open-cargo-toml :which-key "Open Cargo.toml")
-      "mp" '(lsp-rust-analyzer-find-parent-module :which-key "Open Cargo.toml")
-      "mt" '(lsp-rust-analyzer-inlay-hints-mode :which-key "Toggle inline hints"))
+	      "mc" '(lsp-rust-analyzer-open-cargo-toml :which-key "Open Cargo.toml")
+	      "mp" '(lsp-rust-analyzer-find-parent-module :which-key "Open Cargo.toml")
+	      "mt" '(lsp-rust-analyzer-inlay-hints-mode :which-key "Toggle inline hints"))
     :init
     (setq lsp-rust-analyzer-server-display-inlay-hints t))
 #+end_src
