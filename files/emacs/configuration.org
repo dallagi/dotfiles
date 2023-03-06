@@ -198,15 +198,29 @@ Setup evil and evil-collections.
 #+begin_src emacs-lisp
   (use-package eglot
     :demand
+
     :preface
     ;; allow eldoc to properly compose messages from eglot
     ;; see https://www.masteringemacs.org/article/seamlessly-merge-multiple-documentation-sources-eldoc
     (defun mp-eglot-eldoc ()
       (setq eldoc-documentation-strategy
 	    'eldoc-documentation-compose-eagerly))
+
+    :config
+    ;; remove previous rust-analyzer config
+    (setq eglot-server-programs (assoc-delete-all '(rust-ts-mode rust-mode) eglot-server-programs ))
+    (add-to-list 'eglot-server-programs '((rust-ts-mode rust-mode) .
+					  ("rust-analyzer"
+					   :initializationOptions
+					   (:imports
+					    (:granularity
+					     (:group "item")
+					     :prefix "crate")))))
+
     :hook
     ((python-ts-mode rust-ts-mode elixir-ts-mode heex-ts-mode) . eglot-ensure)
     (eglot-managed-mode . mp-eglot-eldoc)
+
     :general
     (my-leader-def
       :states '(motion normal)
