@@ -19,8 +19,19 @@ see also https://www.reddit.com/r/emacs/comments/1161zcs/dynamic_action_in_org_m
 - Rust:
   (once available) ~rustup component add rust-analyzer~
   (until the above works) see https://rust-analyzer.github.io/manual.html#rust-analyzer-language-server-binary
+* Initialization
+** Garbage collection
+Tune the GC via the GC magic hack.
 
-* Package management
+#+begin_src emacs-lisp
+  (use-package gcmh
+    :ensure t
+    :demand t
+    :config
+    (gcmh-mode 1))
+#+end_src
+
+** Package management
 Setup melpa.
 
 #+begin_src emacs-lisp
