@@ -198,8 +198,15 @@ Setup evil and evil-collections.
 #+begin_src emacs-lisp
   (use-package eglot
     :demand
+    :preface
+    ;; allow eldoc to properly compose messages from eglot
+    ;; see https://www.masteringemacs.org/article/seamlessly-merge-multiple-documentation-sources-eldoc
+    (defun mp-eglot-eldoc ()
+      (setq eldoc-documentation-strategy
+	    'eldoc-documentation-compose-eagerly))
     :hook
     ((python-ts-mode rust-ts-mode elixir-ts-mode heex-ts-mode) . eglot-ensure)
+    (eglot-managed-mode . mp-eglot-eldoc)
     :general
     (my-leader-def
       :states '(motion normal)
