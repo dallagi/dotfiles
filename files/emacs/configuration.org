@@ -103,6 +103,8 @@ Setup melpa.
 
       "q" '(:ignore t :which-key "Quit")
       "qr" '(restart-emacs :which-key "Restart")
+
+      "x" '(scratch-buffer :which-key "Open scratch buffer")
       ))
 #+end_src
 
@@ -196,6 +198,12 @@ Setup evil and evil-collections.
 ** LSP
 *** Eglot
 #+begin_src emacs-lisp
+  (defun my/eldoc-doc-buffer-with-focus ()
+    "Same as eldoc-doc-buffer, but focus on eldoc window"
+    (interactive)
+    (call-interactively 'eldoc-doc-buffer)
+    (call-interactively 'other-window))
+
   (use-package eglot
     :demand
 
@@ -209,6 +217,7 @@ Setup evil and evil-collections.
     :config
     ;; remove previous rust-analyzer config
     (setq eglot-server-programs (assoc-delete-all '(rust-ts-mode rust-mode) eglot-server-programs ))
+    ;; configure rust-analyzer
     (add-to-list 'eglot-server-programs '((rust-ts-mode rust-mode) .
 					  ("rust-analyzer"
 					   :initializationOptions
@@ -217,23 +226,34 @@ Setup evil and evil-collections.
 					     (:group "item")
 					     :prefix "crate")))))
 
+
     :hook
     ((python-ts-mode rust-ts-mode elixir-ts-mode heex-ts-mode) . eglot-ensure)
     (eglot-managed-mode . mp-eglot-eldoc)
 
     :general
+
+    (general-define-key
+     :states '(motion normal visual)
+     :keymaps 'eglot-mode-map "K" 'my/eldoc-doc-buffer-with-focus)
+
+    (general-define-key
+     :states '(motion normal visual)
+     "C-." nil)
+  
     (my-leader-def
       :states '(motion normal)
       :keymaps 'override
 
       "c" '(:ignore t :which-key "Code")
       "ca" '(eglot-code-actions :which-key "Code action")
-      "cd" '(eglot-find-declaration :which-key "Find declaration")
-      "cD" '(xref-find-definitions :which-key "Find definitions")
-      "cx" '(xref-find-references :which-key "Find references")
+      "cd" '(xref-find-definitions :which-key "Find definitions")
+      "cD" '(eglot-find-declaration :which-key "Find declaration")
+      "ch" '(eglot-inlay-hints-mode :which-key "Toggle inlay hints")
       "ci" '(eglot-find-implementation :which-key "Find implementation")
+      "cr" '(eglot-rename :which-key "Rename")
       "ct" '(eglot-find-typeDefinition :which-key "Find type definition")
-      "cr" '(eglot-rename :which-key "Rename"))
+      "cx" '(xref-find-references :which-key "Find references"))
     )
 
   (use-package consult-eglot
@@ -478,8 +498,13 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
 
   ;; Keep n rows above/below cursor
   (setq scroll-margin 5)
+
+  ;; Prevent eldoc from showing more than one line, except when asked explicitly to do so
+  (setq eldoc-echo-area-use-multiline-p nil)
 #+end_src
+
 ** Dashboard
+
 #+begin_src emacs-lisp
   (use-package dashboard
     :ensure t
@@ -721,22 +746,15 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 #+begin_src emacs-lisp
   (use-package rust-ts-mode
     :mode "\\.rs\\'"
-    :hook
-    ;; disable inlay hints by default
-    ((lsp-rust-analyzer-after-open . (lambda () (lsp-rust-analyzer-inlay-hints-mode -1))))
-    :config
-    (setq lsp-rust-analyzer-import-granularity "module")
     :general
     (:keymaps 'rust-ts-mode-map
 	      :states '(motion normal visual)
 	      :keymaps 'override
 	      :prefix "SPC"
 
-	      "mc" '(lsp-rust-analyzer-open-cargo-toml :which-key "Open Cargo.toml")
-	      "mp" '(lsp-rust-analyzer-find-parent-module :which-key "Open Cargo.toml")
-	      "mt" '(lsp-rust-analyzer-inlay-hints-mode :which-key "Toggle inline hints"))
-    :init
-    (setq lsp-rust-analyzer-server-display-inlay-hints t))
+	      ;; "mc" '(lsp-rust-analyzer-open-cargo-toml :which-key "Open Cargo.toml")
+	      ;; "mp" '(lsp-rust-analyzer-find-parent-module :which-key "Open Cargo.toml")
+    ))
 #+end_src
 
 ** Elixir
