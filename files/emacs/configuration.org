@@ -103,6 +103,7 @@ Setup melpa.
 
       "q" '(:ignore t :which-key "Quit")
       "qr" '(restart-emacs :which-key "Restart")
+      "qq" '(save-buffers-kill-terminal :which-key "Quit")
 
       "x" '(scratch-buffer :which-key "Open scratch buffer")
       ))
@@ -377,6 +378,8 @@ Save files when they lose focus, and autoformat on save
       (exec-path-from-shell-initialize))
     (when (daemonp)
       (exec-path-from-shell-initialize))
+    ;; add rtx shims to path
+    (add-to-list 'exec-path "~/.local/share/rtx/shims")
     )
 #+end_src
 ** Eshell
@@ -394,22 +397,26 @@ Save files when they lose focus, and autoformat on save
 #+end_src
 ** Vterm
 #+begin_src emacs-lisp
-  (defun my/project-vterm ()
-  "Open vterm at project root"
-  (interactive)
-  ;; TODO
-  ;; for inspiration: https://github.com/bbatsov/projectile/pull/1474/files#diff-a448a7e36d92f29a14e851a15a0ea0c384ccd9721d6474dc45e7bf4999090859R3413
-  )
-
   (use-package vterm
+    :ensure t)
+
+  (use-package multi-vterm
     :ensure t
     :general
     (my-leader-def
       :states '(motion normal)
       :keymaps 'override
 
-      "ot" '(my/project-vterm :which-key "Shell at project path")
-      "oT" '(vterm :which-key "Vterm at current path")))
+      "ot" '(multi-vterm-project :which-key "Shell at project path")
+      "oT" '(multi-vterm :which-key "Vterm at current path")))
+#+end_src
+** Direnv
+
+#+begin_src emacs-lisp
+  (use-package direnv
+    :ensure t
+    :config
+    (direnv-mode))
 #+end_src
 
 * Git
@@ -435,6 +442,18 @@ Save files when they lose focus, and autoformat on save
       "gg" '(magit-status :which-key "Status")
       "gl" '(magit-log-buffer-file :which-key "Buffer log")
       ))
+
+  (use-package forge
+    :ensure t
+    :after magit)
+#+end_src
+** Code review
+#+begin_src emacs-lisp
+  (use-package code-review
+    :ensure t
+    :config
+    ;; use passwords from forge
+    (setq code-review-auth-login-marker 'forge))
 #+end_src
 ** Gutter
 #+begin_src emacs-lisp
@@ -660,6 +679,18 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     :ensure t)
 #+end_src
 
+** Highlight TODO/FIXME/...
+#+begin_src emacs-lisp 
+  (use-package hl-todo
+    :ensure t
+    :hook
+    ((prog-mode . hl-todo-mode)))
+#+end_src
+** Perspectives
+#+begin_src emacs-lisp
+  (use-package persp-mode
+    :ensure t)
+#+end_src
 * Projects and files
 ** Projects
 #+begin_src emacs-lisp
@@ -734,12 +765,25 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 
 ** Python
 #+begin_src emacs-lisp
+  (defun my/poetry-venv-workon ()
+    "Activate virtualenv and restart eglot to pick up the new venv"
+    (interactive)
+    (call-interactively 'poetry-venv-workon)
+    (call-interactively 'eglot-reconnect))
+
   (use-package python-ts-mode
-    :commands python-ts-mode
+    :general
+    (my-leader-def
+      :keymaps 'python-ts-mode-map
+      :states '(normal motion)
+      "mw" '(my/poetry-venv-workon :which-key "Poetry workon"))
+
     :config
     (setq indent-tabs-mode nil)
     (setq tab-width 4)
     (setq python-indent-offset 4))
+
+  (use-package poetry :after python-ts-mode :ensure t)
 #+end_src
 
 ** Rust
@@ -762,3 +806,23 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
   (use-package elixir-ts-mode
     :ensure t)
 #+end_src
+
+** Emacs lisp
+#+begin_src emacs-lisp
+    (use-package emacs-lisp-mode
+      :general
+
+      (my-leader-def
+	:keymaps 'emacs-lisp-mode-map
+
+	:states '(visual visual-line)
+	"mr" '(eval-region :which-key "Eval region"))
+  
+      (my-leader-def
+	:states '(motion normal)
+	:keymaps 'emacs-lisp-mode-map
+
+	"ml" '(eval-last-sexp :which-key "Eval last sexp"))
+  )
+#+end_src
+	
