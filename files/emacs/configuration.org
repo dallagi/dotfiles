@@ -132,7 +132,7 @@ Setup evil and evil-collections.
     :ensure t
     :diminish (evil-collection-unimpaired-mode . "")
     :config
-    (evil-collection-init)) 
+    (evil-collection-init))
 
   (use-package evil-nerd-commenter
     :after evil
@@ -226,7 +226,15 @@ Setup evil and evil-collections.
 					    (:granularity
 					     (:group "item")
 					     :prefix "crate")))))
+  
+    ;; remove previous python config
+    (setq eglot-server-programs (assoc-delete-all '(python-mode python-ts-mode) eglot-server-programs ))
+    ;; configure pyright
+    (add-to-list 'eglot-server-programs '((python-ts-mode python-mode) .
+					  ("poetry" "run" "pyright-langserver" "--stdio")))
 
+    ;; no inlay hints by default
+    (eglot-inlay-hints-mode -1)
 
     :hook
     ((python-ts-mode rust-ts-mode elixir-ts-mode heex-ts-mode) . eglot-ensure)
@@ -241,7 +249,7 @@ Setup evil and evil-collections.
     (general-define-key
      :states '(motion normal visual)
      "C-." nil)
-  
+
     (my-leader-def
       :states '(motion normal)
       :keymaps 'override
@@ -314,7 +322,7 @@ Save files when they lose focus, and autoformat on save
       "bb" '(consult-project-buffer :which-key "Switch to project buffer")
       "bB" '(consult-buffer :which-key "Switch to buffer")
 
-      "ci" '(consult-imenu :which-key "Imenu")
+      "cm" '(consult-imenu :which-key "Imenu")
 
       "n/" '(my/search-notes :which-key "Search notes")
       ))
@@ -433,6 +441,10 @@ Save files when they lose focus, and autoformat on save
 
     :hook (with-editor-mode . evil-insert-state)
 
+    :config
+    ;; restore windows configuration when quitting magit
+    (setq magit-bury-buffer-function 'magit-restore-window-configuration)
+
     :general
     (my-leader-def
       :states '(motion normal visual)
@@ -442,6 +454,13 @@ Save files when they lose focus, and autoformat on save
       "gg" '(magit-status :which-key "Status")
       "gl" '(magit-log-buffer-file :which-key "Buffer log")
       ))
+
+  ;; use delta for diffing in magit
+  (use-package magit-delta
+    :ensure t
+    :hook (magit-mode . magit-delta-mode)
+    :config
+    (setq magit-delta-default-dark-theme "zenburn"))
 
   (use-package forge
     :ensure t
@@ -555,12 +574,7 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
   (use-package zenburn-theme
     :ensure t
     :config
-    (load-theme 'zenburn))
-  
-    ;; (use-package color-theme-sanityinc-tomorrow
-    ;;     :ensure t
-    ;;     :config
-    ;;     (color-theme-sanityinc-tomorrow-night))
+    (load-theme 'zenburn t))
 #+end_src
 
 ** Font
@@ -601,9 +615,13 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
   (global-display-line-numbers-mode t)
 
   ;; Disable line numbers for some modes
-  (dolist (mode '(term-mode-hook
+  (dolist (mode '(dired-mode-hook
+		  eshell-mode-hook
+		  org-mode-hook
+		  ranger-mode-hook
 		  shell-mode-hook
-		  eshell-mode-hook))
+		  term-mode-hook
+		  vterm-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 #+end_src
 
@@ -644,13 +662,14 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     (diminish 'auto-revert-mode))
 
   ;; Show column number
-  (column-number-mode) 
+  (column-number-mode)
 
   (use-package doom-modeline
     :ensure t
     :init (doom-modeline-mode 1)
     :config
-    (setq doom-modeline-height 20))
+    (setq doom-modeline-height 20
+	  doom-modeline-buffer-file-name-style 'truncate-upto-project))
 #+end_src
 
 ** Help / Helpful
@@ -661,7 +680,9 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     :ensure t
 
     :general
-    (:keymaps 'emacs-lisp-mode-map "K" 'helpful-at-point)
+    (:keymaps 'emacs-lisp-mode-map
+	      :states '(motion normal visual)
+	      "K" 'helpful-at-point)
 
     (my-leader-def
       :states '(motion normal visual)
@@ -688,8 +709,22 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 #+end_src
 ** Perspectives
 #+begin_src emacs-lisp
-  (use-package persp-mode
-    :ensure t)
+  ;; (use-package persp-mode
+  ;;   :ensure t
+  ;;   :config
+  ;;   (persp-mode)
+  ;;   :general
+
+  ;;   (my-leader-def
+  ;;     :states '(motion normal visual)
+  ;;     :keymaps 'override
+
+  ;;     "TAB" '(:ignore t :which-key "Workspaces")
+  ;;     "TAB d" '(persp-kill :which-key "Kill")
+  ;;     "TAB n" '(persp-add-new :which-key "New")
+  ;;     "TAB ]" '(persp-next :which-key "Next")
+  ;;     "TAB [" '(persp-prev :which-key "Previous")
+  ;;     ))
 #+end_src
 * Projects and files
 ** Projects
@@ -729,21 +764,22 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     :commands (dired dired-jump)
     :init
     ;; reuse buffers in dired
-    (setq dired-kill-when-opening-new-dired-buffer t)
+    (setq dired-kill-when-opening-new-dired-buffer t))
 
+  (defun my/project-ranger ()
+    "Start Ranger in the current project's root."
+    (interactive)
+    (ranger (project-root (project-current t))))
+
+  (use-package ranger
+    :ensure t
     :general
     (my-leader-def
       :states '(motion normal visual)
       :keymaps 'override
-      "ee" '(dired-jump :which-key "Open dired at current buffer")
-      "ep" '(project-dired :which-key "Open dired in project root")))
-
-  (use-package dirvish
-    :ensure t
-    :commands dirvish
-    :config
-    (dirvish-override-dired-mode)
-    (evil-make-overriding-map dirvish-mode-map 'normal))
+      "ee" '(ranger :which-key "Open dired at current buffer")
+      "ep" '(my/project-ranger :which-key "Open dired in project root"))
+    )
 #+end_src
 * Languages
 ** Org
@@ -757,10 +793,16 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     (require 'evil-org-agenda)
     (evil-org-agenda-set-keys)
 
-    (org-indent-mode)
     (setq org-log-done 'time ;; set timestamp when closing TODO item
-	  org-todo-keywords
-	  '((sequence "TODO(t)" "WIP(w)" "BLOCKED(b)" "|" "DONE(d)" "KILLED(k)" "POSTPONED(p)"))))
+          org-todo-keywords
+          '((sequence "TODO(t)" "WIP(w)" "BLOCKED(b)" "|" "DONE(d)" "KILLED(k)" "POSTPONED(p)"))))
+
+
+  (use-package org-modern
+    :ensure t
+    :after org
+    :config
+    (global-org-modern-mode))
 #+end_src
 
 ** Python
@@ -809,20 +851,20 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 
 ** Emacs lisp
 #+begin_src emacs-lisp
-    (use-package emacs-lisp-mode
-      :general
+  (use-package emacs-lisp-mode
+    :general
 
-      (my-leader-def
-	:keymaps 'emacs-lisp-mode-map
+    (my-leader-def
+      :keymaps 'emacs-lisp-mode-map
 
-	:states '(visual visual-line)
-	"mr" '(eval-region :which-key "Eval region"))
-  
-      (my-leader-def
-	:states '(motion normal)
-	:keymaps 'emacs-lisp-mode-map
+      :states '(visual visual-line)
+      "mr" '(eval-region :which-key "Eval region"))
 
-	"ml" '(eval-last-sexp :which-key "Eval last sexp"))
-  )
+    (my-leader-def
+      :states '(motion normal)
+      :keymaps 'emacs-lisp-mode-map
+
+      "ml" '(eval-last-sexp :which-key "Eval last sexp"))
+    )
 #+end_src
 	
