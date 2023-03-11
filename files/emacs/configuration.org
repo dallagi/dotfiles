@@ -470,6 +470,7 @@ Save files when they lose focus, and autoformat on save
 #+begin_src emacs-lisp
   (use-package code-review
     :ensure t
+    :after magit
     :config
     ;; use passwords from forge
     (setq code-review-auth-login-marker 'forge))
