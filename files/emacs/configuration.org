@@ -87,6 +87,9 @@ Setup melpa.
       "hm" '(describe-mode :which-key "Describe mode")
 
       "m" '(:ignore t :which-key "Mode-specific")
+  
+      "i" '(:ignore t :which-key "Insert")
+      "ie" '(emoji-search :which-key "Emoji")
 
       "o" '(:ignore t :which-key "Open")
 
