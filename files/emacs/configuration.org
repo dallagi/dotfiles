@@ -1,5 +1,4 @@
 * TODOs
-** TODO replace yasnippet with templer
 ** TODO org-roam
 ** TODO straight (or other package manager)
 ** TODO beautify org
@@ -152,9 +151,16 @@ Setup evil and evil-collections.
 
 ** Snippets
 #+begin_src emacs-lisp
-  ;; TODO
-#+end_src
+(use-package yasnippet
+  :ensure t
+  :config
+  (yas-reload-all)
+  (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets"))
+  (yas-global-mode 1))
 
+(use-package yasnippet-snippets
+  :ensure t)
+  #+end_src
 ** Autocomplete
 #+begin_src emacs-lisp
   ;; Completion-at-point extensions
