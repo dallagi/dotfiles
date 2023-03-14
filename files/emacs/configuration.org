@@ -1,4 +1,6 @@
 * TODOs
+* TODO mappare ~vterm-send-next-key~
+** TODO recentf
 ** TODO org-roam
 ** TODO straight (or other package manager)
 ** TODO beautify org
@@ -10,7 +12,9 @@ see also https://www.reddit.com/r/emacs/comments/1161zcs/dynamic_action_in_org_m
 ** TODO replace format-all with apheleia?
 ** TODO hydra to resize windows
 ** TODO perspectives
-** TODO mixed-pitch-mode
+** TODO checkout other configs
+https://github.com/wandersoncferreira/literate_emacs
+https://www.lucacambiaghi.com/vanilla-emacs/readme.html
 
 * Manual steps
 ** Language servers
@@ -38,6 +42,34 @@ Setup melpa.
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
   (package-initialize)
 #+end_src
+
+* Functions
+#+begin_src emacs-lisp
+  (defun my/copy-file-name-to-clipboard ()
+    "Copy the current buffer file name to the clipboard."
+    (interactive)
+    (when buffer-file-name
+      (kill-new buffer-file-name)
+      (message "Copied buffer file name '%s' to the clipboard." buffer-file-name)))
+
+
+  (defun my/slide-buffer (dir)
+    "Move current buffer into window at direction DIR.
+  DIR is handled as by `windmove-other-window-loc'."
+    (require 'windmove)
+    (let ((buffer (current-buffer))
+	  (target (windmove-find-other-window dir)))
+      (if (null target)
+	  (user-error "There is no window %s from here" dir)
+	(switch-to-prev-buffer)
+	(select-window target)
+	(switch-to-buffer buffer nil t))))
+
+  (defun my/slide-buffer-up () (interactive) (my/slide-buffer 'up))
+  (defun my/slide-buffer-down () (interactive) (my/slide-buffer 'down))
+  (defun my/slide-buffer-left () (interactive) (my/slide-buffer 'left))
+  (defun my/slide-buffer-right () (interactive) (my/slide-buffer 'right))
+      #+end_src
 
 * Editor
 ** General Editor UX
@@ -95,9 +127,13 @@ Setup melpa.
       "w" '(:ignore t :which-key "Window")
       "wd" '(delete-window :which-key "Delete")
       "wh" '(windmove-left :which-key "Move left")
+      "wH" '(my/slide-buffer-left :which-key "Slide buffer to window on left")
       "wj" '(windmove-down :which-key "Move down")
+      "wJ" '(my/slide-buffer-down :which-key "Slide buffer to window below")
       "wk" '(windmove-up :which-key "Move up")
+      "wK" '(my/slide-buffer-up :which-key "Slide buffer to window above")
       "wl" '(windmove-right :which-key "Move right")
+      "wL" '(my/slide-buffer-right :which-key "Slide buffer to window on right")
       "wv" '(split-window-right :which-key "Split vertically")
       "ws" '(split-window-below :which-key "Split horizontally")
       "w=" '(balance-windows :which-key "Balance")
@@ -115,6 +151,19 @@ Setup melpa.
 Setup evil and evil-collections.
 
 #+begin_src emacs-lisp
+  ;; ;; Restore visual selection after indenting / dedenting
+  ;; (defun my/evil-shift-right ()
+  ;;   (interactive)
+  ;;   (evil-shift-right evil-visual-beginning evil-visual-end)
+  ;;   (evil-normal-state)
+  ;;   (evil-visual-restore))
+
+  ;; (defun my/evil-shift-left ()
+  ;;   (interactive)
+  ;;   (evil-shift-left evil-visual-beginning evil-visual-end)
+  ;;   (evil-normal-state)
+  ;;   (evil-visual-restore))
+
   (use-package evil
     :ensure t
     :init
@@ -124,6 +173,8 @@ Setup evil and evil-collections.
     (setq evil-undo-system 'undo-redo) ;; Simple undo/redo
     :general
     (:keymaps 'evil-motion-state-map "K" nil)
+    ;; (:keymaps 'evil-visual-state-map ">" 'my/evil-shift-right)
+    ;; (:keymaps 'evil-visual-state-map "<" 'my/evil-shift-left)
     :config
     ;; keep vim-like tab behavior
     (define-key evil-insert-state-map (kbd "TAB") 'tab-to-tab-stop)
