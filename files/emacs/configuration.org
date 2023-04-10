@@ -265,6 +265,14 @@ Setup evil and evil-collections.
     (call-interactively 'eldoc-doc-buffer)
     (call-interactively 'other-window))
 
+  (defun my/python-lsp-command ()
+    "Use poetry to run pyright when possible, or run pyright directly instead"
+    (let* ((poetry-check-result (call-process "poetry" nil nil nil "check"))
+	   (in-poetry-project? (= 0 poetry-check-result)))
+      (if in-poetry-project?
+	  '("poetry" "run" "pyright-langserver" "--stdio")
+	'("pyright-langserver" "--stdio"))))
+
   (use-package eglot
     :demand
 
@@ -291,7 +299,7 @@ Setup evil and evil-collections.
     (setq eglot-server-programs (assoc-delete-all '(python-mode python-ts-mode) eglot-server-programs ))
     ;; configure pyright
     (add-to-list 'eglot-server-programs '((python-ts-mode python-mode) .
-					  ("poetry" "run" "pyright-langserver" "--stdio")))
+					  (lambda (x) "" (my/python-lsp-command))))
 
     ;; no inlay hints by default
     (eglot-inlay-hints-mode -1)
