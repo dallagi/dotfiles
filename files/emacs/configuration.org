@@ -9,7 +9,6 @@ See also package org-appear
 ** TODO org-dwim-at-point
 see how doom emacs implemented it
 see also https://www.reddit.com/r/emacs/comments/1161zcs/dynamic_action_in_org_mode_based_on_content_at/
-** TODO replace format-all with apheleia?
 ** TODO hydra to resize windows
 ** TODO perspectives
 ** TODO checkout other configs
@@ -35,12 +34,24 @@ Tune the GC via the GC magic hack.
 #+end_src
 
 ** Package management
-Setup melpa.
+Setup melpa and quelpa.
 
 #+begin_src emacs-lisp
   (require 'package)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
   (package-initialize)
+
+  (unless (package-installed-p 'quelpa)
+    (with-temp-buffer
+      (url-insert-file-contents "https://raw.githubusercontent.com/quelpa/quelpa/master/quelpa.el")
+      (eval-buffer)
+      (quelpa-self-upgrade)))
+
+  (quelpa
+   '(quelpa-use-package
+     :fetcher git
+     :url "https://github.com/quelpa/quelpa-use-package.git"))
+  (require 'quelpa-use-package)
 #+end_src
 
 * Functions
@@ -55,7 +66,7 @@ Setup melpa.
 
   (defun my/slide-buffer (dir)
     "Move current buffer into window at direction DIR.
-  DIR is handled as by `windmove-other-window-loc'."
+    DIR is handled as by `windmove-other-window-loc'."
     (require 'windmove)
     (let ((buffer (current-buffer))
 	  (target (windmove-find-other-window dir)))
@@ -361,12 +372,10 @@ Save files when they lose focus, and autoformat on save
     ;; this prevents a problem where save is triggered on signature help from lsp-mode
     (setq super-save-exclude '(" *LV*")))
 
-  (use-package format-all
+  (use-package apheleia
     :ensure t
-    :hook
-    ;; enable for most programming languages
-    (prog-mode . format-all-mode)
-    (format-all-mode . format-all-ensure-formatter))
+    :config
+    (apheleia-global-mode +1))
 #+end_src
 
 ** Consult
@@ -379,6 +388,10 @@ Save files when they lose focus, and autoformat on save
     (interactive)
     (consult-ripgrep org-directory))
 
+  (defun my/consult-ripgrep-current-dir ()
+    (interactive)
+    (let ((current-dir (file-name-directory buffer-file-name)))
+      (consult-ripgrep current-dir)))
   (use-package consult
     :ensure t
     :custom
@@ -389,6 +402,7 @@ Save files when they lose focus, and autoformat on save
       :keymaps 'override
 
       "/" '(consult-ripgrep :which-key "Search project")
+      "C-u /" '(consult-ripgrep :which-key "Search project")
 
       "bb" '(consult-project-buffer :which-key "Switch to project buffer")
       "bB" '(consult-buffer :which-key "Switch to buffer")
@@ -856,8 +870,10 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     (my-leader-def
       :states '(motion normal visual)
       :keymaps 'override
-      "ee" '(ranger :which-key "Open dired at current buffer")
-      "ep" '(my/project-ranger :which-key "Open dired in project root"))
+      "ee" '(ranger :which-key "Open ranger at current buffer")
+      "ep" '(my/project-ranger :which-key "Open ranger in project root")
+      :config
+      (setq ranger-show-hidden 't))
     )
 #+end_src
 * Languages
