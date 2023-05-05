@@ -27,7 +27,6 @@ Tune the GC via the GC magic hack.
 
 #+begin_src emacs-lisp
   (use-package gcmh
-    :ensure t
     :demand t
     :config
     (gcmh-mode 1))
@@ -46,6 +45,9 @@ Setup melpa and quelpa.
       (url-insert-file-contents "https://raw.githubusercontent.com/quelpa/quelpa/master/quelpa.el")
       (eval-buffer)
       (quelpa-self-upgrade)))
+
+  (require 'use-package-ensure)
+  (setq use-package-always-ensure t)
 
   (quelpa
    '(quelpa-use-package
@@ -91,7 +93,6 @@ Setup melpa and quelpa.
 ** Keybinds
 #+begin_src emacs-lisp
   (use-package which-key
-    :ensure t
     :init (which-key-mode)
     :config
     (setq which-key-idle-delay 1))
@@ -102,7 +103,6 @@ Setup melpa and quelpa.
     (find-file (locate-user-emacs-file "configuration.org")))
 
   (use-package general
-    :ensure t
     :config
     (general-override-mode) ;; allow overriding key definitions
     (general-create-definer my-leader-def :prefix "SPC")
@@ -162,21 +162,7 @@ Setup melpa and quelpa.
 Setup evil and evil-collections.
 
 #+begin_src emacs-lisp
-  ;; ;; Restore visual selection after indenting / dedenting
-  ;; (defun my/evil-shift-right ()
-  ;;   (interactive)
-  ;;   (evil-shift-right evil-visual-beginning evil-visual-end)
-  ;;   (evil-normal-state)
-  ;;   (evil-visual-restore))
-
-  ;; (defun my/evil-shift-left ()
-  ;;   (interactive)
-  ;;   (evil-shift-left evil-visual-beginning evil-visual-end)
-  ;;   (evil-normal-state)
-  ;;   (evil-visual-restore))
-
   (use-package evil
-    :ensure t
     :init
     (setq evil-want-keybinding nil) ;; Expected by evil-collection
     (setq evil-want-integration t) ;; Expected by evil-collection
@@ -184,8 +170,6 @@ Setup evil and evil-collections.
     (setq evil-undo-system 'undo-redo) ;; Simple undo/redo
     :general
     (:keymaps 'evil-motion-state-map "K" nil)
-    ;; (:keymaps 'evil-visual-state-map ">" 'my/evil-shift-right)
-    ;; (:keymaps 'evil-visual-state-map "<" 'my/evil-shift-left)
     :config
     ;; keep vim-like tab behavior
     (define-key evil-insert-state-map (kbd "TAB") 'tab-to-tab-stop)
@@ -194,20 +178,18 @@ Setup evil and evil-collections.
   (use-package evil-collection
     :after evil
     :init
+    ;; fix magit bug
     (require 'magit)
-    :ensure t
     :config
     (evil-collection-init))
 
   (use-package evil-nerd-commenter
     :after evil
-    :ensure t
     :general
     ("C-/" '(evilnc-comment-or-uncomment-lines :which-key "Comment")))
 
   (use-package evil-surround
     :after evil
-    :ensure t
     :config
     (global-evil-surround-mode 1))
 #+end_src
@@ -215,22 +197,19 @@ Setup evil and evil-collections.
 ** Snippets
 #+begin_src emacs-lisp
 (use-package yasnippet
-  :ensure t
   :config
   (yas-reload-all)
   (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets"))
   (yas-global-mode 1))
 
-(use-package yasnippet-snippets
-  :ensure t)
+(use-package yasnippet-snippets)
   #+end_src
 ** Autocomplete
 #+begin_src emacs-lisp
   ;; Completion-at-point extensions
-  (use-package cape :ensure t)
+  (use-package cape)
 
   (use-package corfu
-    :ensure t
     :custom
     (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
     (corfu-auto t)                 ;; Enable auto completion
@@ -248,7 +227,6 @@ Setup evil and evil-collections.
 
   ;; Icons for corfu
   (use-package kind-icon
-    :ensure t
     :after corfu
     :custom
     (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
@@ -259,8 +237,6 @@ Setup evil and evil-collections.
 ** Treesitter
 #+begin_src emacs-lisp
   (use-package treesit-auto
-    :ensure t
-  
     :custom
     (treesit-auto-install 'prompt)
   
@@ -346,7 +322,6 @@ Setup evil and evil-collections.
     )
 
   (use-package consult-eglot
-    :ensure t
     :commands 'consult-eglot-symbols
 
     :general
@@ -362,7 +337,6 @@ Save files when they lose focus, and autoformat on save
 
 #+begin_src emacs-lisp
   (use-package super-save
-    :ensure t
     :config
     (super-save-mode +1)
     ;; disable super save for lv buffer
@@ -370,7 +344,6 @@ Save files when they lose focus, and autoformat on save
     (setq super-save-exclude '(" *LV*")))
 
   (use-package apheleia
-    :ensure t
     :config
     (apheleia-global-mode +1))
 #+end_src
@@ -390,7 +363,6 @@ Save files when they lose focus, and autoformat on save
     (let ((current-dir (file-name-directory buffer-file-name)))
       (consult-ripgrep current-dir)))
   (use-package consult
-    :ensure t
     :custom
     (consult-async-min-input 0)
     :general
@@ -413,7 +385,6 @@ Save files when they lose focus, and autoformat on save
 ** Multiple cursors
 #+begin_src emacs-lisp
   (use-package evil-multiedit
-    :ensure t
     :config
     (evil-multiedit-mode)
     (evil-multiedit-default-keybinds))
@@ -421,8 +392,6 @@ Save files when they lose focus, and autoformat on save
 ** Embark
 #+begin_src emacs-lisp
   (use-package embark
-    :ensure t
-
     :bind
     (("C-." . embark-act)         ;; pick some comfortable binding
      ("C-;" . embark-dwim)        ;; good alternative: M-.
@@ -454,7 +423,7 @@ Save files when they lose focus, and autoformat on save
 		   (window-parameters (mode-line-format . none)))))
 
   (use-package embark-consult
-    :ensure t ; only need to install it, embark loads it after consult if found
+    ; only need to install it, embark loads it after consult if found
     :hook
     (embark-collect-mode . consult-preview-at-point-mode))
 #+end_src
@@ -462,7 +431,6 @@ Save files when they lose focus, and autoformat on save
 ** Exec path
 #+begin_src emacs-lisp
   (use-package exec-path-from-shell
-    :ensure t
     :init
     (when (memq window-system '(mac ns x))
       (exec-path-from-shell-initialize))
@@ -487,11 +455,9 @@ Save files when they lose focus, and autoformat on save
 #+end_src
 ** Vterm
 #+begin_src emacs-lisp
-  (use-package vterm
-    :ensure t)
+  (use-package vterm)
 
   (use-package multi-vterm
-    :ensure t
     :general
     (my-leader-def
       :states '(motion normal)
@@ -504,13 +470,12 @@ Save files when they lose focus, and autoformat on save
 
 #+begin_src emacs-lisp
   (use-package direnv
-    :ensure t
     :config
     (direnv-mode))
 #+end_src
 ** Eat
 #+begin_src emacs-lisp
-  (use-package eat :ensure t)
+  (use-package eat)
 #+end_src
 
 * Git
@@ -520,7 +485,6 @@ Save files when they lose focus, and autoformat on save
   (setq vc-follow-symlinks t)
 
   (use-package magit
-    :ensure t
     :init
     ;; display magit status buffer in full screen
     (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
@@ -545,19 +509,16 @@ Save files when they lose focus, and autoformat on save
 
   ;; use delta for diffing in magit
   (use-package magit-delta
-    :ensure t
     :hook (magit-mode . magit-delta-mode)
     :config
     (setq magit-delta-default-dark-theme "zenburn"))
 
   (use-package forge
-    :ensure t
     :after magit)
 #+end_src
 ** Code review
 #+begin_src emacs-lisp
   (use-package code-review
-    :ensure t
     :after magit
     :config
     ;; use passwords from forge
@@ -566,7 +527,6 @@ Save files when they lose focus, and autoformat on save
 ** Gutter
 #+begin_src emacs-lisp
   (use-package diff-hl
-    :ensure t
     :general
     (my-leader-def
       :states '(motion normal visual)
@@ -581,7 +541,6 @@ Save files when they lose focus, and autoformat on save
 #+begin_src emacs-lisp
   (use-package git-timemachine
     :commands git-timemachine
-    :ensure t
     :general
     (my-leader-def
       :states '(motion normal visual)
@@ -594,7 +553,6 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
 
 #+begin_src emacs-lisp
   (use-package no-littering
-    :ensure t
     :init
     ;; no-littering doesn't set this by default so we must place
     ;; auto save files in the same path as it uses for sessions
@@ -633,7 +591,6 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
 
 #+begin_src emacs-lisp
   (use-package dashboard
-    :ensure t
     :init
     (setq dashboard-set-footer nil)
     (setq dashboard-center-content t)
@@ -660,7 +617,6 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
   (setq custom-safe-themes t)   ; Treat all themes as safe
 
   (use-package zenburn-theme
-    :ensure t
     :config
     (load-theme 'zenburn t))
 #+end_src
@@ -688,11 +644,10 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
 Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 
 #+begin_src emacs-lisp
-  (use-package all-the-icons :ensure t)
+  (use-package all-the-icons)
 
   ;; Icons in completions (eg. vertico)
   (use-package all-the-icons-completion
-    :ensure t
     :after (marginalia all-the-icons)
     :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
     :init
@@ -717,7 +672,6 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 ** Vertical selection
 #+begin_src emacs-lisp
   (use-package vertico
-    :ensure t
     :bind (:map vertico-map
 		("C-j" . vertico-next)
 		("C-k" . vertico-previous))
@@ -727,7 +681,6 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     (vertico-mode))
 
   (use-package orderless
-    :ensure t
     :after vertico
     :init
     (setq completion-styles '(orderless partial-completion basic)
@@ -736,7 +689,6 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 	  completion-category-overrides '((file (styles partial-completion)))))
 
   (use-package marginalia
-    :ensure t
     :after vertico
     :init
     (marginalia-mode))
@@ -748,7 +700,6 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
   (column-number-mode)
 
   (use-package doom-modeline
-    :ensure t
     :init (doom-modeline-mode 1)
     :config
     (setq doom-modeline-height 20
@@ -760,8 +711,6 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
   (setq help-window-select t) ;; auto select help popup windows
 
   (use-package helpful
-    :ensure t
-
     :general
     (:keymaps 'emacs-lisp-mode-map
 	      :states '(motion normal visual)
@@ -779,21 +728,18 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 ** Rainbow delimiters
 #+begin_src emacs-lisp
   (use-package rainbow-delimiters
-    :hook prog-mode
-    :ensure t)
+    :hook prog-mode)
 #+end_src
 
 ** Highlight TODO/FIXME/...
 #+begin_src emacs-lisp 
   (use-package hl-todo
-    :ensure t
     :hook
     ((prog-mode . hl-todo-mode)))
 #+end_src
 ** Perspectives
 #+begin_src emacs-lisp
   ;; (use-package persp-mode
-  ;;   :ensure t
   ;;   :config
   ;;   (persp-mode)
   ;;   :general
@@ -818,11 +764,9 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     (require 'project)
     (project-find-file-in "" `(,org-directory) nil t))
 
-  (use-package rg :ensure t)
+  (use-package rg)
 
   (use-package project
-    :ensure t
-
     :custom
     (project-switch-commands 'project-find-file)
 
@@ -855,7 +799,6 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     (ranger (project-root (project-current t))))
 
   (use-package ranger
-    :ensure t
     :general
     (my-leader-def
       :states '(motion normal visual)
@@ -870,7 +813,6 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 ** Org
 #+begin_src emacs-lisp
   (use-package evil-org
-    :ensure t
     :after org
     :hook (org-mode . (lambda () (evil-org-mode)))
     :config
@@ -885,7 +827,6 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 
 
   (use-package org-modern
-    :ensure t
     :after org
     :config
     (global-org-modern-mode))
@@ -911,7 +852,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     (setq tab-width 4)
     (setq python-indent-offset 4))
 
-  (use-package poetry :after python-ts-mode :ensure t)
+  (use-package poetry :after python-ts-mode)
 #+end_src
 
 ** Rust
@@ -931,8 +872,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 
 ** Elixir
 #+begin_src emacs-lisp
-  (use-package elixir-ts-mode
-    :ensure t)
+  (use-package elixir-ts-mode)
 #+end_src
 
 ** Emacs lisp
@@ -958,10 +898,8 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 #+begin_src emacs-lisp
   ;; Disabled due to some issues
   ;; TODO check again in the future whether this works
-  ;; (use-package protobuf-ts-mode
-  ;;   :ensure t) 
-  (use-package protobuf-mode
-    :ensure t) 
+  ;; (use-package protobuf-ts-mode) 
+  (use-package protobuf-mode) 
 #+end_src
 
 ** Yaml
