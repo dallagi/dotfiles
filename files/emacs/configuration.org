@@ -93,7 +93,6 @@ Setup melpa and quelpa.
   (use-package which-key
     :ensure t
     :init (which-key-mode)
-    :diminish ""
     :config
     (setq which-key-idle-delay 1))
 
@@ -197,7 +196,6 @@ Setup evil and evil-collections.
     :init
     (require 'magit)
     :ensure t
-    :diminish (evil-collection-unimpaired-mode . "")
     :config
     (evil-collection-init))
 
@@ -365,7 +363,6 @@ Save files when they lose focus, and autoformat on save
 #+begin_src emacs-lisp
   (use-package super-save
     :ensure t
-    :diminish ""
     :config
     (super-save-mode +1)
     ;; disable super save for lv buffer
@@ -570,7 +567,6 @@ Save files when they lose focus, and autoformat on save
 #+begin_src emacs-lisp
   (use-package diff-hl
     :ensure t
-    :diminish ""
     :general
     (my-leader-def
       :states '(motion normal visual)
@@ -748,12 +744,6 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 
 ** Modeline
 #+begin_src emacs-lisp
-  ;; Diminish minor modes
-  (use-package diminish
-    :ensure t
-    :config
-    (diminish 'auto-revert-mode))
-
   ;; Show column number
   (column-number-mode)
 
@@ -882,7 +872,6 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
   (use-package evil-org
     :ensure t
     :after org
-    :diminish ""
     :hook (org-mode . (lambda () (evil-org-mode)))
     :config
     (require 'evil-org-agenda)
