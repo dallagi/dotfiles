@@ -1,14 +1,10 @@
 * TODOs
 * TODO mappare ~vterm-send-next-key~
 ** TODO recentf
-** TODO org-roam
-** TODO straight (or other package manager)
+** TODO wrap lines by default
 ** TODO beautify org
 See https://zzamboni.org/post/beautifying-org-mode-in-emacs/
 See also package org-appear
-** TODO org-dwim-at-point
-see how doom emacs implemented it
-see also https://www.reddit.com/r/emacs/comments/1161zcs/dynamic_action_in_org_mode_based_on_content_at/
 ** TODO hydra to resize windows
 ** TODO perspectives
 ** TODO checkout other configs
@@ -206,32 +202,12 @@ Setup evil and evil-collections.
   #+end_src
 ** Autocomplete
 #+begin_src emacs-lisp
-  ;; Completion-at-point extensions
-  (use-package cape)
-
-  (use-package corfu
-    :custom
-    (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-    (corfu-auto t)                 ;; Enable auto completion
-    (corfu-popupinfo-delay 0.5)
-    (corfu-auto-prefix 1)          ;; show autocomplete at first char
-
-    ;; Enable Corfu only for certain modes.
-    ;; :hook ((prog-mode . corfu-mode)
-    ;;        (shell-mode . corfu-mode)
-    ;;        (eshell-mode . corfu-mode))
-
-    :init
-    (global-corfu-mode)
-    (corfu-popupinfo-mode))
-
-  ;; Icons for corfu
-  (use-package kind-icon
-    :after corfu
-    :custom
-    (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
+  (use-package company
     :config
-    (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+    (global-company-mode))
+
+  (use-package company-quickhelp
+    :hook (company-mode . company-quickhelp-mode))
 #+end_src
 
 ** Treesitter
@@ -244,93 +220,82 @@ Setup evil and evil-collections.
     (global-treesit-auto-mode))
 #+end_src
 
-** LSP
-*** Eglot
+** IDE
+*** Flycheck
 #+begin_src emacs-lisp
-  (defun my/eldoc-doc-buffer-with-focus ()
-    "Same as eldoc-doc-buffer, but focus on eldoc window"
-    (interactive)
-    (call-interactively 'eldoc-doc-buffer)
-    (call-interactively 'other-window))
+  (use-package flycheck
+    :init (global-flycheck-mode))
+#+end_src
+*** Lsp-mode
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :init
+    ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+    (setq lsp-keymap-prefix "C-c l")
+    ;; increase GC threshold to suit LSP-mode needs
+    (setq gc-cons-threshold 100000000)
+    ;; Increase the amount of data which Emacs reads from the process#
+    (setq read-process-output-max (* 1024 1024)) ;; 1mb
 
-  (defun my/python-lsp-command ()
-    "Use poetry to run pyright when possible, or run pyright directly instead"
-    (let* ((poetry-check-result (call-process "poetry" nil nil nil "check"))
-	   (in-poetry-project? (= 0 poetry-check-result)))
-      (if in-poetry-project?
-	  '("poetry" "run" "pyright-langserver" "--stdio")
-	'("pyright-langserver" "--stdio"))))
+    ;; Don't cache completion results from LSP
+    (setq-local completion-at-point-functions (list (cape-capf-buster #'lsp-completion-at-point)))
 
-  (use-package eglot
-    :demand
-
-    :preface
-    ;; allow eldoc to properly compose messages from eglot
-    ;; see https://www.masteringemacs.org/article/seamlessly-merge-multiple-documentation-sources-eldoc
-    (defun mp-eglot-eldoc ()
-      (setq eldoc-documentation-strategy
-	    'eldoc-documentation-compose-eagerly))
-
-    :config
-    ;; remove previous rust-analyzer config
-    (setq eglot-server-programs (assoc-delete-all '(rust-ts-mode rust-mode) eglot-server-programs ))
-    ;; configure rust-analyzer
-    (add-to-list 'eglot-server-programs '((rust-ts-mode rust-mode) .
-					  ("rust-analyzer"
-					   :initializationOptions
-					   (:imports
-					    (:granularity
-					     (:group "item")
-					     :prefix "crate")))))
-  
-    ;; remove previous python config
-    (setq eglot-server-programs (assoc-delete-all '(python-mode python-ts-mode) eglot-server-programs ))
-    ;; configure pyright
-    (add-to-list 'eglot-server-programs '((python-ts-mode python-mode) .
-					  (lambda (x) "" (my/python-lsp-command))))
-
-    ;; no inlay hints by default
-    (eglot-inlay-hints-mode -1)
+    (defun my/lsp-mode-setup-completion ()
+      (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+	    '(orderless))) ;; Configure orderless
+    :custom
+    (lsp-auto-execute-action nil) ;; always ask before executing action
+    (lsp-ui-doc-enable nil) ;; disable docs popup on hover
+    (lsp-lens-enable nil) ;; disable lens by default
+    (lsp-headerline-breadcrumb-enable nil) ;; disable breadcrumbs in headerline
+    (lsp-ui-sideline-enable nil) ;; disable sideline entirely
+    (lsp-modeline-code-actions-enable nil) ;; do not show code actions in modeline
+    (lsp-signature-render-documentation nil) ;; do not show documentation in echo area
 
     :hook
-    ((python-ts-mode rust-ts-mode elixir-ts-mode heex-ts-mode) . eglot-ensure)
-    (eglot-managed-mode . mp-eglot-eldoc)
+    (lsp-completion-mode . my/lsp-mode-setup-completion)
+    ;; if you want which-key integration
+    (lsp-mode . lsp-enable-which-key-integration)
 
     :general
-
-    (general-define-key
-     :states '(motion normal visual)
-     :keymaps 'eglot-mode-map "K" 'my/eldoc-doc-buffer-with-focus)
-
-    (general-define-key
-     :states '(motion normal visual)
-     "C-." nil)
+    ("K" 'lsp-describe-thing-at-point)
 
     (my-leader-def
       :states '(motion normal)
       :keymaps 'override
 
       "c" '(:ignore t :which-key "Code")
-      "ca" '(eglot-code-actions :which-key "Code action")
+      "ca" '(lsp-execute-code-action :which-key "Code action")
       "cd" '(xref-find-definitions :which-key "Find definitions")
-      "cD" '(eglot-find-declaration :which-key "Find declaration")
-      "ch" '(eglot-inlay-hints-mode :which-key "Toggle inlay hints")
-      "ci" '(eglot-find-implementation :which-key "Find implementation")
-      "cr" '(eglot-rename :which-key "Rename")
-      "ct" '(eglot-find-typeDefinition :which-key "Find type definition")
+      "cD" '(lsp-find-declaration :which-key "Find declaration")
+      "ch" '(lsp-inlay-hints-mode :which-key "Toggle inlay hints")
+      "cl" '(lsp-lens-mode :which-key "Toggle LSP lens")
+      "ci" '(lsp-find-implementation :which-key "Find implementation")
+      "cr" '(lsp-rename :which-key "Rename")
+      "ct" '(lsp-find-type-definition :which-key "Find type definition")
       "cx" '(xref-find-references :which-key "Find references"))
-    )
 
-  (use-package consult-eglot
-    :commands 'consult-eglot-symbols
+    :commands lsp lsp-deferred)
 
+  ;; optionally
+  (use-package lsp-ui :commands lsp-ui-mode)
+
+  ;; optionally if you want to use debugger
+  (use-package dap-mode)
+  ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+  (use-package consult-lsp
     :general
     (my-leader-def
       :states '(motion normal)
       :keymaps 'override
 
-      "cj" '(consult-eglot-symbols :which-key "Find symbols")))
+      "cj" '(consult-lsp-file-symbols :which-key "Find symbols in file")
+      "cJ" '(consult-lsp-symbols :which-key "Find symbols in workspace")
+      "ck" '(consult-lsp-diagnostics :which-key "Find diagnostics in workspace")
+      ))
 #+end_src
+
 
 ** Autosave and format
 Save files when they lose focus, and autoformat on save
@@ -788,6 +753,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 ** File management
 #+begin_src emacs-lisp
   (use-package dired
+    :ensure nil
     :commands (dired dired-jump)
     :init
     ;; reuse buffers in dired
@@ -841,6 +807,10 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     (call-interactively 'eglot-reconnect))
 
   (use-package python-ts-mode
+    :ensure nil
+
+    :hook (python-ts-mode . lsp-mode)
+  
     :general
     (my-leader-def
       :keymaps 'python-ts-mode-map
@@ -859,6 +829,9 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 #+begin_src emacs-lisp
   (use-package rust-ts-mode
     :mode "\\.rs\\'"
+
+    :hook (rust-ts-mode . lsp-mode)
+
     :general
     (:keymaps 'rust-ts-mode-map
 	      :states '(motion normal visual)
@@ -872,12 +845,40 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 
 ** Elixir
 #+begin_src emacs-lisp
-  (use-package elixir-ts-mode)
-#+end_src
+  (use-package elixir-ts-mode
+    :hook (elixir-ts-mode . lsp-mode))
+
+  (use-package exunit
+    :hook (elixir-ts-mode . exunit-mode)  
+    :general
+    (:keymaps 'elixir-ts-mode-map
+	      :states '(motion normal visual)
+	      :keymaps 'override
+	      :prefix "SPC mt"
+	      "a" '(exunit-verify-all :which-key "Run all the tests in the current project")
+	      "d" '(exunit-debug :which-key "Run the test under the point in IEx shell")
+	      "r" '(exunit-verify-rerun :which-key "Re-run the last test invocation")
+	      "s" '(exunit-verify-single :which-key "Run the test under point")
+	      "t" '(exunit-toggle-file-and-test :which-key "Toggle between a file and its tests in the current window")
+	      "T" '(exunit-toggle-file-and-test-other-window :which-key "Toggle between a file and its tests in other window")
+	      "v" '(exunit-verify :which-key "Run all the tests in the current buffer, or the test file corresponding to the current buffer")
+	      )
+    )
+
+  (use-package flycheck-credo
+    :after (flycheck elixir-mode)
+
+    :custom
+    (flycheck-elixir-credo-strict t)
+
+    :hook
+    (elixir-mode . flycheck-credo-setup))
+  #+end_src
 
 ** Emacs lisp
 #+begin_src emacs-lisp
   (use-package emacs-lisp-mode
+    :ensure nil
     :general
 
     (my-leader-def
