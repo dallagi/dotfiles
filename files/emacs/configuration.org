@@ -808,12 +808,15 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     (interactive)
     (call-interactively 'poetry-venv-workon)
     (call-interactively 'eglot-reconnect))
+  (use-package lsp-pyright)
 
   (use-package python-ts-mode
     :ensure nil
 
-    :hook (python-ts-mode . lsp-mode)
-  
+    :hook (python-ts-mode . (lambda ()
+			      (require 'lsp-pyright)
+			      (lsp-deferred)))
+
     :general
     (my-leader-def
       :keymaps 'python-ts-mode-map
