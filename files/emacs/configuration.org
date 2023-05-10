@@ -203,8 +203,9 @@ Setup evil and evil-collections.
 ** Autocomplete
 #+begin_src emacs-lisp
   (use-package company
-    :config
-    (global-company-mode))
+    :custom
+    (company-minimum-prefix-length 0)
+    :hook (prog-mode . company-mode))
 
   (use-package company-quickhelp
     :hook (company-mode . company-quickhelp-mode))
