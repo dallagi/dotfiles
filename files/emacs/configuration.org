@@ -836,7 +836,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
   (use-package rust-ts-mode
     :mode "\\.rs\\'"
 
-    :hook (rust-ts-mode . lsp-mode)
+    :hook (rust-ts-mode . lsp-deferred)
 
     :general
     (:keymaps 'rust-ts-mode-map
@@ -852,7 +852,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 ** Elixir
 #+begin_src emacs-lisp
   (use-package elixir-ts-mode
-    :hook (elixir-ts-mode . lsp-mode))
+    :hook (elixir-ts-mode . lsp-deferred))
 
   (use-package exunit
     :hook (elixir-ts-mode . exunit-mode)  
