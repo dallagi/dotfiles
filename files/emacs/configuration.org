@@ -311,6 +311,8 @@ Save files when they lose focus, and autoformat on save
 
   (use-package apheleia
     :config
+    ;; use rust 2021 to format rust buffers
+    (add-to-list 'apheleia-formatters '(rustfmt . ("rustfmt" "--quiet" "--emit" "stdout" "--edition" "2021")))
     (apheleia-global-mode +1))
 #+end_src
 
