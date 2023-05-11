@@ -264,6 +264,9 @@ Setup evil and evil-collections.
     (lsp-modeline-code-actions-enable nil) ;; do not show code actions in modeline
     (lsp-signature-render-documentation nil) ;; do not show documentation in echo area
 
+    (lsp-rust-analyzer-import-granularity "module") ;; group rust imports by module
+    (lsp-rust-analyzer-import-prefix "by_crate") ;; make rust imports start by crate
+
     :hook
     (lsp-completion-mode . my/lsp-mode-setup-completion)
     ;; if you want which-key integration
@@ -278,8 +281,8 @@ Setup evil and evil-collections.
 
       "c" '(:ignore t :which-key "Code")
       "ca" '(lsp-execute-code-action :which-key "Code action")
-      "cd" '(lsp-find-references :which-key "Find definitions")
-      "cD" '(lsp-find-declaration :which-key "Find declaration")
+      "cd" '(lsp-find-declaration :which-key "Find declaration")
+      "cD" '(lsp-find-references :which-key "Find definitions")
       "ch" '(lsp-inlay-hints-mode :which-key "Toggle inlay hints")
       "cl" '(lsp-lens-mode :which-key "Toggle LSP lens")
       "ci" '(lsp-find-implementation :which-key "Find implementation")
@@ -855,8 +858,8 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 	      :keymaps 'override
 	      :prefix "SPC"
 
-	      ;; "mc" '(lsp-rust-analyzer-open-cargo-toml :which-key "Open Cargo.toml")
-	      ;; "mp" '(lsp-rust-analyzer-find-parent-module :which-key "Open Cargo.toml")
+	      "mc" '(lsp-rust-analyzer-open-cargo-toml :which-key "Open Cargo.toml")
+	      "mp" '(lsp-rust-analyzer-find-parent-module :which-key "Open Cargo.toml")
     ))
 #+end_src
 
