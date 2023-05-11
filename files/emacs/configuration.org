@@ -218,8 +218,8 @@ Setup evil and evil-collections.
 
     :hook (prog-mode . company-mode))
 
-  (use-package company-quickhelp
-    :hook (company-mode . company-quickhelp-mode))
+  (use-package company-box
+    :hook (company-mode . company-box-mode))
 #+end_src
 
 ** Treesitter
