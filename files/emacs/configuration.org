@@ -204,7 +204,12 @@ Setup evil and evil-collections.
 #+begin_src emacs-lisp
   (use-package company
     :custom
-    (company-minimum-prefix-length 0)
+    (company-minimum-prefix-length 1)
+
+    :general
+    (:keymaps 'company-mode-map 
+	      "C-<tab>" 'company-complete)
+
     :hook (prog-mode . company-mode))
 
   (use-package company-quickhelp
