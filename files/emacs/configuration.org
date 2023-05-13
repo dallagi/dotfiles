@@ -85,6 +85,11 @@ Setup melpa and quelpa.
 #+begin_src emacs-lisp
   ;; automatic parens pairing
   (electric-pair-mode t)
+
+  (use-package recentf
+  :config
+  (add-to-list 'recentf-exclude "\\elpa")
+  (recentf-mode))
 #+end_src
 ** Keybinds
 #+begin_src emacs-lisp
@@ -192,13 +197,14 @@ Setup evil and evil-collections.
 
 ** Snippets
 #+begin_src emacs-lisp
-(use-package yasnippet
-  :config
-  (yas-reload-all)
-  (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets"))
-  (yas-global-mode 1))
+  (use-package yasnippet
+    :defer 15 ;; takes a while to load, so do it async
+    :config
+    (yas-reload-all)
+    (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets"))
+    (yas-global-mode 1))
 
-(use-package yasnippet-snippets)
+  (use-package yasnippet-snippets)
   #+end_src
 ** Autocomplete
 #+begin_src emacs-lisp
@@ -812,7 +818,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     "Activate virtualenv and restart eglot to pick up the new venv"
     (interactive)
     (call-interactively 'poetry-venv-workon)
-    (call-interactively 'eglot-reconnect))
+    (call-interactively 'lsp-workspace-restart))
   (use-package lsp-pyright)
 
   (use-package python-ts-mode
