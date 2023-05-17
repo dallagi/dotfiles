@@ -86,6 +86,9 @@ Setup melpa and quelpa.
   ;; automatic parens pairing
   (electric-pair-mode t)
 
+  ;; don't use tabs for indent by default
+  (setq-default indent-tabs-mode nil)
+
   (use-package recentf
   :config
   (add-to-list 'recentf-exclude "\\elpa")
