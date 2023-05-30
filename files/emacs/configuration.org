@@ -1,5 +1,5 @@
 * TODOs
-* TODO mappare ~vterm-send-next-key~
+** TODO mappare ~vterm-send-next-key~
 ** TODO recentf
 ** TODO wrap lines by default
 ** TODO beautify org
@@ -11,12 +11,6 @@ See also package org-appear
 https://github.com/wandersoncferreira/literate_emacs
 https://www.lucacambiaghi.com/vanilla-emacs/readme.html
 
-* Manual steps
-** Language servers
-- Python: ~pip install python-lsp-server[all]~
-- Rust:
-  (once available) ~rustup component add rust-analyzer~
-  (until the above works) see https://rust-analyzer.github.io/manual.html#rust-analyzer-language-server-binary
 * Initialization
 ** Garbage collection
 Tune the GC via the GC magic hack.
@@ -67,17 +61,31 @@ Setup melpa and quelpa.
     DIR is handled as by `windmove-other-window-loc'."
     (require 'windmove)
     (let ((buffer (current-buffer))
-	  (target (windmove-find-other-window dir)))
+          (target (windmove-find-other-window dir)))
       (if (null target)
-	  (user-error "There is no window %s from here" dir)
-	(switch-to-prev-buffer)
-	(select-window target)
-	(switch-to-buffer buffer nil t))))
+          (user-error "There is no window %s from here" dir)
+        (switch-to-prev-buffer)
+        (select-window target)
+        (switch-to-buffer buffer nil t))))
 
   (defun my/slide-buffer-up () (interactive) (my/slide-buffer 'up))
   (defun my/slide-buffer-down () (interactive) (my/slide-buffer 'down))
   (defun my/slide-buffer-left () (interactive) (my/slide-buffer 'left))
   (defun my/slide-buffer-right () (interactive) (my/slide-buffer 'right))
+
+  (defun my/org-capture-inbox ()
+     "Org capture to inbox"
+     (interactive)
+     (call-interactively 'org-store-link)
+     (org-capture nil "i"))
+
+  (defun my/open-org-file (file) (interactive)
+    (find-file (concat org-directory "/" file)))
+
+  (defun my/open-org-projects () (interactive) (my/open-org-file "projects.org"))
+  (defun my/open-org-notes () (interactive) (my/open-org-file "notes.org"))
+  (defun my/open-org-inbox () (interactive) (my/open-org-file "inbox.org"))
+
       #+end_src
 
 * Editor
@@ -89,10 +97,25 @@ Setup melpa and quelpa.
   ;; don't use tabs for indent by default
   (setq-default indent-tabs-mode nil)
 
+  ;; Revert buffers when the underlying file has changed
+  (global-auto-revert-mode 1)
+
+  ;; Revert Dired and other buffers
+  (setq global-auto-revert-non-file-buffers t)
+
+  ;; Remember and restore the last cursor location of opened files
+  (save-place-mode 1)
+
+  (use-package savehist
+    :custom
+    (history-length 50)
+    :config
+    (savehist-mode))
+
   (use-package recentf
-  :config
-  (add-to-list 'recentf-exclude "\\elpa")
-  (recentf-mode))
+    :config
+    (add-to-list 'recentf-exclude "\\elpa")
+    (recentf-mode))
 #+end_src
 ** Keybinds
 #+begin_src emacs-lisp
@@ -105,7 +128,7 @@ Setup melpa and quelpa.
     "Open private configuration file"
     (interactive)
     (find-file (locate-user-emacs-file "configuration.org")))
-
+  
   (use-package general
     :config
     (general-override-mode) ;; allow overriding key definitions
@@ -132,7 +155,7 @@ Setup melpa and quelpa.
       "hm" '(describe-mode :which-key "Describe mode")
 
       "m" '(:ignore t :which-key "Mode-specific")
-  
+
       "i" '(:ignore t :which-key "Insert")
       "ie" '(emoji-search :which-key "Emoji")
 
@@ -196,6 +219,15 @@ Setup evil and evil-collections.
     :after evil
     :config
     (global-evil-surround-mode 1))
+
+  (use-package better-jumper
+    :after evil
+    :general
+    (:keymaps 'evil-motion-state-map
+	      "C-o" 'better-jumper-jump-backward
+	      "C-i" 'better-jumper-jump-forward)
+    :config
+    (better-jumper-mode +1))
 #+end_src
 
 ** Snippets
@@ -276,7 +308,7 @@ Setup evil and evil-collections.
     (lsp-mode . lsp-enable-which-key-integration)
 
     :general
-    ("K" 'lsp-describe-thing-at-point)
+    (:states '(motion normal) "K" 'lsp-describe-thing-at-point)
 
     (my-leader-def
       :states '(motion normal)
@@ -551,6 +583,9 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
 #+begin_src emacs-lisp
   ;; Use y-n instead of yes-no
   (setq use-short-answers t)
+  
+  ;; Don't pop up UI dialogs when prompting
+  (setq use-dialog-box nil)
 
   ;; Setup visible bell and disable sound bell
   (setq visible-bell t)
@@ -798,6 +833,42 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 * Languages
 ** Org
 #+begin_src emacs-lisp
+  (use-package org-mode
+    :ensure nil
+    :init
+    (setq org-directory "~/org")
+    (setq org-agenda-files (list "inbox.org" "notes.org" "projects.org"))
+    (setq org-capture-templates
+          `(("i" "Inbox" entry  (file "inbox.org")
+             ,(concat "* TODO %?\n"
+                      "/Entered on/ %U"))
+            ("n" "Note" entry  (file "notes.org")
+             ,(concat "* Note \n"
+                      "/Entered on/ %U\n" "\n" "%?"))
+            ))
+    ;; Refile to projects file, either to Notes or to Tasks sections
+    (setq org-refile-targets
+          '(("projects.org" :regexp . "\\(?:\\(?:Note\\|Task\\)s\\)")))
+    (setq org-refile-use-outline-path 'file)
+    (setq org-outline-path-complete-in-steps nil)
+
+    :hook
+    ;; Use full window for org-capture
+    (org-capture-mode . delete-other-windows)
+
+    :general
+    (my-leader-def
+      :states '(motion normal visual)
+      :keymaps 'override
+
+      "na" '(org-agenda :which-key "Agenda")
+      "nc" '(org-capture :which-key "Capture")
+      "ni" '(my/org-capture-inbox :which-key "Capture inbox")
+      "nI" '(my/open-org-inbox :which-key "Open inbox")
+      "nN" '(my/open-org-notes :which-key "Open notes")
+      "nP" '(my/open-org-projects :which-key "Open projects file")
+      ))
+
   (use-package evil-org
     :after org
     :hook (org-mode . (lambda () (evil-org-mode)))
