@@ -513,6 +513,8 @@ Save files when they lose focus, and autoformat on save
     (setq magit-bury-buffer-function 'magit-restore-window-configuration)
     ;; save file-visiting buffers without asking for consent
     (setq magit-save-repository-buffers 'dontask)
+    ;; highlight single hunks in diffs (delta style)
+    (setq magit-diff-refine-hunk 'all)
 
     :general
     (my-leader-def
@@ -868,7 +870,13 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
       "nI" '(my/open-org-inbox :which-key "Open inbox")
       "nN" '(my/open-org-notes :which-key "Open notes")
       "nP" '(my/open-org-projects :which-key "Open projects file")
-      ))
+      )
+
+    (my-leader-def
+      :keymaps 'org-mode-map
+      :states '(normal motion)
+      "mt" '(consult-org-heading :which-key "Go to heading"))
+    )
 
   (use-package evil-org
     :after org
