@@ -524,11 +524,11 @@ Save files when they lose focus, and autoformat on save
       "gl" '(magit-log-buffer-file :which-key "Buffer log")
       ))
 
-  ;; use delta for diffing in magit
-  (use-package magit-delta
-    :hook (magit-mode . magit-delta-mode)
-    :config
-    (setq magit-delta-default-dark-theme "zenburn"))
+  ;; ;; use delta for diffing in magit
+  ;; (use-package magit-delta
+  ;;   :hook (magit-mode . magit-delta-mode)
+  ;;   :config
+  ;;   (setq magit-delta-default-dark-theme "zenburn"))
 
   (use-package forge
     :after magit)
