@@ -851,6 +851,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
           '(("projects.org" :regexp . "\\(?:\\(?:Note\\|Task\\)s\\)")))
     (setq org-refile-use-outline-path 'file)
     (setq org-outline-path-complete-in-steps nil)
+    (setq org-startup-truncated nil)
 
     :hook
     ;; Use full window for org-capture
