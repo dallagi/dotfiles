@@ -474,7 +474,13 @@ Save files when they lose focus, and autoformat on save
 #+end_src
 ** Vterm
 #+begin_src emacs-lisp
-  (use-package vterm)
+  (use-package vterm
+    :general
+    (my-leader-def
+      :states '(motion normal)
+      :keymaps 'vterm-mode-map
+
+      "ms" '(vterm-send-next-key :which-key "Send next key")))
 
   (use-package multi-vterm
     :general
