@@ -160,6 +160,8 @@ Setup melpa and quelpa.
       "ie" '(emoji-search :which-key "Emoji")
 
       "o" '(:ignore t :which-key "Open")
+  
+      "t" '(:ignore t :which-key "Tools")
 
       "w" '(:ignore t :which-key "Window")
       "w`" '(other-frame :which-key "Other frame")
@@ -831,6 +833,15 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
       :config
       (setq ranger-show-hidden 't))
     )
+#+end_src
+* Tools
+#+begin_src emacs-lisp
+  (use-package docker
+    :general
+    (my-leader-def
+      :states '(motion normal visual)
+      :keymaps 'override
+      "td" '(docker :which-key "Open docker menu")))
 #+end_src
 * Languages
 ** Org
