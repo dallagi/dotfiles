@@ -97,6 +97,10 @@ Setup melpa and quelpa.
   ;; don't use tabs for indent by default
   (setq-default indent-tabs-mode nil)
 
+  ;; Wrap lines
+  (setq-default word-wrap t)
+  (set-default 'truncate-lines nil)
+
   ;; Revert buffers when the underlying file has changed
   (global-auto-revert-mode 1)
 
