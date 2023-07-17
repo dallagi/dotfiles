@@ -568,11 +568,12 @@ Save files when they lose focus, and autoformat on save
     (my-leader-def
       :states '(motion normal visual)
       :keymaps 'override
-  
+
       "gr" '(diff-hl-revert-hunk :which-key "Revert hunk"))
-  :config
-  (global-diff-hl-mode)
-  (diff-hl-flydiff-mode))
+    :hook (magit-post-refresh . diff-hl-magit-post-refresh)
+    :config
+    (global-diff-hl-mode)
+    (diff-hl-flydiff-mode))
 #+end_src
 ** Git utils
 #+begin_src emacs-lisp
