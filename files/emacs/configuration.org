@@ -195,51 +195,55 @@ Setup melpa and quelpa.
 Setup evil and evil-collections.
 
 #+begin_src emacs-lisp
-    (use-package evil
-      :init
-      (setq evil-want-keybinding nil) ;; Expected by evil-collection
-      (setq evil-want-integration t) ;; Expected by evil-collection
-      (setq evil-want-C-u-scroll t) ;; Keep vim behavior for C-u
-      (setq evil-undo-system 'undo-redo) ;; Simple undo/redo
-      :general
-      (:keymaps 'evil-motion-state-map "K" nil)
-      :config
-      ;; keep vim-like tab behavior
-      (define-key evil-insert-state-map (kbd "TAB") 'tab-to-tab-stop)
-      (evil-mode 1))
+  (use-package evil
+    :init
+    (setq evil-want-keybinding nil) ;; Expected by evil-collection
+    (setq evil-want-integration t) ;; Expected by evil-collection
+    (setq evil-want-C-u-scroll t) ;; Keep vim behavior for C-u
+    (setq evil-undo-system 'undo-redo) ;; Simple undo/redo
+    :general
+    (:keymaps 'evil-motion-state-map "K" nil)
+    :config
+    ;; keep vim-like tab behavior
+    (define-key evil-insert-state-map (kbd "TAB") 'tab-to-tab-stop)
+    (evil-mode 1))
 
-    (use-package evil-collection
-      :after evil
-      :init
-      ;; fix magit bug
-      (require 'magit)
-      :config
-      (evil-collection-init))
+  ;; functions to eg. increment number at point
+  ;; currently not bound to keys as C-a and C-x would conflict with emacs
+  (use-package evil-numbers)
 
-    (use-package evil-nerd-commenter
-      :after evil
-      :general
-      ("C-/" '(evilnc-comment-or-uncomment-lines :which-key "Comment")))
+  (use-package evil-collection
+    :after evil
+    :init
+    ;; fix magit bug
+    (require 'magit)
+    :config
+    (evil-collection-init))
 
-    (use-package evil-surround
-      :after evil
-      :config
-      (global-evil-surround-mode 1))
+  (use-package evil-nerd-commenter
+    :after evil
+    :general
+    ("C-/" '(evilnc-comment-or-uncomment-lines :which-key "Comment")))
 
-    (use-package better-jumper
-      :after evil
-      :general
-      (:keymaps 'evil-motion-state-map
-		"C-o" 'better-jumper-jump-backward
-		"C-i" 'better-jumper-jump-forward)
-      :config
-      (better-jumper-mode +1))
-    
-    ;; make # and * work on visual selection
-    (use-package evil-visualstar
-      :after evil
-      :config
-      (global-evil-visualstar-mode))
+  (use-package evil-surround
+    :after evil
+    :config
+    (global-evil-surround-mode 1))
+
+  (use-package better-jumper
+    :after evil
+    :general
+    (:keymaps 'evil-motion-state-map
+              "C-o" 'better-jumper-jump-backward
+              "C-i" 'better-jumper-jump-forward)
+    :config
+    (better-jumper-mode +1))
+
+  ;; make # and * work on visual selection
+  (use-package evil-visualstar
+    :after evil
+    :config
+    (global-evil-visualstar-mode))
 #+end_src
 
 ** Snippets
