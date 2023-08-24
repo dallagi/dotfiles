@@ -310,7 +310,7 @@ Setup evil and evil-collections.
 
     (defun my/lsp-mode-setup-completion ()
       (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
-	    '(orderless))) ;; Configure orderless
+            '(orderless))) ;; Configure orderless
     :custom
     (lsp-auto-execute-action nil) ;; always ask before executing action
     (lsp-ui-doc-enable nil) ;; disable docs popup on hover
@@ -322,6 +322,7 @@ Setup evil and evil-collections.
 
     (lsp-rust-analyzer-import-granularity "module") ;; group rust imports by module
     (lsp-rust-analyzer-import-prefix "by_crate") ;; make rust imports start by crate
+    (lsp-rust-analyzer-cargo-load-out-dirs-from-check t) ;; run build.rs, to eg. goto grpc-generated code
 
     :hook
     (lsp-completion-mode . my/lsp-mode-setup-completion)
@@ -366,7 +367,6 @@ Setup evil and evil-collections.
       "ck" '(consult-lsp-diagnostics :which-key "Find diagnostics in workspace")
       ))
 #+end_src
-
 
 ** Autosave and format
 Save files when they lose focus, and autoformat on save
@@ -481,19 +481,31 @@ Save files when they lose focus, and autoformat on save
 ** Eshell
 #+begin_src emacs-lisp
   (use-package eshell
+    :hook
+    (eshell-mode . (lambda () (setenv "TERM" "xterm-256color")))
+    (eshell-mode . company-mode)
+
     :general
     (:keymaps 'eshell-mode-map 
-	      "C-l" 'eshell/clear)
+              "C-l" 'eshell/clear)
     (my-leader-def
       :states '(motion normal)
       :keymaps 'override
 
       "os" '(project-eshell :which-key "Shell at project path")
       "oS" '(eshell :which-key "Shell at current path")))
+
+  ;; bash completions for eshell
+  (use-package bash-completion
+    :config
+    (bash-completion-setup))
 #+end_src
 ** Vterm
 #+begin_src emacs-lisp
   (use-package vterm
+    :custom
+    ;; when a script wants to open an editor, open an emacs buffer
+    (vterm-environment '("VISUAL=emacsclient"))
     :general
     (my-leader-def
       :states '(motion normal)
