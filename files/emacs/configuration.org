@@ -47,6 +47,11 @@ Setup melpa and quelpa.
 #+end_src
 
 * Functions
+** Packages
+#+begin_src emacs-lisp
+  (use-package string-inflection)
+#+end_src
+** Custom
 #+begin_src emacs-lisp
   (defun my/copy-file-name-to-clipboard ()
     "Copy the current buffer file name to the clipboard."
