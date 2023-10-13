@@ -1,7 +1,5 @@
 * TODOs
-** TODO mappare ~vterm-send-next-key~
 ** TODO recentf
-** TODO wrap lines by default
 ** TODO beautify org
 See https://zzamboni.org/post/beautifying-org-mode-in-emacs/
 See also package org-appear
@@ -17,6 +15,7 @@ Tune the GC via the GC magic hack.
 
 #+begin_src emacs-lisp
   (use-package gcmh
+    :ensure t
     :demand t
     :config
     (gcmh-mode 1))
@@ -46,11 +45,26 @@ Setup melpa and quelpa.
   (require 'quelpa-use-package)
 #+end_src
 
+* Chatgpt
+#+begin_src emacs-lisp
+  (use-package chatgpt-shell
+    :custom
+    ((chatgpt-shell-openai-key
+      (auth-source-pick-first-password :host "api.openai.com"))))
+
+  (use-package dall-e-shell
+    :custom
+    ((dall-e-shell-openai-key
+      (auth-source-pick-first-password :host "api.openai.com"))))
+#+end_src
+
 * Functions
 ** Packages
 #+begin_src emacs-lisp
   (use-package string-inflection)
-#+end_src
+
+  (use-package git-link)
+      #+end_src
 ** Custom
 #+begin_src emacs-lisp
   (defun my/copy-file-name-to-clipboard ()
@@ -304,9 +318,6 @@ Setup evil and evil-collections.
     (setq gc-cons-threshold 100000000)
     ;; Increase the amount of data which Emacs reads from the process#
     (setq read-process-output-max (* 1024 1024)) ;; 1mb
-
-    ;; Don't cache completion results from LSP
-    (setq-local completion-at-point-functions (list (cape-capf-buster #'lsp-completion-at-point)))
 
     (defun my/lsp-mode-setup-completion ()
       (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
@@ -573,14 +584,6 @@ Save files when they lose focus, and autoformat on save
 
   (use-package forge
     :after magit)
-#+end_src
-** Code review
-#+begin_src emacs-lisp
-  (use-package code-review
-    :after magit
-    :config
-    ;; use passwords from forge
-    (setq code-review-auth-login-marker 'forge))
 #+end_src
 ** Gutter
 #+begin_src emacs-lisp
@@ -882,6 +885,12 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
       "td" '(docker :which-key "Open docker menu")))
 #+end_src
 * Languages
+** Dockerfile
+#+begin_src emacs-lisp
+  (use-package dockerfile-ts-mode
+    :mode "Dockerfile")
+#+end_src
+
 ** Org
 #+begin_src emacs-lisp
   (use-package org-mode
