@@ -9,6 +9,11 @@ See also package org-appear
 https://github.com/wandersoncferreira/literate_emacs
 https://www.lucacambiaghi.com/vanilla-emacs/readme.html
 
+* To remind
+
+~all-the-icons-install-fonts~
+~nerd-icons-install-fonts~
+
 * Initialization
 ** Garbage collection
 Tune the GC via the GC magic hack.
