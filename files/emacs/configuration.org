@@ -624,8 +624,22 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
     ;; no-littering doesn't set this by default so we must place
     ;; auto save files in the same path as it uses for sessions
     (setq auto-save-file-name-transforms
-	  `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+          `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
     )
+
+  (defvar my/backup-directory (concat user-emacs-directory "backups"))
+  (if (not (file-exists-p my/backup-directory))
+      (make-directory my/backup-directory t))
+  (setq backup-directory-alist `(("." . ,my/backup-directory)))
+
+  (setq make-backup-files t               ; backup of a file the first time it is saved.
+        backup-by-copying t               ; don't clobber symlinks
+        version-control t                 ; version numbers for backup files
+        delete-old-versions t             ; delete excess backup files silently
+        delete-by-moving-to-trash t
+        kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
+        kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
+        )
 #+end_src
 * Appearance
 ** Basic UX
