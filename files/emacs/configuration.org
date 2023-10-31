@@ -50,19 +50,6 @@ Setup melpa and quelpa.
   (require 'quelpa-use-package)
 #+end_src
 
-* Chatgpt
-#+begin_src emacs-lisp
-  (use-package chatgpt-shell
-    :custom
-    ((chatgpt-shell-openai-key
-      (auth-source-pick-first-password :host "api.openai.com"))))
-
-  (use-package dall-e-shell
-    :custom
-    ((dall-e-shell-openai-key
-      (auth-source-pick-first-password :host "api.openai.com"))))
-#+end_src
-
 * Functions
 ** Packages
 #+begin_src emacs-lisp
@@ -898,6 +885,20 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     )
 #+end_src
 * Tools
+** Chatgpt
+#+begin_src emacs-lisp
+  (use-package chatgpt-shell
+    :custom
+    ((chatgpt-shell-openai-key
+      (auth-source-pick-first-password :host "api.openai.com"))))
+
+  (use-package dall-e-shell
+    :custom
+    ((dall-e-shell-openai-key
+      (auth-source-pick-first-password :host "api.openai.com"))))
+#+end_src
+
+** Docker
 #+begin_src emacs-lisp
   (use-package docker
     :general
