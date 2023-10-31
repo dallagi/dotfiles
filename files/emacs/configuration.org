@@ -328,6 +328,8 @@ Setup evil and evil-collections.
       (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
             '(orderless))) ;; Configure orderless
     :custom
+    (lsp-elixir-ls-version "v0.17.1")
+
     (lsp-auto-execute-action nil) ;; always ask before executing action
     (lsp-ui-doc-enable nil) ;; disable docs popup on hover
     (lsp-lens-enable nil) ;; disable lens by default
@@ -416,10 +418,10 @@ Save files when they lose focus, and autoformat on save
     (interactive)
     (let ((current-dir (file-name-directory buffer-file-name)))
       (consult-ripgrep current-dir)))
+
   (use-package consult
     :custom
     (consult-async-min-input 0)
-    (consult-ripgrep-args "rg --null --hidden --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --no-heading --with-filename --line-number --search-zip")
     :general
     (my-leader-def
       :states '(motion normal visual)
@@ -486,7 +488,7 @@ Save files when they lose focus, and autoformat on save
 ** Exec path
 #+begin_src emacs-lisp
   (use-package exec-path-from-shell
-    :init
+    :config
     (when (memq window-system '(mac ns x))
       (exec-path-from-shell-initialize))
     (when (daemonp)
@@ -1027,23 +1029,27 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 ** Elixir
 #+begin_src emacs-lisp
   (use-package elixir-ts-mode
+    :init
+    ;; Add local installation of elixir-ls to path
+    (add-to-list 'exec-path "~/.bin/elixir-ls")
+
     :hook (elixir-ts-mode . lsp-deferred))
 
   (use-package exunit
     :hook (elixir-ts-mode . exunit-mode)  
     :general
     (:keymaps 'elixir-ts-mode-map
-	      :states '(motion normal visual)
-	      :keymaps 'override
-	      :prefix "SPC mt"
-	      "a" '(exunit-verify-all :which-key "Run all the tests in the current project")
-	      "d" '(exunit-debug :which-key "Run the test under the point in IEx shell")
-	      "r" '(exunit-verify-rerun :which-key "Re-run the last test invocation")
-	      "s" '(exunit-verify-single :which-key "Run the test under point")
-	      "t" '(exunit-toggle-file-and-test :which-key "Toggle between a file and its tests in the current window")
-	      "T" '(exunit-toggle-file-and-test-other-window :which-key "Toggle between a file and its tests in other window")
-	      "v" '(exunit-verify :which-key "Run all the tests in the current buffer, or the test file corresponding to the current buffer")
-	      )
+              :states '(motion normal visual)
+              :keymaps 'override
+              :prefix "SPC mt"
+              "a" '(exunit-verify-all :which-key "Run all the tests in the current project")
+              "d" '(exunit-debug :which-key "Run the test under the point in IEx shell")
+              "r" '(exunit-verify-rerun :which-key "Re-run the last test invocation")
+              "s" '(exunit-verify-single :which-key "Run the test under point")
+              "t" '(exunit-toggle-file-and-test :which-key "Toggle between a file and its tests in the current window")
+              "T" '(exunit-toggle-file-and-test-other-window :which-key "Toggle between a file and its tests in other window")
+              "v" '(exunit-verify :which-key "Run all the tests in the current buffer, or the test file corresponding to the current buffer")
+              )
     )
 
   (use-package flycheck-credo
