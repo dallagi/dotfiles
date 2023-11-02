@@ -96,7 +96,6 @@ Setup melpa and quelpa.
   (defun my/open-org-projects () (interactive) (my/open-org-file "projects.org"))
   (defun my/open-org-notes () (interactive) (my/open-org-file "notes.org"))
   (defun my/open-org-inbox () (interactive) (my/open-org-file "inbox.org"))
-
       #+end_src
 
 * Editor
@@ -401,21 +400,26 @@ Save files when they lose focus, and autoformat on save
     (interactive)
     (consult-ripgrep org-directory))
 
-  (defun my/consult-ripgrep-current-dir ()
+  (defun my/consult-ripgrep-region ()
     (interactive)
-    (let ((current-dir (file-name-directory buffer-file-name)))
-      (consult-ripgrep current-dir)))
+    (let ((text-in-region (buffer-substring (mark) (point))))
+      (consult-ripgrep nil text-in-region)))
 
   (use-package consult
     :custom
     (consult-async-min-input 0)
     :general
     (my-leader-def
-      :states '(motion normal visual)
+      :states '(visual)
+      :keymaps 'override
+
+      "/" '(my/consult-ripgrep-region :which-key "Search project"))
+
+    (my-leader-def
+      :states '(motion normal)
       :keymaps 'override
 
       "/" '(consult-ripgrep :which-key "Search project")
-      "C-u /" '(consult-ripgrep :which-key "Search project")
 
       "bb" '(consult-project-buffer :which-key "Switch to project buffer")
       "bB" '(consult-buffer :which-key "Switch to buffer")
