@@ -297,6 +297,16 @@ Setup evil and evil-collections.
 *** Flycheck
 #+begin_src emacs-lisp
   (use-package flycheck
+    :general
+    (my-leader-def
+      :states '(motion normal)
+      :keymaps 'override
+
+      "ce" '(:ignore t :which-key "Errors")
+      "cen" '(flycheck-next-error :which-key "Next error")
+      "cep" '(flycheck-previous-error :which-key "Previous error")
+     )
+
     :init (global-flycheck-mode))
 #+end_src
 *** Lsp-mode
