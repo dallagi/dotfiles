@@ -1077,6 +1077,10 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     (elixir-mode . flycheck-credo-setup))
   #+end_src
 
+** Elm
+#+begin_src emacs-lisp
+  (use-package elm-mode)
+  #+end_src
 ** Emacs lisp
 #+begin_src emacs-lisp
   (use-package emacs-lisp-mode
