@@ -921,6 +921,18 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
       :keymaps 'override
       "td" '(docker :which-key "Open docker menu")))
 #+end_src
+** Exercism
+#+begin_src emacs-lisp
+  (use-package exercism
+    :custom
+    (exercism--workspace "/home/marco/Workspace/personal/exercism")
+    (exercism--display-tests-after-run t)
+    :general
+    (my-leader-def
+      :states '(motion normal visual)
+      :keymaps 'override
+      "te" '(exercism :which-key "Open exercism menu")))
+#+end_src
 * Languages
 ** Dockerfile
 #+begin_src emacs-lisp
