@@ -903,7 +903,8 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 #+begin_src emacs-lisp
   (use-package chatgpt-shell
     :custom
-    ((chatgpt-shell-openai-key
+    ((chatgpt-shell-model-versions '("gpt-4" "gpt-3.5-turbo"))
+     (chatgpt-shell-openai-key
       (auth-source-pick-first-password :host "api.openai.com"))))
 
   (use-package dall-e-shell
