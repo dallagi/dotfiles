@@ -57,7 +57,7 @@ Setup melpa and quelpa.
 
   (use-package git-link)
       #+end_src
-** Custom
+** Custom functions
 #+begin_src emacs-lisp
   (defun my/copy-file-name-to-clipboard ()
     "Copy the current buffer file name to the clipboard."
@@ -934,6 +934,64 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
       :keymaps 'override
       "te" '(exercism :which-key "Open exercism menu")))
 #+end_src
+** Prima tools
+#+begin_src emacs-lisp
+  (require 'transient)
+  (require 'term)
+
+  (defvar prima-tools-buffer-name "*prima-tools*"
+    "Name of the term buffer for prima-tools commands.")
+
+  (defvar prima-tools-shell "/bin/bash"
+    "Shell to use for prima-tools commands.")
+
+  (defun prima-tools-ensure-term ()
+    "Ensure that a term buffer is open for prima-tools commands."
+    (unless (get-buffer prima-tools-buffer-name)
+      (with-current-buffer (term prima-tools-shell)
+        (rename-buffer prima-tools-buffer-name)))
+    (switch-to-buffer prima-tools-buffer-name))
+
+  (defun prima-tools-send-command-to-term (command)
+    "Send a command to the prima-tools term buffer."
+    (prima-tools-ensure-term)
+    (term-send-raw-string (concat command "\n")))
+
+  (defun prima-tools-send-command-to-temporary-buffer (command)
+    "Run process and show outputin temporary buffer"
+    (interactive)
+    (let ((temporary-buffer-name "*prima-tools-output*"))
+      (get-buffer-create temporary-buffer-name)
+      (let ((message-log-max nil)) ; Don't clutter *Messages* buffer
+        (shell-command command temporary-buffer-name))
+      (switch-to-buffer-other-window temporary-buffer-name)
+      (special-mode) ; a read-only major mode that can be quit via <q>
+      ))
+
+  ;; Define the transient
+  (transient-define-prefix prima-tools-transient ()
+    "Transient for prima-tools commands."
+    ["Suite-py"
+     ("b" "Create Branch"  (lambda () (interactive) (prima-tools-send-command-to-term "suite-py create-branch")))
+     ("r" "Create Release" (lambda () (interactive) (prima-tools-send-command-to-term "suite-py release create")))
+     ("o" "Open PR"        (lambda () (interactive) (prima-tools-send-command-to-term "suite-py open-pr")))]
+    ["Warp"
+      ("s" "Warp Status"     (lambda () (interactive) (prima-tools-send-command-to-temporary-buffer "warp-cli status")))
+      ("c" "Warp Connect"    (lambda () (interactive) (prima-tools-send-command-to-temporary-buffer "warp-cli connect")))
+      ("d" "Warp Disconnect" (lambda () (interactive) (prima-tools-send-command-to-temporary-buffer "warp-cli disconnect")))
+     ])
+
+  (provide 'prima-tools-transient)
+
+  (use-package prima-tools-transient
+    :ensure nil
+      :general
+      (my-leader-def
+        :states '(motion normal visual)
+        :keymaps 'override
+        "j" '(prima-tools-transient :which-key "Prima tools")))
+#+end_src
+
 * Languages
 ** Dockerfile
 #+begin_src emacs-lisp
@@ -943,67 +1001,67 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 
 ** Org
 #+begin_src emacs-lisp
-  (use-package org-mode
-    :ensure nil
-    :init
-    (setq org-directory "~/org")
-    (setq org-agenda-files (list "inbox.org" "notes.org" "projects.org"))
-    (setq org-capture-templates
-          `(("i" "Inbox" entry  (file "inbox.org")
-             ,(concat "* TODO %?\n"
-                      "/Entered on/ %U"))
-            ("n" "Note" entry  (file "notes.org")
-             ,(concat "* Note \n"
-                      "/Entered on/ %U\n" "\n" "%?"))
-            ))
-    ;; Refile to projects file, either to Notes or to Tasks sections
-    (setq org-refile-targets
-          '(("projects.org" :regexp . "\\(?:\\(?:Note\\|Task\\)s\\)")))
-    (setq org-refile-use-outline-path 'file)
-    (setq org-outline-path-complete-in-steps nil)
-    (setq org-startup-truncated nil)
+    (use-package org-mode
+      :ensure nil
+      :init
+      (setq org-directory "~/org")
+      (setq org-agenda-files (list "inbox.org" "notes.org" "projects.org"))
+      (setq org-capture-templates
+            `(("i" "Inbox" entry  (file "inbox.org")
+               ,(concat "* TODO %?\n"
+                        "/Entered on/ %U"))
+              ("n" "Note" entry  (file "notes.org")
+               ,(concat "* Note \n"
+                        "/Entered on/ %U\n" "\n" "%?"))
+              ))
+      ;; Refile to projects file, either to Notes or to Tasks sections
+      (setq org-refile-targets
+            '(("projects.org" :regexp . "\\(?:\\(?:Note\\|Task\\)s\\)")))
+      (setq org-refile-use-outline-path 'file)
+      (setq org-outline-path-complete-in-steps nil)
+      (setq org-startup-truncated nil)
 
-    :hook
-    ;; Use full window for org-capture
-    (org-capture-mode . delete-other-windows)
+      :hook
+      ;; Use full window for org-capture
+      (org-capture-mode . delete-other-windows)
 
-    :general
-    (my-leader-def
-      :states '(motion normal visual)
-      :keymaps 'override
+      :general
+      (my-leader-def
+        :states '(motion normal visual)
+        :keymaps 'override
 
-      "na" '(org-agenda :which-key "Agenda")
-      "nc" '(org-capture :which-key "Capture")
-      "ni" '(my/org-capture-inbox :which-key "Capture inbox")
-      "nI" '(my/open-org-inbox :which-key "Open inbox")
-      "nN" '(my/open-org-notes :which-key "Open notes")
-      "nP" '(my/open-org-projects :which-key "Open projects file")
+        "na" '(org-agenda :which-key "Agenda")
+        "nc" '(org-capture :which-key "Capture")
+        "ni" '(my/org-capture-inbox :which-key "Capture inbox")
+        "nI" '(my/open-org-inbox :which-key "Open inbox")
+        "nN" '(my/open-org-notes :which-key "Open notes")
+        "nP" '(my/open-org-projects :which-key "Open projects file")
+        )
+
+      (my-leader-def
+        :keymaps 'org-mode-map
+        :states '(normal motion)
+        "mt" '(consult-org-heading :which-key "Go to heading"))
       )
 
-    (my-leader-def
-      :keymaps 'org-mode-map
-      :states '(normal motion)
-      "mt" '(consult-org-heading :which-key "Go to heading"))
-    )
+    (use-package evil-org
+      :after org
+      :hook (org-mode . (lambda () (evil-org-mode)))
+      :config
+      (require 'evil-org-agenda)
+      (evil-org-agenda-set-keys)
+      ;; keep org <TAB> behavior
+      (evil-define-key '(normal insert) org-mode-map (kbd "<tab>") #'org-cycle)
 
-  (use-package evil-org
-    :after org
-    :hook (org-mode . (lambda () (evil-org-mode)))
-    :config
-    (require 'evil-org-agenda)
-    (evil-org-agenda-set-keys)
-    ;; keep org <TAB> behavior
-    (evil-define-key '(normal insert) org-mode-map (kbd "<tab>") #'org-cycle)
-
-    (setq org-log-done 'time ;; set timestamp when closing TODO item
-          org-todo-keywords
-          '((sequence "TODO(t)" "WIP(w)" "BLOCKED(b)" "|" "DONE(d)" "KILLED(k)" "POSTPONED(p)"))))
+      (setq org-log-done 'time ;; set timestamp when closing TODO item
+            org-todo-keywords
+            '((sequence "TODO(t)" "WIP(w)" "BLOCKED(b)" "|" "DONE(d)" "KILLED(k)" "POSTPONED(p)"))))
 
 
-  (use-package org-modern
-    :after org
-    :config
-    (global-org-modern-mode))
+    (use-package org-modern
+      :after org
+      :config
+      (global-org-modern-mode))
 #+end_src
 
 ** Python
@@ -1088,6 +1146,19 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 
     :hook
     (elixir-mode . flycheck-credo-setup))
+
+  ;; ;; Setup next-ls
+  ;; (with-eval-after-load 'lsp-mode
+  ;;   ;; disable default LSPs for elixir
+  ;;   (setq lsp-disabled-clients '(elixir-ls credo-language-server))
+
+  ;;   (add-to-list 'lsp-language-id-configuration
+  ;;                '(elixir-ts-mode . "elixir"))
+
+  ;;   (lsp-register-client
+  ;;    (make-lsp-client :new-connection (lsp-stdio-connection '("next-ls" "--stdio=true"))
+  ;;                     :activation-fn (lsp-activate-on "elixir")
+  ;;                     :server-id 'next-ls)))
   #+end_src
 
 ** Elm
