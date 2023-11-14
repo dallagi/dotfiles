@@ -948,7 +948,9 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
   (defun prima-tools-ensure-term ()
     "Ensure that a term buffer is open for prima-tools commands."
     (unless (get-buffer prima-tools-buffer-name)
-      (with-current-buffer (term prima-tools-shell)
+      (setenv "VISUAL" "emacsclient")
+      (with-current-buffer
+          (term prima-tools-shell)
         (rename-buffer prima-tools-buffer-name)))
     (switch-to-buffer prima-tools-buffer-name))
 
@@ -976,20 +978,20 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
      ("r" "Create Release" (lambda () (interactive) (prima-tools-send-command-to-term "suite-py release create")))
      ("o" "Open PR"        (lambda () (interactive) (prima-tools-send-command-to-term "suite-py open-pr")))]
     ["Warp"
-      ("s" "Warp Status"     (lambda () (interactive) (prima-tools-send-command-to-temporary-buffer "warp-cli status")))
-      ("c" "Warp Connect"    (lambda () (interactive) (prima-tools-send-command-to-temporary-buffer "warp-cli connect")))
-      ("d" "Warp Disconnect" (lambda () (interactive) (prima-tools-send-command-to-temporary-buffer "warp-cli disconnect")))
+     ("s" "Warp Status"     (lambda () (interactive) (prima-tools-send-command-to-temporary-buffer "warp-cli status")))
+     ("c" "Warp Connect"    (lambda () (interactive) (prima-tools-send-command-to-temporary-buffer "warp-cli connect")))
+     ("d" "Warp Disconnect" (lambda () (interactive) (prima-tools-send-command-to-temporary-buffer "warp-cli disconnect")))
      ])
 
   (provide 'prima-tools-transient)
 
   (use-package prima-tools-transient
     :ensure nil
-      :general
-      (my-leader-def
-        :states '(motion normal visual)
-        :keymaps 'override
-        "j" '(prima-tools-transient :which-key "Prima tools")))
+    :general
+    (my-leader-def
+      :states '(motion normal visual)
+      :keymaps 'override
+      "j" '(prima-tools-transient :which-key "Prima tools")))
 #+end_src
 
 * Languages
