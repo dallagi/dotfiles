@@ -305,6 +305,7 @@ Setup evil and evil-collections.
       "ce" '(:ignore t :which-key "Errors")
       "cen" '(flycheck-next-error :which-key "Next error")
       "cep" '(flycheck-previous-error :which-key "Previous error")
+      "cex" '(flycheck-explain-error-at-point :which-key "Explain error at point")
      )
 
     :init (global-flycheck-mode))
