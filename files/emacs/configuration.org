@@ -961,7 +961,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     (term-send-raw-string (concat command "\n")))
 
   (defun prima-tools-send-command-to-temporary-buffer (command)
-    "Run process and show outputin temporary buffer"
+    "Run process and show output in temporary buffer"
     (interactive)
     (let ((temporary-buffer-name "*prima-tools-output*"))
       (get-buffer-create temporary-buffer-name)
