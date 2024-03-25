@@ -495,8 +495,8 @@ Save files when they lose focus, and autoformat on save
       (exec-path-from-shell-initialize))
     (when (daemonp)
       (exec-path-from-shell-initialize))
-    ;; add rtx shims to path
-    (add-to-list 'exec-path "~/.local/share/rtx/shims")
+    ;; add mise shims to path
+    (add-to-list 'exec-path "~/.local/share/mise/shims")
     )
 #+end_src
 ** Eshell
@@ -895,23 +895,15 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
       :keymaps 'override
       "ee" '(ranger :which-key "Open ranger at current buffer")
       "ep" '(my/project-ranger :which-key "Open ranger in project root")
+      "es" '(lsp-treemacs-symbols :which-key "Show symbols in treemacs (LSP)")
       :config
       (setq ranger-show-hidden 't))
     )
 #+end_src
 * Tools
-** Chatgpt
+** Gpt
 #+begin_src emacs-lisp
-  (use-package chatgpt-shell
-    :custom
-    ((chatgpt-shell-model-versions '("gpt-4" "gpt-3.5-turbo"))
-     (chatgpt-shell-openai-key
-      (auth-source-pick-first-password :host "api.openai.com"))))
-
-  (use-package dall-e-shell
-    :custom
-    ((dall-e-shell-openai-key
-      (auth-source-pick-first-password :host "api.openai.com"))))
+  (use-package gptel)
 #+end_src
 
 ** Docker
@@ -953,7 +945,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
       (with-current-buffer
           (term prima-tools-shell)
         (rename-buffer prima-tools-buffer-name)))
-    (switch-to-buffer prima-tools-buffer-name))
+    (pop-to-buffer prima-tools-buffer-name))
 
   (defun prima-tools-send-command-to-term (command)
     "Send a command to the prima-tools term buffer."
@@ -992,7 +984,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     (my-leader-def
       :states '(motion normal visual)
       :keymaps 'override
-      "j" '(prima-tools-transient :which-key "Prima tools")))
+      "1" '(prima-tools-transient :which-key "Prima tools")))
 #+end_src
 
 * Languages
@@ -1198,5 +1190,6 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 
 ** Yaml
 #+begin_src emacs-lisp
-  (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode))
+  ;; use yaml-mode instead of yaml-ts-mode, as the latter doesn't work properly with yaml templates
+  (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
 #+end_src
