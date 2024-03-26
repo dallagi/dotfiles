@@ -977,7 +977,11 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     "Shell to use for prima-tools commands.")
 
   (defun prima-tools-ensure-term ()
-    "Ensure that a term buffer is open for prima-tools commands."
+    "Ensure that a fresh term buffer is open for prima-tools commands."
+    (when (get-buffer prima-tools-buffer-name)
+      (let ((kill-buffer-query-functions nil)) ;; do not ask for confirmation
+        (kill-buffer prima-tools-buffer-name)))
+
     (unless (get-buffer prima-tools-buffer-name)
       (setenv "VISUAL" "emacsclient")
       (with-current-buffer
