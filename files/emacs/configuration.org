@@ -984,9 +984,10 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     (unless (get-buffer prima-tools-buffer-name)
       (setenv "VISUAL" "emacsclient")
       (with-current-buffer
-          (term prima-tools-shell)
-        (rename-buffer prima-tools-buffer-name)))
-    (pop-to-buffer prima-tools-buffer-name))
+          (let ((default-directory (project-root (project-current)))) ;; run in project root
+            (term prima-tools-shell)
+            (rename-buffer prima-tools-buffer-name)))
+      (pop-to-buffer prima-tools-buffer-name)))
 
   (defun prima-tools-send-command-to-term (command)
     "Send COMMAND to the prima-tools term buffer."

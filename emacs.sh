@@ -5,4 +5,3 @@ mkdir -p ~/.config/emacs
 stow --restow --dir files --target ~/.config/emacs emacs
 
 echo "+ Done."
-
