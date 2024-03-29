@@ -355,14 +355,13 @@ Setup evil and evil-collections.
 
       "c" '(:ignore t :which-key "Code")
       "ca" '(lsp-execute-code-action :which-key "Code action")
-      "cd" '(lsp-find-declaration :which-key "Find declaration")
-      "cD" '(lsp-find-references :which-key "Find definitions")
+      "cd" '(xref-find-definitions :which-key "Find definition")
       "ch" '(lsp-inlay-hints-mode :which-key "Toggle inlay hints")
       "cl" '(lsp-lens-mode :which-key "Toggle LSP lens")
       "ci" '(lsp-find-implementation :which-key "Find implementation")
       "cr" '(lsp-rename :which-key "Rename")
       "ct" '(lsp-find-type-definition :which-key "Find type definition")
-      "cx" '(lsp-find-references :which-key "Find references"))
+      "cx" '(xref-find-references :which-key "Find references"))
 
     :commands lsp lsp-deferred)
 
@@ -990,12 +989,12 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     (pop-to-buffer prima-tools-buffer-name))
 
   (defun prima-tools-send-command-to-term (command)
-    "Send a command to the prima-tools term buffer."
+    "Send COMMAND to the prima-tools term buffer."
     (prima-tools-ensure-term)
     (term-send-raw-string (concat command "\n")))
 
   (defun prima-tools-send-command-to-temporary-buffer (command)
-    "Run process and show output in temporary buffer"
+    "Run COMMAND and show output in temporary buffer."
     (interactive)
     (let ((temporary-buffer-name "*prima-tools-output*"))
       (get-buffer-create temporary-buffer-name)
@@ -1225,9 +1224,9 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 ** Protobuf
 #+begin_src emacs-lisp
   ;; Disabled due to some issues
-  ;; TODO check again in the future whether this works
-  ;; (use-package protobuf-ts-mode) 
-  (use-package protobuf-mode) 
+  (use-package protobuf-mode
+    :mode "\\.proto\\'"
+    :hook (protobuf-mode . lsp-deferred)) 
 #+end_src
 
 ** Yaml
