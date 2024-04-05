@@ -322,6 +322,8 @@ Setup evil and evil-collections.
     (setq read-process-output-max (* 1024 1024)) ;; 1mb
     ;; Use plists for deserialization. Better performance, and required for lsp-booster
     (setq lsp-use-plists t)
+    ;; Do not ask to select identifier, but look for the one at point
+    (setq xref-prompt-for-identifier nil)
 
     (defun my/lsp-mode-setup-completion ()
       (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
@@ -721,7 +723,7 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
     (setq dashboard-set-footer nil)
     (setq dashboard-center-content t)
     (setq dashboard-projects-backend 'project-el)
-    (setq dashboard-items '((projects . 5) (agenda . 5)))
+    (setq dashboard-items '((projects . 10) (agenda . 5)))
     :config
     (dashboard-setup-startup-hook))
 #+end_src
@@ -999,10 +1001,10 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     (interactive)
     (let ((temporary-buffer-name "*prima-tools-output*"))
       (get-buffer-create temporary-buffer-name)
-      (let ((message-log-max nil)) ; Don't clutter *Messages* buffer
+      (let ((message-log-max nil)) ;; Don't clutter *Messages* buffer
         (shell-command command temporary-buffer-name))
       (switch-to-buffer-other-window temporary-buffer-name)
-      (special-mode) ; a read-only major mode that can be quit via <q>
+      (special-mode) ;; a read-only major mode that can be quit via <q>
       ))
 
   ;; Define the transient
