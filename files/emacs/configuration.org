@@ -254,6 +254,12 @@ Setup evil and evil-collections.
     :after evil
     :config
     (global-evil-visualstar-mode))
+
+  ;; Fold in evil
+  (use-package origami
+    :after evil
+    :config
+    (global-origami-mode))
 #+end_src
 
 ** Snippets
@@ -329,7 +335,7 @@ Setup evil and evil-collections.
       (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
             '(orderless))) ;; Configure orderless
     :custom
-    (lsp-elixir-ls-version "v0.17.1")
+    (lsp-elixir-ls-version "v0.20.0")
 
     (lsp-auto-execute-action nil) ;; always ask before executing action
     (lsp-ui-doc-enable nil) ;; disable docs popup on hover
@@ -614,6 +620,9 @@ Save files when they lose focus, and autoformat on save
     (setq magit-save-repository-buffers 'dontask)
     ;; highlight single hunks in diffs (delta style)
     (setq magit-diff-refine-hunk 'all)
+    ;; show dates in magit log as YYYY-mm-dd HH:MM instead of relative dates
+    (setq magit-log-margin '(t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
+
 
     :general
     (my-leader-def
@@ -691,7 +700,7 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
 #+begin_src emacs-lisp
   ;; Use y-n instead of yes-no
   (setq use-short-answers t)
-  
+
   ;; Don't pop up UI dialogs when prompting
   (setq use-dialog-box nil)
 
@@ -713,6 +722,9 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
 
   ;; Prevent eldoc from showing more than one line, except when asked explicitly to do so
   (setq eldoc-echo-area-use-multiline-p nil)
+
+  ;; Highlight current line
+  (global-hl-line-mode)
 #+end_src
 
 ** Dashboard
@@ -1154,10 +1166,6 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 ** Elixir
 #+begin_src emacs-lisp
   (use-package elixir-ts-mode
-    :init
-    ;; Add local installation of elixir-ls to path
-    (add-to-list 'exec-path "~/.bin/elixir-ls")
-
     :hook (elixir-ts-mode . lsp-deferred))
 
   (use-package exunit
@@ -1185,19 +1193,6 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 
     :hook
     (elixir-mode . flycheck-credo-setup))
-
-  ;; ;; Setup next-ls
-  ;; (with-eval-after-load 'lsp-mode
-  ;;   ;; disable default LSPs for elixir
-  ;;   (setq lsp-disabled-clients '(elixir-ls credo-language-server))
-
-  ;;   (add-to-list 'lsp-language-id-configuration
-  ;;                '(elixir-ts-mode . "elixir"))
-
-  ;;   (lsp-register-client
-  ;;    (make-lsp-client :new-connection (lsp-stdio-connection '("next-ls" "--stdio=true"))
-  ;;                     :activation-fn (lsp-activate-on "elixir")
-  ;;                     :server-id 'next-ls)))
   #+end_src
 
 ** Elm
