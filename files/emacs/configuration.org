@@ -572,6 +572,10 @@ Save files when they lose focus, and autoformat on save
     :custom
     ;; when a script wants to open an editor, open an emacs buffer
     (vterm-environment '("VISUAL=emacsclient"))
+    ;; use screen as vterm shell, so that it handles line wrapping
+    ;; (by default vterm truncates lines when you narrow the window, text
+    ;; does not appear back once it's enlarged again)
+    (vterm-shell "screen")
     :general
     (my-leader-def
       :states '(motion normal)
