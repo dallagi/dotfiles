@@ -1,0 +1,2 @@
+# allow emacs to control scrollback
+termcapinfo xterm* ti@:te@
