@@ -1227,6 +1227,14 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
       "ml" '(eval-last-sexp :which-key "Eval last sexp"))
     )
 #+end_src
+
+** Php
+#+begin_src emacs-lisp
+  ;; Disabled due to some issues
+  (use-package php-mode
+    :mode "\\.php\\'"
+    :hook (php-mode . lsp-deferred))
+#+end_src
 	
 ** Protobuf
 #+begin_src emacs-lisp
