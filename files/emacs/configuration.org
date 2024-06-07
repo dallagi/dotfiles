@@ -958,7 +958,12 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 * Tools
 ** Gpt
 #+begin_src emacs-lisp
-  (use-package gptel)
+  (use-package gptel
+    :general
+    (my-leader-def
+      :states '(motion normal visual)
+      :keymaps 'override
+      "cg" '(gptel-menu :which-key "GptEl menu")))
 #+end_src
 
 ** Docker
