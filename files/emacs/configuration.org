@@ -553,7 +553,7 @@ Save files when they lose focus, and autoformat on save
 
     :general
     (:keymaps 'eshell-mode-map 
-              "C-l" 'eshell/clear)
+              "C-l" 'eshell/clear-scrollback)
     (my-leader-def
       :states '(motion normal)
       :keymaps 'override
