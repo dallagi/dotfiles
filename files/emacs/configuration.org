@@ -580,13 +580,17 @@ Save files when they lose focus, and autoformat on save
 ** Eat
 #+begin_src emacs-lisp
   (use-package eat
+    :config
+    ;; paste using p in normal mode
+    (evil-define-key 'normal eat-mode-map (kbd "p") 'eat-yank)
+
     :general
     (my-leader-def
       :states '(motion normal)
       :keymaps 'override
 
-      "ot" '(eat-project-other-window :which-key "Vterm at project path")
-      ))
+      "ot" '(eat-project-other-window :which-key "Vterm at project path")))
+
 #+end_src
 
 * Git
