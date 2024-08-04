@@ -566,32 +566,6 @@ Save files when they lose focus, and autoformat on save
     :config
     (bash-completion-setup))
 #+end_src
-** Vterm
-#+begin_src emacs-lisp
-  (use-package vterm
-    :custom
-    ;; when a script wants to open an editor, open an emacs buffer
-    (vterm-environment '("VISUAL=emacsclient"))
-    ;; use screen as vterm shell, so that it handles line wrapping
-    ;; (by default vterm truncates lines when you narrow the window, text
-    ;; does not appear back once it's enlarged again)
-    (vterm-shell "screen")
-    :general
-    (my-leader-def
-      :states '(motion normal)
-      :keymaps 'vterm-mode-map
-
-      "ms" '(vterm-send-next-key :which-key "Send next key")))
-
-  (use-package multi-vterm
-    :general
-    (my-leader-def
-      :states '(motion normal)
-      :keymaps 'override
-
-      "ot" '(multi-vterm-project :which-key "Shell at project path")
-      "oT" '(multi-vterm :which-key "Vterm at current path")))
-#+end_src
 ** Direnv
 
 #+begin_src emacs-lisp
@@ -601,7 +575,14 @@ Save files when they lose focus, and autoformat on save
 #+end_src
 ** Eat
 #+begin_src emacs-lisp
-  (use-package eat)
+  (use-package eat
+    :general
+    (my-leader-def
+      :states '(motion normal)
+      :keymaps 'override
+
+      "ot" '(eat-project-other-window :which-key "Vterm at project path")
+      ))
 #+end_src
 
 * Git
