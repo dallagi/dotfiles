@@ -7,8 +7,6 @@ bindkey -e
 # The following lines were added by compinstall
 zstyle :compinstall filename '~/.zshrc'
 
-# Enable asdf
-. $HOME/.asdf/asdf.sh
 # append completions to fpath
 fpath=(${ASDF_DIR}/completions $fpath)
 
@@ -60,3 +58,5 @@ alias dcr='dc run -d --rm --service-ports'
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$HOME/.local/bin:$PATH"
 
 export SAM_CLI_TELEMETRY=0
+
+eval "$(~/.local/bin/mise activate zsh --shims)"
