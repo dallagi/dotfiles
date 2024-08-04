@@ -619,12 +619,6 @@ Save files when they lose focus, and autoformat on save
       "gl" '(magit-log-buffer-file :which-key "Buffer log")
       ))
 
-  ;; ;; use delta for diffing in magit
-  ;; (use-package magit-delta
-  ;;   :hook (magit-mode . magit-delta-mode)
-  ;;   :config
-  ;;   (setq magit-delta-default-dark-theme "zenburn"))
-
   (use-package forge
     :after magit)
 #+end_src
@@ -741,9 +735,9 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
 #+begin_src emacs-lisp
   (setq custom-safe-themes t)   ; Treat all themes as safe
 
-  (use-package zenburn-theme
+  (use-package modus-themes
     :config
-    (load-theme 'zenburn t))
+    (load-theme 'modus-vivendi-tinted t))
 #+end_src
 
 ** Font
