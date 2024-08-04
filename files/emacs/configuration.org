@@ -330,6 +330,10 @@ Setup evil and evil-collections.
     (setq lsp-use-plists t)
     ;; Do not ask to select identifier, but look for the one at point
     (setq xref-prompt-for-identifier nil)
+    ;; Increase the file watch warning threshold
+    (setq lsp-file-watch-threshold 10000)
+    ;; Only show symbols hierarchy in headerline breadcrumb (as opposed to also path and file name)
+    (setq lsp-headerline-breadcrumb-segments '(symbols))
 
     (defun my/lsp-mode-setup-completion ()
       (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
@@ -340,8 +344,8 @@ Setup evil and evil-collections.
     (lsp-auto-execute-action nil) ;; always ask before executing action
     (lsp-ui-doc-enable nil) ;; disable docs popup on hover
     (lsp-lens-enable nil) ;; disable lens by default
-    (lsp-headerline-breadcrumb-enable nil) ;; disable breadcrumbs in headerline
-    (lsp-ui-sideline-enable nil) ;; disable sideline entirely
+    ;; (lsp-ui-sideline-enable nil) ;; disable sideline entirely
+    ;; (lsp-headerline-breadcrumb-enable nil) ;; disable breadcrumbs in headerline
     (lsp-modeline-code-actions-enable nil) ;; do not show code actions in modeline
     (lsp-signature-render-documentation nil) ;; do not show documentation in echo area
 
