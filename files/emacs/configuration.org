@@ -120,6 +120,9 @@ Setup melpa and quelpa.
   ;; Remember and restore the last cursor location of opened files
   (save-place-mode 1)
 
+  ;; Highlight trailing whitespaces
+  (setq-default show-trailing-whitespace t)
+
   (use-package savehist
     :custom
     (history-length 50)
@@ -142,7 +145,7 @@ Setup melpa and quelpa.
     "Open private configuration file"
     (interactive)
     (find-file (locate-user-emacs-file "configuration.org")))
-  
+
   (use-package general
     :config
     (general-override-mode) ;; allow overriding key definitions
@@ -174,7 +177,7 @@ Setup melpa and quelpa.
       "ie" '(emoji-search :which-key "Emoji")
 
       "o" '(:ignore t :which-key "Open")
-  
+
       "t" '(:ignore t :which-key "Tools")
 
       "w" '(:ignore t :which-key "Window")
@@ -280,7 +283,7 @@ Setup evil and evil-collections.
     (company-minimum-prefix-length 1)
 
     :general
-    (:keymaps 'company-mode-map 
+    (:keymaps 'company-mode-map
 	      "C-<tab>" 'company-complete)
 
     :hook (prog-mode . company-mode))
@@ -294,7 +297,7 @@ Setup evil and evil-collections.
   (use-package treesit-auto
     :custom
     (treesit-auto-install 'prompt)
-  
+
     :config
     (global-treesit-auto-mode))
 #+end_src
@@ -446,7 +449,15 @@ Save files when they lose focus, and autoformat on save
   (use-package apheleia
     :config
     ;; use rust 2021 to format rust buffers
-    (add-to-list 'apheleia-formatters '(rustfmt . ("rustfmt" "--quiet" "--emit" "stdout" "--edition" "2021")))
+    (add-to-list 'apheleia-formatters
+                 '(rustfmt . ("rustfmt" "--quiet" "--emit" "stdout" "--edition" "2021")))
+
+    ;; use ruff to format python buffers
+    (setf (alist-get 'python-mode apheleia-mode-alist)
+        '(ruff-isort ruff))
+    (setf (alist-get 'python-ts-mode apheleia-mode-alist)
+        '(ruff-isort ruff))
+
     (apheleia-global-mode +1))
 #+end_src
 
@@ -510,7 +521,7 @@ Save files when they lose focus, and autoformat on save
     (general-define-key
      :states '(motion normal visual)
      "C-." nil)
-  
+
     (my-leader-def
       :states '(motion normal visual)
       :keymaps 'override
@@ -556,7 +567,7 @@ Save files when they lose focus, and autoformat on save
     (eshell-mode . company-mode)
 
     :general
-    (:keymaps 'eshell-mode-map 
+    (:keymaps 'eshell-mode-map
               "C-l" 'eshell/clear-scrollback)
     (my-leader-def
       :states '(motion normal)
@@ -859,7 +870,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 #+end_src
 
 ** Highlight TODO/FIXME/...
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
   (use-package hl-todo
     :hook
     ((prog-mode . hl-todo-mode)))
@@ -1161,7 +1172,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     :hook (elixir-ts-mode . lsp-deferred))
 
   (use-package exunit
-    :hook (elixir-ts-mode . exunit-mode)  
+    :hook (elixir-ts-mode . exunit-mode)
     :general
     (:keymaps 'elixir-ts-mode-map
               :states '(motion normal visual)
@@ -1218,13 +1229,13 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     :mode "\\.php\\'"
     :hook (php-mode . lsp-deferred))
 #+end_src
-	
+
 ** Protobuf
 #+begin_src emacs-lisp
   ;; Disabled due to some issues
   (use-package protobuf-mode
     :mode "\\.proto\\'"
-    :hook (protobuf-mode . lsp-deferred)) 
+    :hook (protobuf-mode . lsp-deferred))
 #+end_src
 
 ** Yaml
