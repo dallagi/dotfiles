@@ -120,9 +120,6 @@ Setup melpa and quelpa.
   ;; Remember and restore the last cursor location of opened files
   (save-place-mode 1)
 
-  ;; Highlight trailing whitespaces
-  (setq-default show-trailing-whitespace t)
-
   (use-package savehist
     :custom
     (history-length 50)
@@ -145,7 +142,7 @@ Setup melpa and quelpa.
     "Open private configuration file"
     (interactive)
     (find-file (locate-user-emacs-file "configuration.org")))
-
+  
   (use-package general
     :config
     (general-override-mode) ;; allow overriding key definitions
@@ -177,7 +174,7 @@ Setup melpa and quelpa.
       "ie" '(emoji-search :which-key "Emoji")
 
       "o" '(:ignore t :which-key "Open")
-
+  
       "t" '(:ignore t :which-key "Tools")
 
       "w" '(:ignore t :which-key "Window")
@@ -283,7 +280,7 @@ Setup evil and evil-collections.
     (company-minimum-prefix-length 1)
 
     :general
-    (:keymaps 'company-mode-map
+    (:keymaps 'company-mode-map 
 	      "C-<tab>" 'company-complete)
 
     :hook (prog-mode . company-mode))
@@ -297,7 +294,7 @@ Setup evil and evil-collections.
   (use-package treesit-auto
     :custom
     (treesit-auto-install 'prompt)
-
+  
     :config
     (global-treesit-auto-mode))
 #+end_src
@@ -333,10 +330,6 @@ Setup evil and evil-collections.
     (setq lsp-use-plists t)
     ;; Do not ask to select identifier, but look for the one at point
     (setq xref-prompt-for-identifier nil)
-    ;; Increase the file watch warning threshold
-    (setq lsp-file-watch-threshold 10000)
-    ;; Only show symbols hierarchy in headerline breadcrumb (as opposed to also path and file name)
-    (setq lsp-headerline-breadcrumb-segments '(symbols))
 
     (defun my/lsp-mode-setup-completion ()
       (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
@@ -347,8 +340,8 @@ Setup evil and evil-collections.
     (lsp-auto-execute-action nil) ;; always ask before executing action
     (lsp-ui-doc-enable nil) ;; disable docs popup on hover
     (lsp-lens-enable nil) ;; disable lens by default
-    ;; (lsp-ui-sideline-enable nil) ;; disable sideline entirely
-    ;; (lsp-headerline-breadcrumb-enable nil) ;; disable breadcrumbs in headerline
+    (lsp-headerline-breadcrumb-enable nil) ;; disable breadcrumbs in headerline
+    (lsp-ui-sideline-enable nil) ;; disable sideline entirely
     (lsp-modeline-code-actions-enable nil) ;; do not show code actions in modeline
     (lsp-signature-render-documentation nil) ;; do not show documentation in echo area
 
@@ -449,15 +442,7 @@ Save files when they lose focus, and autoformat on save
   (use-package apheleia
     :config
     ;; use rust 2021 to format rust buffers
-    (add-to-list 'apheleia-formatters
-                 '(rustfmt . ("rustfmt" "--quiet" "--emit" "stdout" "--edition" "2021")))
-
-    ;; use ruff to format python buffers
-    (setf (alist-get 'python-mode apheleia-mode-alist)
-        '(ruff-isort ruff))
-    (setf (alist-get 'python-ts-mode apheleia-mode-alist)
-        '(ruff-isort ruff))
-
+    (add-to-list 'apheleia-formatters '(rustfmt . ("rustfmt" "--quiet" "--emit" "stdout" "--edition" "2021")))
     (apheleia-global-mode +1))
 #+end_src
 
@@ -521,7 +506,7 @@ Save files when they lose focus, and autoformat on save
     (general-define-key
      :states '(motion normal visual)
      "C-." nil)
-
+  
     (my-leader-def
       :states '(motion normal visual)
       :keymaps 'override
@@ -567,7 +552,7 @@ Save files when they lose focus, and autoformat on save
     (eshell-mode . company-mode)
 
     :general
-    (:keymaps 'eshell-mode-map
+    (:keymaps 'eshell-mode-map 
               "C-l" 'eshell/clear-scrollback)
     (my-leader-def
       :states '(motion normal)
@@ -580,6 +565,32 @@ Save files when they lose focus, and autoformat on save
   (use-package bash-completion
     :config
     (bash-completion-setup))
+#+end_src
+** Vterm
+#+begin_src emacs-lisp
+  (use-package vterm
+    :custom
+    ;; when a script wants to open an editor, open an emacs buffer
+    (vterm-environment '("VISUAL=emacsclient"))
+    ;; use screen as vterm shell, so that it handles line wrapping
+    ;; (by default vterm truncates lines when you narrow the window, text
+    ;; does not appear back once it's enlarged again)
+    (vterm-shell "screen")
+    :general
+    (my-leader-def
+      :states '(motion normal)
+      :keymaps 'vterm-mode-map
+
+      "ms" '(vterm-send-next-key :which-key "Send next key")))
+
+  (use-package multi-vterm
+    :general
+    (my-leader-def
+      :states '(motion normal)
+      :keymaps 'override
+
+      "ot" '(multi-vterm-project :which-key "Shell at project path")
+      "oT" '(multi-vterm :which-key "Vterm at current path")))
 #+end_src
 ** Direnv
 
@@ -601,7 +612,6 @@ Save files when they lose focus, and autoformat on save
       :keymaps 'override
 
       "oe" '(eat-project-other-window :which-key "Eat at project path")))
-
 #+end_src
 
 * Git
@@ -637,6 +647,12 @@ Save files when they lose focus, and autoformat on save
       "gg" '(magit-status :which-key "Status")
       "gl" '(magit-log-buffer-file :which-key "Buffer log")
       ))
+
+  ;; ;; use delta for diffing in magit
+  ;; (use-package magit-delta
+  ;;   :hook (magit-mode . magit-delta-mode)
+  ;;   :config
+  ;;   (setq magit-delta-default-dark-theme "zenburn"))
 
   (use-package forge
     :after magit)
@@ -754,9 +770,9 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
 #+begin_src emacs-lisp
   (setq custom-safe-themes t)   ; Treat all themes as safe
 
-  (use-package modus-themes
+  (use-package zenburn-theme
     :config
-    (load-theme 'modus-vivendi-tinted t))
+    (load-theme 'zenburn t))
 #+end_src
 
 ** Font
@@ -870,7 +886,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 #+end_src
 
 ** Highlight TODO/FIXME/...
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp 
   (use-package hl-todo
     :hook
     ((prog-mode . hl-todo-mode)))
@@ -1172,7 +1188,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     :hook (elixir-ts-mode . lsp-deferred))
 
   (use-package exunit
-    :hook (elixir-ts-mode . exunit-mode)
+    :hook (elixir-ts-mode . exunit-mode)  
     :general
     (:keymaps 'elixir-ts-mode-map
               :states '(motion normal visual)
@@ -1229,13 +1245,13 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     :mode "\\.php\\'"
     :hook (php-mode . lsp-deferred))
 #+end_src
-
+	
 ** Protobuf
 #+begin_src emacs-lisp
   ;; Disabled due to some issues
   (use-package protobuf-mode
     :mode "\\.proto\\'"
-    :hook (protobuf-mode . lsp-deferred))
+    :hook (protobuf-mode . lsp-deferred)) 
 #+end_src
 
 ** Yaml
