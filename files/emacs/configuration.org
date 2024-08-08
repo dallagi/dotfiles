@@ -600,7 +600,7 @@ Save files when they lose focus, and autoformat on save
       :states '(motion normal)
       :keymaps 'override
 
-      "ot" '(eat-project-other-window :which-key "Vterm at project path")))
+      "oe" '(eat-project-other-window :which-key "Eat at project path")))
 
 #+end_src
 
