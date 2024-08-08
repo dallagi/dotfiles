@@ -142,7 +142,7 @@ Setup melpa and quelpa.
     "Open private configuration file"
     (interactive)
     (find-file (locate-user-emacs-file "configuration.org")))
-  
+
   (use-package general
     :config
     (general-override-mode) ;; allow overriding key definitions
@@ -174,7 +174,7 @@ Setup melpa and quelpa.
       "ie" '(emoji-search :which-key "Emoji")
 
       "o" '(:ignore t :which-key "Open")
-  
+
       "t" '(:ignore t :which-key "Tools")
 
       "w" '(:ignore t :which-key "Window")
@@ -280,7 +280,7 @@ Setup evil and evil-collections.
     (company-minimum-prefix-length 1)
 
     :general
-    (:keymaps 'company-mode-map 
+    (:keymaps 'company-mode-map
 	      "C-<tab>" 'company-complete)
 
     :hook (prog-mode . company-mode))
@@ -294,7 +294,7 @@ Setup evil and evil-collections.
   (use-package treesit-auto
     :custom
     (treesit-auto-install 'prompt)
-  
+
     :config
     (global-treesit-auto-mode))
 #+end_src
@@ -506,7 +506,7 @@ Save files when they lose focus, and autoformat on save
     (general-define-key
      :states '(motion normal visual)
      "C-." nil)
-  
+
     (my-leader-def
       :states '(motion normal visual)
       :keymaps 'override
@@ -552,7 +552,7 @@ Save files when they lose focus, and autoformat on save
     (eshell-mode . company-mode)
 
     :general
-    (:keymaps 'eshell-mode-map 
+    (:keymaps 'eshell-mode-map
               "C-l" 'eshell/clear-scrollback)
     (my-leader-def
       :states '(motion normal)
@@ -647,12 +647,6 @@ Save files when they lose focus, and autoformat on save
       "gg" '(magit-status :which-key "Status")
       "gl" '(magit-log-buffer-file :which-key "Buffer log")
       ))
-
-  ;; ;; use delta for diffing in magit
-  ;; (use-package magit-delta
-  ;;   :hook (magit-mode . magit-delta-mode)
-  ;;   :config
-  ;;   (setq magit-delta-default-dark-theme "zenburn"))
 
   (use-package forge
     :after magit)
@@ -886,7 +880,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 #+end_src
 
 ** Highlight TODO/FIXME/...
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
   (use-package hl-todo
     :hook
     ((prog-mode . hl-todo-mode)))
@@ -1188,7 +1182,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     :hook (elixir-ts-mode . lsp-deferred))
 
   (use-package exunit
-    :hook (elixir-ts-mode . exunit-mode)  
+    :hook (elixir-ts-mode . exunit-mode)
     :general
     (:keymaps 'elixir-ts-mode-map
               :states '(motion normal visual)
@@ -1245,13 +1239,13 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     :mode "\\.php\\'"
     :hook (php-mode . lsp-deferred))
 #+end_src
-	
+
 ** Protobuf
 #+begin_src emacs-lisp
   ;; Disabled due to some issues
   (use-package protobuf-mode
     :mode "\\.proto\\'"
-    :hook (protobuf-mode . lsp-deferred)) 
+    :hook (protobuf-mode . lsp-deferred))
 #+end_src
 
 ** Yaml
