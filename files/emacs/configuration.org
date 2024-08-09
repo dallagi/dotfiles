@@ -591,6 +591,11 @@ Save files when they lose focus, and autoformat on save
     ;; (by default vterm truncates lines when you narrow the window, text
     ;; does not appear back once it's enlarged again)
     (vterm-shell "screen")
+
+    :hook
+    ;; disable show-trailing-whitespace in vterm buffers
+    (vterm-mode . (lambda () (setq show-trailing-whitespace nil)))
+
     :general
     (my-leader-def
       :states '(motion normal)
