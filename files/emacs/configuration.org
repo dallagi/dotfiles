@@ -635,6 +635,17 @@ Save files when they lose focus, and autoformat on save
 
 #+end_src
 
+** Term
+#+begin_src emacs-lisp
+  (use-package term
+    :config
+    (general-define-key
+     :states '(motion normal)
+     :keymaps 'term-mode-map
+     ;; $ moves to end of line instead of end of buffer
+     "$" 'evil-end-of-line))
+#+end_src
+
 * Git
 ** Magit
 #+begin_src emacs-lisp
