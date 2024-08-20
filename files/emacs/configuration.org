@@ -669,6 +669,14 @@ Save files when they lose focus, and autoformat on save
     ;; show dates in magit log as YYYY-mm-dd HH:MM instead of relative dates
     (setq magit-log-margin '(t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
 
+    (general-define-key
+     :states '(motion normal)
+     :keymaps 'magit-mode-map
+     ;; use M-h, M-j, M-k, M-l to move around buffer
+     "M-h" 'evil-backward-char
+     "M-j" 'evil-next-line
+     "M-k" 'evil-previous-line
+     "M-l" 'evil-forward-char)
 
     :general
     (my-leader-def
