@@ -1272,9 +1272,20 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     )
 #+end_src
 
+** Jinja2
+#+begin_src emacs-lisp
+  (use-package jinja2-mode
+    :mode "\\.j2\\'")
+#+end_src
+
+** Just
+#+begin_src emacs-lisp
+  (use-package just-mode
+    :mode "Justfile")
+#+end_src
+
 ** Php
 #+begin_src emacs-lisp
-  ;; Disabled due to some issues
   (use-package php-mode
     :mode "\\.php\\'"
     :hook (php-mode . lsp-deferred))
@@ -1282,7 +1293,6 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 
 ** Protobuf
 #+begin_src emacs-lisp
-  ;; Disabled due to some issues
   (use-package protobuf-mode
     :mode "\\.proto\\'"
     :hook (protobuf-mode . lsp-deferred))
