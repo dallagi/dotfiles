@@ -1,4 +1,5 @@
 * TODOs
+** TODO replace evil-multiedit with evil-mc
 ** TODO recentf
 ** TODO beautify org
 See https://zzamboni.org/post/beautifying-org-mode-in-emacs/
@@ -284,10 +285,12 @@ Setup evil and evil-collections.
 
     :general
     (:keymaps 'company-mode-map
-	      "C-<tab>" 'company-complete)
+              "C-<tab>" 'company-complete)
 
     :hook (prog-mode . company-mode))
 
+  ;; TODO try to remove as childframes may be the issue
+  ;; TODO try to switch gtk3 (NON-pure gtk) version
   (use-package company-box
     :hook (company-mode . company-box-mode))
 #+end_src
@@ -476,6 +479,11 @@ Save files when they lose focus, and autoformat on save
     (let ((text-in-region (buffer-substring (mark) (point))))
       (consult-ripgrep nil text-in-region)))
 
+  (defun my/consult-line-region ()
+    (interactive)
+    (let ((text-in-region (buffer-substring (mark) (point))))
+      (consult-line text-in-region nil)))
+
   (use-package consult
     :custom
     (consult-async-min-input 0)
@@ -484,13 +492,18 @@ Save files when they lose focus, and autoformat on save
       :states '(visual)
       :keymaps 'override
 
-      "/" '(my/consult-ripgrep-region :which-key "Search project"))
+      "sf" '(my/consult-line-region :which-key "Search file")
+      "sp" '(my/consult-ripgrep-region :which-key "Search project")
+      "/" '(my/consult-ripgrep-region :which-key "Search project")
+      )
 
     (my-leader-def
       :states '(motion normal)
       :keymaps 'override
 
+      "sp" '(consult-ripgrep :which-key "Search project")
       "/" '(consult-ripgrep :which-key "Search project")
+      "sf" '(consult-line :which-key "Search file")
 
       "bb" '(consult-project-buffer :which-key "Switch to project buffer")
       "bB" '(consult-buffer :which-key "Switch to buffer")
@@ -887,11 +900,14 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
   ;; Show column number
   (column-number-mode)
 
-  (use-package doom-modeline
-    :init (doom-modeline-mode 1)
-    :config
-    (setq doom-modeline-height 20
-	  doom-modeline-buffer-file-name-style 'truncate-upto-project))
+  (use-package mood-line
+  :config
+  (mood-line-mode)
+
+  ;; Use pretty Fira Code-compatible glyphs
+  :custom
+  (mood-line-glyph-alist mood-line-glyphs-fira-code))
+
 #+end_src
 
 ** Help / Helpful
