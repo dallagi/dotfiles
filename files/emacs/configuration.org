@@ -158,7 +158,7 @@ Setup melpa and quelpa.
       ":" '(execute-extended-command :which-key "M-x")
 
       "b" '(:ignore t :which-key "Buffer")
-      "bd" '(kill-this-buffer :which-key "Kill")
+      "bd" '(kill-current-buffer :which-key "Kill")
       "bp" '(previous-buffer :which-key "Previous")
       "bn" '(next-buffer :which-key "Next")
       "bs" '(save-buffer :which-key "Save")
@@ -270,6 +270,12 @@ Setup evil and evil-collections.
 #+begin_src emacs-lisp
   (use-package yasnippet
     :defer 15 ;; takes a while to load, so do it async
+    :general
+    (my-leader-def
+      :states '(motion normal)
+      :keymaps 'override
+      "is" '(yas-insert-snippet :which-key "Snippet")
+      )
     :config
     (yas-reload-all)
     (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets"))
