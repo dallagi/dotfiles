@@ -124,6 +124,9 @@ Setup melpa and quelpa.
   ;; Highlight trailing whitespaces
   (setq-default show-trailing-whitespace t)
 
+  ;; Scroll at pixel resolution (instead of by line)
+  (pixel-scroll-precision-mode)
+
   (use-package savehist
     :custom
     (history-length 50)
