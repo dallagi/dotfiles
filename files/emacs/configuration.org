@@ -1118,6 +1118,20 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
       "1" '(prima-tools-transient :which-key "Prima tools")))
 #+end_src
 
+** Whisper STT
+#+begin_src emacs-lisp
+  (use-package whisper
+    :vc (:url "https://github.com/natrys/whisper.el"
+              :branch "master")
+    :bind ("M-w" . whisper-run)
+    :config
+    (setq whisper-install-directory "/tmp/"
+          whisper-model "base"
+          whisper-language "en"
+          whisper-translate nil
+          whisper-use-threads (/ (num-processors) 2)))
+#+end_src
+
 * Languages
 ** Dockerfile
 #+begin_src emacs-lisp
