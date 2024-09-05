@@ -1,6 +1,7 @@
 * TODOs
 ** TODO replace evil-multiedit with evil-mc
 ** TODO recentf
+** TODO consider org-ai
 ** TODO beautify org
 See https://zzamboni.org/post/beautifying-org-mode-in-emacs/
 See also package org-appear
@@ -975,7 +976,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     "Find a note in `org-directory'"
     (interactive)
     (require 'project)
-    (project-find-file-in "" `(,org-directory) nil t))
+    (project-find-file-in "" `(,org-directory) (project--find-in-directory org-directory) t))
 
   (use-package rg)
 
@@ -1258,6 +1259,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 ** Elixir
 #+begin_src emacs-lisp
   (use-package elixir-ts-mode
+    :mode "\\.(ex|exs)\\'"
     :hook (elixir-ts-mode . lsp-deferred))
 
   (use-package exunit
