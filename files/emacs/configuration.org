@@ -1259,7 +1259,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 ** Elixir
 #+begin_src emacs-lisp
   (use-package elixir-ts-mode
-    :mode "\\.(ex|exs)\\'"
+    :mode "\\.exs?\\'"
     :hook (elixir-ts-mode . lsp-deferred))
 
   (use-package exunit
