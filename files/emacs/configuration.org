@@ -617,8 +617,6 @@ Save files when they lose focus, and autoformat on save
 #+begin_src emacs-lisp
   (use-package vterm
     :custom
-    ;; when a script wants to open an editor, open an emacs buffer
-    (vterm-environment '("VISUAL=emacsclient"))
     ;; use screen as vterm shell, so that it handles line wrapping
     ;; (by default vterm truncates lines when you narrow the window, text
     ;; does not appear back once it's enlarged again)
@@ -631,6 +629,8 @@ Save files when they lose focus, and autoformat on save
     :hook
     ;; disable show-trailing-whitespace in vterm buffers
     (vterm-mode . (lambda () (setq show-trailing-whitespace nil)))
+    ;; export editor variable
+    with-editor-export-editor
 
     :general
     (my-leader-def
@@ -1072,33 +1072,52 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 #+end_src
 ** Prima tools
 #+begin_src emacs-lisp
-  (require 'transient)
-  (require 'term)
+  (use-package transient)
+  (use-package vterm)
+  (use-package with-editor)
+
+  (add-hook 'vterm-mode-hook  'with-editor-export-editor)
 
   (defvar prima-tools-buffer-name "*prima-tools*"
-    "Name of the term buffer for prima-tools commands.")
+    "Name of the vterm buffer for prima-tools commands.")
 
   (defvar prima-tools-shell "/bin/bash"
     "Shell to use for prima-tools commands.")
 
-  (defun prima-tools-ensure-term ()
-    "Ensure that a fresh term buffer is open for prima-tools commands."
+  (defun prima-tools-setup-editor (process)
+    "Set up the environment to use Emacs as the editor for the vterm PROCESS."
+    (with-editor-set-process-filter process (process-filter process))
+    ;; workaround for python-editor issue when the editor command has arguments
+    ;; (like in this case, as it will be something like 'emacsclient --socket-name=...')
+    (vterm-send-string "echo '#!/usr/bin/bash' > ~/.bin/emacsclient-workaround")
+    (vterm-send-return)
+    (vterm-send-string "echo $EDITOR \\$@ >> ~/.bin/emacsclient-workaround")
+    (vterm-send-return)
+    (vterm-send-string "chmod +x ~/.bin/emacsclient-workaround")
+    (vterm-send-return)
+    (vterm-send-string "export EDITOR=~/.bin/emacsclient-workaround")
+    (vterm-send-return)
+    (vterm-clear))
+
+  (defun prima-tools-ensure-vterm ()
+    "Ensure that a fresh vterm buffer is open for prima-tools commands."
     (when (get-buffer prima-tools-buffer-name)
       (let ((kill-buffer-query-functions nil)) ;; do not ask for confirmation
         (kill-buffer prima-tools-buffer-name)))
-
     (unless (get-buffer prima-tools-buffer-name)
-      (setenv "VISUAL" "emacsclient")
-      (with-current-buffer
-          (let ((default-directory (project-root (project-current)))) ;; run in project root
-            (term prima-tools-shell)
-            (rename-buffer prima-tools-buffer-name)))
-      (pop-to-buffer prima-tools-buffer-name)))
+      (let ((default-directory (project-root (project-current)))) ;; run in project root
+        (vterm prima-tools-shell)
+        (rename-buffer prima-tools-buffer-name)
+        (let ((process (get-buffer-process prima-tools-buffer-name)))
+          (when process
+            (prima-tools-setup-editor process)))))
+    (pop-to-buffer prima-tools-buffer-name))
 
-  (defun prima-tools-send-command-to-term (command)
-    "Send COMMAND to the prima-tools term buffer."
-    (prima-tools-ensure-term)
-    (term-send-raw-string (concat command "\n")))
+  (defun prima-tools-send-command-to-vterm (command)
+    "Send COMMAND to the prima-tools vterm buffer."
+    (prima-tools-ensure-vterm)
+    (vterm-send-string command)
+    (vterm-send-return))
 
   (defun prima-tools-send-command-to-temporary-buffer (command)
     "Run COMMAND and show output in temporary buffer."
@@ -1108,21 +1127,19 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
       (let ((message-log-max nil)) ;; Don't clutter *Messages* buffer
         (shell-command command temporary-buffer-name))
       (switch-to-buffer-other-window temporary-buffer-name)
-      (special-mode) ;; a read-only major mode that can be quit via <q>
-      ))
+      (special-mode))) ;; a read-only major mode that can be quit via <q>
 
   ;; Define the transient
   (transient-define-prefix prima-tools-transient ()
     "Transient for prima-tools commands."
     ["Suite-py"
-     ("b" "Create Branch"  (lambda () (interactive) (prima-tools-send-command-to-term "suite-py create-branch")))
-     ("r" "Create Release" (lambda () (interactive) (prima-tools-send-command-to-term "suite-py release create")))
-     ("o" "Open PR"        (lambda () (interactive) (prima-tools-send-command-to-term "suite-py open-pr")))]
+     ("b" "Create Branch"  (lambda () (interactive) (prima-tools-send-command-to-vterm "suite-py create-branch")))
+     ("r" "Create Release" (lambda () (interactive) (prima-tools-send-command-to-vterm "suite-py release create")))
+     ("o" "Open PR"        (lambda () (interactive) (prima-tools-send-command-to-vterm "suite-py open-pr")))]
     ["Warp"
      ("s" "Warp Status"     (lambda () (interactive) (prima-tools-send-command-to-temporary-buffer "warp-cli status")))
      ("c" "Warp Connect"    (lambda () (interactive) (prima-tools-send-command-to-temporary-buffer "warp-cli connect")))
-     ("d" "Warp Disconnect" (lambda () (interactive) (prima-tools-send-command-to-temporary-buffer "warp-cli disconnect")))
-     ])
+     ("d" "Warp Disconnect" (lambda () (interactive) (prima-tools-send-command-to-temporary-buffer "warp-cli disconnect")))])
 
   (provide 'prima-tools-transient)
 
@@ -1158,67 +1175,69 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 
 ** Org
 #+begin_src emacs-lisp
-    (use-package org-mode
-      :ensure nil
-      :init
-      (setq org-directory "~/org")
-      (setq org-agenda-files (list "inbox.org" "notes.org" "projects.org"))
-      (setq org-capture-templates
-            `(("i" "Inbox" entry  (file "inbox.org")
-               ,(concat "* TODO %?\n"
-                        "/Entered on/ %U"))
-              ("n" "Note" entry  (file "notes.org")
-               ,(concat "* Note \n"
-                        "/Entered on/ %U\n" "\n" "%?"))
-              ))
-      ;; Refile to projects file, either to Notes or to Tasks sections
-      (setq org-refile-targets
-            '(("projects.org" :regexp . "\\(?:\\(?:Note\\|Task\\)s\\)")))
-      (setq org-refile-use-outline-path 'file)
-      (setq org-outline-path-complete-in-steps nil)
-      (setq org-startup-truncated nil)
+  (use-package org-mode
+    :ensure nil
 
-      :hook
-      ;; Use full window for org-capture
-      (org-capture-mode . delete-other-windows)
+    :init
+    (setq org-directory "~/org")
+    (setq org-agenda-files (list "inbox.org" "notes.org" "projects.org"))
+    (setq org-capture-templates
+          `(("i" "Inbox" entry  (file "inbox.org")
+             ,(concat "* TODO %?\n"
+                      "/Entered on/ %U"))
+            ("n" "Note" entry  (file "notes.org")
+             ,(concat "* Note \n"
+                      "/Entered on/ %U\n" "\n" "%?"))
+            ))
+    ;; Refile to projects file, either to Notes or to Tasks sections
+    (setq org-refile-targets
+          '(("projects.org" :regexp . "\\(?:\\(?:Note\\|Task\\)s\\)")))
+    (setq org-refile-use-outline-path 'file)
+    (setq org-outline-path-complete-in-steps nil)
+    (setq org-startup-truncated nil)
+    (setq org-startup-indented t)
 
-      :general
-      (my-leader-def
-        :states '(motion normal visual)
-        :keymaps 'override
+    :hook
+    ;; Use full window for org-capture
+    (org-capture-mode . delete-other-windows)
 
-        "na" '(org-agenda :which-key "Agenda")
-        "nc" '(org-capture :which-key "Capture")
-        "ni" '(my/org-capture-inbox :which-key "Capture inbox")
-        "nI" '(my/open-org-inbox :which-key "Open inbox")
-        "nN" '(my/open-org-notes :which-key "Open notes")
-        "nP" '(my/open-org-projects :which-key "Open projects file")
-        )
+    :general
+    (my-leader-def
+      :states '(motion normal visual)
+      :keymaps 'override
 
-      (my-leader-def
-        :keymaps 'org-mode-map
-        :states '(normal motion)
-        "mt" '(consult-org-heading :which-key "Go to heading"))
+      "na" '(org-agenda :which-key "Agenda")
+      "nc" '(org-capture :which-key "Capture")
+      "ni" '(my/org-capture-inbox :which-key "Capture inbox")
+      "nI" '(my/open-org-inbox :which-key "Open inbox")
+      "nN" '(my/open-org-notes :which-key "Open notes")
+      "nP" '(my/open-org-projects :which-key "Open projects file")
       )
 
-    (use-package evil-org
-      :after org
-      :hook (org-mode . (lambda () (evil-org-mode)))
-      :config
-      (require 'evil-org-agenda)
-      (evil-org-agenda-set-keys)
-      ;; keep org <TAB> behavior
-      (evil-define-key '(normal insert) org-mode-map (kbd "<tab>") #'org-cycle)
+    (my-leader-def
+      :keymaps 'org-mode-map
+      :states '(normal motion)
+      "mt" '(consult-org-heading :which-key "Go to heading"))
+    )
 
-      (setq org-log-done 'time ;; set timestamp when closing TODO item
-            org-todo-keywords
-            '((sequence "TODO(t)" "WIP(w)" "BLOCKED(b)" "|" "DONE(d)" "KILLED(k)" "POSTPONED(p)"))))
+  (use-package evil-org
+    :after org
+    :hook (org-mode . (lambda () (evil-org-mode)))
+    :config
+    (require 'evil-org-agenda)
+    (evil-org-agenda-set-keys)
+    ;; keep org <TAB> behavior
+    (evil-define-key '(normal insert) org-mode-map (kbd "<tab>") #'org-cycle)
+
+    (setq org-log-done 'time ;; set timestamp when closing TODO item
+          org-todo-keywords
+          '((sequence "TODO(t)" "WIP(w)" "BLOCKED(b)" "|" "DONE(d)" "KILLED(k)" "POSTPONED(p)"))))
 
 
-    (use-package org-modern
-      :after org
-      :config
-      (global-org-modern-mode))
+  (use-package org-modern
+    :after org
+    :config
+    (global-org-modern-mode))
 #+end_src
 
 ** Python
