@@ -52,6 +52,15 @@ Setup melpa and quelpa.
   (require 'quelpa-use-package)
 #+end_src
 
+** Emacs server
+Ensure server is started for emacsclient
+
+#+begin_src emacs-lisp
+(use-package server
+  :config
+  (unless (server-running-p)
+    (server-start)))
+#+end_src
 * Functions
 ** Packages
 #+begin_src emacs-lisp
