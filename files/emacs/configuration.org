@@ -624,6 +624,10 @@ Save files when they lose focus, and autoformat on save
     ;; does not appear back once it's enlarged again)
     (vterm-shell "screen")
 
+    :config
+    ;; keep scrollback up to 10_000 lines
+    (setq vterm-max-scrollback 100000)
+
     :hook
     ;; disable show-trailing-whitespace in vterm buffers
     (vterm-mode . (lambda () (setq show-trailing-whitespace nil)))
