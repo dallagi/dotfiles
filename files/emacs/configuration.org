@@ -277,6 +277,20 @@ Setup evil and evil-collections.
     :after evil
     :config
     (global-origami-mode))
+
+  ;; Make > and < "sticky", ie. keep region selected after indenting/dedenting
+  (defun keep-visual-after-shift-right ()
+    (interactive)
+    (evil-shift-right (region-beginning) (region-end))
+    (evil-normal-state)
+    (evil-visual-restore))
+  (defun keep-visual-after-shift-left ()
+    (interactive)
+    (evil-shift-left (region-beginning) (region-end))
+    (evil-normal-state)
+    (evil-visual-restore))
+  (define-key evil-visual-state-map (kbd ">") 'keep-visual-after-shift-right)
+  (define-key evil-visual-state-map (kbd "<") 'keep-visual-after-shift-left)
 #+end_src
 
 ** Snippets
@@ -558,7 +572,7 @@ Save files when they lose focus, and autoformat on save
       :states '(motion normal visual)
       :keymaps 'override
 
-      "he" '(embark-bindings :which-key "Embark"))
+      "he" '(embark-bindings :which-key "Embark bindings"))
 
 
     :init
@@ -735,7 +749,10 @@ Save files when they lose focus, and autoformat on save
       :states '(motion normal visual)
       :keymaps 'override
 
-      "gr" '(diff-hl-revert-hunk :which-key "Revert hunk"))
+      "gn" '(diff-hl-next-hunk :which-key "Next hunk")
+      "gp" '(diff-hl-previous-hunk :which-key "Next hunk")
+      "gr" '(diff-hl-revert-hunk :which-key "Revert hunk")
+      "gs" '(diff-hl-show-hunk :which-key "Show hunk"))
     :hook (magit-post-refresh . diff-hl-magit-post-refresh)
     :config
     (global-diff-hl-mode)
@@ -1089,6 +1106,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     (with-editor-set-process-filter process (process-filter process))
     ;; workaround for python-editor issue when the editor command has arguments
     ;; (like in this case, as it will be something like 'emacsclient --socket-name=...')
+    ;; here we create a new command that implicitly adds the arguments to the original one
     (vterm-send-string "echo '#!/usr/bin/bash' > ~/.bin/emacsclient-workaround")
     (vterm-send-return)
     (vterm-send-string "echo $EDITOR \\$@ >> ~/.bin/emacsclient-workaround")
