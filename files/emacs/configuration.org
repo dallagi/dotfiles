@@ -1235,6 +1235,7 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     (my-leader-def
       :keymaps 'org-mode-map
       :states '(normal motion)
+      "ml" '(org-insert-link :which-key "Insert link")
       "mt" '(consult-org-heading :which-key "Go to heading"))
     )
 
