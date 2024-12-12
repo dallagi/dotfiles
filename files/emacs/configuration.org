@@ -676,6 +676,9 @@ Save files when they lose focus, and autoformat on save
     ;; paste using p in normal mode
     (evil-define-key 'normal eat-mode-map (kbd "p") 'eat-yank)
 
+    :hook
+    (eat-mode . (lambda () (setq show-trailing-whitespace nil)))
+
     :general
     (my-leader-def
       :states '(motion normal)
@@ -693,9 +696,16 @@ Save files when they lose focus, and autoformat on save
      :states '(motion normal)
      :keymaps 'term-mode-map
      ;; $ moves to end of line instead of end of buffer
-     "$" 'evil-end-of-line))
+     "$" 'evil-end-of-line)
+    :hook
+    (term-mode . (lambda () (setq show-trailing-whitespace nil))))
 #+end_src
-
+* Tramp
+#+begin_src emacs-lisp
+  ;; fix tramp for remote guix
+  ;; see https://lists.nongnu.org/archive/html/guix-devel/2022-02/msg00114.html
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+#+end_src
 * Git
 ** Magit
 #+begin_src emacs-lisp
