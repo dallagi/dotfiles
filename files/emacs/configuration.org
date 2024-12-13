@@ -120,16 +120,14 @@ Ensure server is started for emacsclient
 
   ;; Wrap lines
   (setq-default word-wrap t)
-  (set-default 'truncate-lines nil)
+  (setq-default truncate-lines nil)
 
   ;; Revert buffers when the underlying file has changed
   (global-auto-revert-mode 1)
+  (setq-default auto-revert-stop-on-user-input nil)
 
   ;; Revert Dired and other buffers
   (setq global-auto-revert-non-file-buffers t)
-
-  ;; Remember and restore the last cursor location of opened files
-  (save-place-mode 1)
 
   ;; Highlight trailing whitespaces
   (setq-default show-trailing-whitespace t)
@@ -378,7 +376,7 @@ Setup evil and evil-collections.
       (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
             '(orderless))) ;; Configure orderless
     :custom
-    (lsp-elixir-ls-version "v0.20.0")
+    (lsp-elixir-ls-version "v0.24.1")
 
     (lsp-auto-execute-action nil) ;; always ask before executing action
     (lsp-ui-doc-enable nil) ;; disable docs popup on hover
