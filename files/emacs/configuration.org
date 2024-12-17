@@ -1242,6 +1242,11 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     (elixir-mode . flycheck-credo-setup))
   #+end_src
 
+** Graphql
+#+begin_src emacs-lisp
+  (use-package graphql-mode)
+  #+end_src
+
 ** Guile
 #+begin_src emacs-lisp
   (use-package geiser)
