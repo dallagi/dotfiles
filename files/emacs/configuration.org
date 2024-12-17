@@ -10,6 +10,10 @@ See also package org-appear
 ** TODO checkout other configs
 https://github.com/wandersoncferreira/literate_emacs
 https://www.lucacambiaghi.com/vanilla-emacs/readme.html
+** TODO setup secrets https://www.gnu.org/software/emacs/manual/html_node/auth/Secret-Service-API.html
+** TODO setup ts-fold (or treesit-fold)
+** TODO setup emacs-pet
+https://github.com/wyuenho/emacs-pet
 
 * To remind
 
@@ -610,6 +614,10 @@ Save files when they lose focus, and autoformat on save
     (eshell-mode . (lambda () (setenv "TERM" "xterm-256color")))
     (eshell-mode . company-mode)
 
+    :hook
+    ;; disable show-trailing-whitespace in eshell buffers
+    (eshell-mode . (lambda () (setq show-trailing-whitespace nil)))
+
     :general
     (:keymaps 'eshell-mode-map
               "C-l" 'eshell/clear-scrollback)
@@ -675,6 +683,7 @@ Save files when they lose focus, and autoformat on save
     (evil-define-key 'normal eat-mode-map (kbd "p") 'eat-yank)
 
     :hook
+    ;; disable show-trailing-whitespace in eat buffers
     (eat-mode . (lambda () (setq show-trailing-whitespace nil)))
 
     :general
@@ -702,7 +711,8 @@ Save files when they lose focus, and autoformat on save
 #+begin_src emacs-lisp
   ;; fix tramp for remote guix
   ;; see https://lists.nongnu.org/archive/html/guix-devel/2022-02/msg00114.html
-  (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+  (with-eval-after-load 'tramp
+    (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 #+end_src
 * Git
 ** Magit
@@ -837,7 +847,6 @@ Keep backups, autosaves, etc. in their own directory, in order not to clutter em
 #+end_src
 
 ** Dashboard
-
 #+begin_src emacs-lisp
   (use-package dashboard
     :init
@@ -1180,16 +1189,17 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 
 ** Whisper STT
 #+begin_src emacs-lisp
-  (use-package whisper
-    :vc (:url "https://github.com/natrys/whisper.el"
-              :branch "master")
-    :bind ("M-w" . whisper-run)
-    :config
-    (setq whisper-install-directory "/tmp/"
-          whisper-model "base"
-          whisper-language "en"
-          whisper-translate nil
-          whisper-use-threads (/ (num-processors) 2)))
+  ;; TEMPORARILY DISABLED UNTIL I MANAGE TO SWITCH BACK TO EMACS 30
+  ;; (use-package whisper
+  ;;   :vc (:url "https://github.com/natrys/whisper.el"
+  ;;             :branch "master")
+  ;;   :bind ("M-w" . whisper-run)
+  ;;   :config
+  ;;   (setq whisper-install-directory "/tmp/"
+  ;;         whisper-model "base"
+  ;;         whisper-language "en"
+  ;;         whisper-translate nil
+  ;;         whisper-use-threads (/ (num-processors) 2)))
 #+end_src
 
 * Languages
@@ -1197,122 +1207,6 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
 #+begin_src emacs-lisp
   (use-package dockerfile-ts-mode
     :mode "Dockerfile")
-#+end_src
-
-** Org
-#+begin_src emacs-lisp
-  (use-package org-mode
-    :ensure nil
-
-    :init
-    (setq org-directory "~/org")
-    (setq org-agenda-files (list "inbox.org" "notes.org" "projects.org"))
-    (setq org-capture-templates
-          `(("i" "Inbox" entry  (file "inbox.org")
-             ,(concat "* TODO %?\n"
-                      "/Entered on/ %U"))
-            ("n" "Note" entry  (file "notes.org")
-             ,(concat "* Note \n"
-                      "/Entered on/ %U\n" "\n" "%?"))
-            ))
-    ;; Refile to projects file, either to Notes or to Tasks sections
-    (setq org-refile-targets
-          '(("projects.org" :regexp . "\\(?:\\(?:Note\\|Task\\)s\\)")))
-    (setq org-refile-use-outline-path 'file)
-    (setq org-outline-path-complete-in-steps nil)
-    (setq org-startup-truncated nil)
-    (setq org-startup-indented t)
-
-    :hook
-    ;; Use full window for org-capture
-    (org-capture-mode . delete-other-windows)
-
-    :general
-    (my-leader-def
-      :states '(motion normal visual)
-      :keymaps 'override
-
-      "na" '(org-agenda :which-key "Agenda")
-      "nc" '(org-capture :which-key "Capture")
-      "ni" '(my/org-capture-inbox :which-key "Capture inbox")
-      "nI" '(my/open-org-inbox :which-key "Open inbox")
-      "nN" '(my/open-org-notes :which-key "Open notes")
-      "nP" '(my/open-org-projects :which-key "Open projects file")
-      )
-
-    (my-leader-def
-      :keymaps 'org-mode-map
-      :states '(normal motion)
-      "ml" '(org-insert-link :which-key "Insert link")
-      "mt" '(consult-org-heading :which-key "Go to heading"))
-    )
-
-  (use-package evil-org
-    :after org
-    :hook (org-mode . (lambda () (evil-org-mode)))
-    :config
-    (require 'evil-org-agenda)
-    (evil-org-agenda-set-keys)
-    ;; keep org <TAB> behavior
-    (evil-define-key '(normal insert) org-mode-map (kbd "<tab>") #'org-cycle)
-
-    (setq org-log-done 'time ;; set timestamp when closing TODO item
-          org-todo-keywords
-          '((sequence "TODO(t)" "WIP(w)" "BLOCKED(b)" "|" "DONE(d)" "KILLED(k)" "POSTPONED(p)"))))
-
-
-  (use-package org-modern
-    :after org
-    :config
-    (global-org-modern-mode))
-#+end_src
-
-** Python
-#+begin_src emacs-lisp
-  (defun my/poetry-venv-workon ()
-    "Activate virtualenv and restart eglot to pick up the new venv"
-    (interactive)
-    (call-interactively 'poetry-venv-workon)
-    (call-interactively 'lsp-workspace-restart))
-  (use-package lsp-pyright)
-
-  (use-package python-ts-mode
-    :ensure nil
-
-    :hook (python-ts-mode . (lambda ()
-			      (require 'lsp-pyright)
-			      (lsp-deferred)))
-
-    :general
-    (my-leader-def
-      :keymaps 'python-ts-mode-map
-      :states '(normal motion)
-      "mw" '(my/poetry-venv-workon :which-key "Poetry workon"))
-
-    :config
-    (setq indent-tabs-mode nil)
-    (setq tab-width 4)
-    (setq python-indent-offset 4))
-
-  (use-package poetry :after python-ts-mode)
-#+end_src
-
-** Rust
-#+begin_src emacs-lisp
-  (use-package rust-ts-mode
-    :mode "\\.rs\\'"
-
-    :hook (rust-ts-mode . lsp-deferred)
-
-    :general
-    (:keymaps 'rust-ts-mode-map
-	      :states '(motion normal visual)
-	      :keymaps 'override
-	      :prefix "SPC"
-
-	      "mc" '(lsp-rust-analyzer-open-cargo-toml :which-key "Open Cargo.toml")
-	      "mp" '(lsp-rust-analyzer-find-parent-module :which-key "Open Cargo.toml")
-    ))
 #+end_src
 
 ** Elixir
@@ -1389,6 +1283,74 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
     :mode "Justfile")
 #+end_src
 
+** Org
+#+begin_src emacs-lisp
+  (use-package org-mode
+    :ensure nil
+
+    :init
+    (setq org-directory "~/org")
+    (setq org-agenda-files (list "inbox.org" "notes.org" "projects.org"))
+    (setq org-capture-templates
+          `(("i" "Inbox" entry  (file "inbox.org")
+             ,(concat "* TODO %?\n"
+                      "/Entered on/ %U"))
+            ("n" "Note" entry  (file "notes.org")
+             ,(concat "* Note \n"
+                      "/Entered on/ %U\n" "\n" "%?"))
+            ))
+    ;; Refile to projects file, either to Notes or to Tasks sections
+    (setq org-refile-targets
+          '(("projects.org" :regexp . "\\(?:\\(?:Note\\|Task\\)s\\)")))
+    (setq org-refile-use-outline-path 'file)
+    (setq org-outline-path-complete-in-steps nil)
+    (setq org-startup-truncated nil)
+    (setq org-startup-indented t)
+
+    :hook
+    ;; Use full window for org-capture
+    (org-capture-mode . delete-other-windows)
+
+    :general
+    (my-leader-def
+      :states '(motion normal visual)
+      :keymaps 'override
+
+      "na" '(org-agenda :which-key "Agenda")
+      "nc" '(org-capture :which-key "Capture")
+      "ni" '(my/org-capture-inbox :which-key "Capture inbox")
+      "nI" '(my/open-org-inbox :which-key "Open inbox")
+      "nN" '(my/open-org-notes :which-key "Open notes")
+      "nP" '(my/open-org-projects :which-key "Open projects file")
+      )
+
+    (my-leader-def
+      :keymaps 'org-mode-map
+      :states '(normal motion)
+      "ml" '(org-insert-link :which-key "Insert link")
+      "mt" '(consult-org-heading :which-key "Go to heading"))
+    )
+
+  (use-package evil-org
+    :after org
+    :hook (org-mode . (lambda () (evil-org-mode)))
+    :config
+    (require 'evil-org-agenda)
+    (evil-org-agenda-set-keys)
+    ;; keep org <TAB> behavior
+    (evil-define-key '(normal insert) org-mode-map (kbd "<tab>") #'org-cycle)
+
+    (setq org-log-done 'time ;; set timestamp when closing TODO item
+          org-todo-keywords
+          '((sequence "TODO(t)" "WIP(w)" "BLOCKED(b)" "|" "DONE(d)" "KILLED(k)" "POSTPONED(p)"))))
+
+
+  (use-package org-modern
+    :after org
+    :config
+    (global-org-modern-mode))
+#+end_src
+
 ** Php
 #+begin_src emacs-lisp
   (use-package php-mode
@@ -1401,6 +1363,54 @@ Remember to run ~M-x all-the-icons-install-fonts~ the first time!
   (use-package protobuf-mode
     :mode "\\.proto\\'"
     :hook (protobuf-mode . lsp-deferred))
+#+end_src
+
+** Python
+#+begin_src emacs-lisp
+  (defun my/poetry-venv-workon ()
+    "Activate virtualenv and restart eglot to pick up the new venv"
+    (interactive)
+    (call-interactively 'poetry-venv-workon)
+    (call-interactively 'lsp-workspace-restart))
+  (use-package lsp-pyright)
+
+  (use-package python-ts-mode
+    :ensure nil
+
+    :hook (python-ts-mode . (lambda ()
+			      (require 'lsp-pyright)
+			      (lsp-deferred)))
+
+    :general
+    (my-leader-def
+      :keymaps 'python-ts-mode-map
+      :states '(normal motion)
+      "mw" '(my/poetry-venv-workon :which-key "Poetry workon"))
+
+    :config
+    (setq indent-tabs-mode nil)
+    (setq tab-width 4)
+    (setq python-indent-offset 4))
+
+  (use-package poetry :after python-ts-mode)
+#+end_src
+
+** Rust
+#+begin_src emacs-lisp
+  (use-package rust-ts-mode
+    :mode "\\.rs\\'"
+
+    :hook (rust-ts-mode . lsp-deferred)
+
+    :general
+    (:keymaps 'rust-ts-mode-map
+	      :states '(motion normal visual)
+	      :keymaps 'override
+	      :prefix "SPC"
+
+	      "mc" '(lsp-rust-analyzer-open-cargo-toml :which-key "Open Cargo.toml")
+	      "mp" '(lsp-rust-analyzer-find-parent-module :which-key "Open Cargo.toml")
+    ))
 #+end_src
 
 ** Yaml

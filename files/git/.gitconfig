@@ -41,3 +41,7 @@
     process = git-lfs filter-process
     required = true
     clean = git-lfs clean -- %f
+
+; [diff "lfs"]
+;     ; show diff for lfs files
+;     ; textconv = cat
